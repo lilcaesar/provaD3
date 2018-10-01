@@ -5,18 +5,16 @@ d3.csv('data.csv', function (data) {
     var h = 500 - margin.top - margin.bottom
     var w = 500 - margin.left - margin.right
     var formatPercent = d3.format('.2%')
-    // Scales
-    var colorScale = d3.scale.category20()
     var xScale = d3.scale.linear()
         .domain([
-            d3.min([0,d3.min(data,function (d) { return d.asd })]),
-            d3.max([0,d3.max(data,function (d) { return d.asd })])
+            d3.min([0,d3.min(data,function (d) { return d.predictionRating })]),
+            d3.max([0,d3.max(data,function (d) { return d.predictionRating })])
         ])
         .range([0,w])
     var yScale = d3.scale.linear()
         .domain([
-            d3.min([0,d3.min(data,function (d) { return d.aror })]),
-            d3.max([0,d3.max(data,function (d) { return d.aror })])
+            d3.min([0,d3.min(data,function (d) { return d.predictionAccuracy })]),
+            d3.max([0,d3.max(data,function (d) { return d.predictionAccuracy })])
         ])
         .range([h,0])
     // SVG
@@ -36,35 +34,41 @@ d3.csv('data.csv', function (data) {
         .tickFormat(formatPercent)
         .ticks(5)
         .orient('left')
+
+    //Color scale
+    var colors = d3.scale.linear()
+        .domain([0, 2.5, 5])
+        .range(["red", "yellow", "green"]);
+
     // Circles
     var circles = svg.selectAll('circle')
         .data(data)
         .enter()
         .append('circle')
-        .attr('cx',function (d) { return xScale(d.asd) })
-        .attr('cy',function (d) { return yScale(d.aror) })
-        .attr('r',function (d) { return d.maxdd })
+        .attr('cx',function (d) { return xScale(d.predictionRating) })
+        .attr('cy',function (d) { return yScale(d.predictionAccuracy) })
+        .attr('r',function (d) { return d.groupSize })
         .attr('stroke','black')
         .attr('stroke-width',1)
-        .attr('fill',function (d,i) { return colorScale(i) })
+        .attr('fill',function (d) { return colors(d.predictionRating * d.predictionAccuracy) })
         .on('mouseover', function () {
             d3.select(this)
                 .transition()
                 .duration(500)
-                .attr('r',function (d) { return d.maxdd*1.5 })
+                .attr('r',function (d) { return d.groupSize*1.5 })
                 .attr('stroke-width',3)
         })
         .on('mouseout', function () {
             d3.select(this)
                 .transition()
                 .duration(500)
-                .attr('r',function (d) { return d.maxdd })
+                .attr('r',function (d) { return d.groupSize })
                 .attr('stroke-width',1)
         })
         .append('title') // Tooltip
         .text(function (d) { return d.variable +
-            '\nReturn: ' + formatPercent(d.aror) +
-            '\nStd. Dev.: ' + formatPercent(d.asd) })
+            '\nReturn: ' + formatPercent(d.predictionAccuracy) +
+            '\nStd. Dev.: ' + formatPercent(d.predictionRating) })
     // X-axis
     svg.append('g')
         .attr('class','axis')
@@ -76,7 +80,7 @@ d3.csv('data.csv', function (data) {
         .attr('x',w)
         .attr('dy','.71em')
         .style('text-anchor','end')
-        .text('Annualized Standard Deviation')
+        .text('Accuracy')
     // Y-axis
     svg.append('g')
         .attr('class', 'axis')
@@ -88,5 +92,5 @@ d3.csv('data.csv', function (data) {
         .attr('y',5)
         .attr('dy','.71em')
         .style('text-anchor','end')
-        .text('Annualized Return')
+        .text('Punteggio')
 })
