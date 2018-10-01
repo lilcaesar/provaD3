@@ -4,18 +4,12 @@ d3.csv('data.csv', function (data) {
     var margin = { top: 50, right: 50, bottom: 50, left: 50 }
     var h = 500 - margin.top - margin.bottom
     var w = 500 - margin.left - margin.right
-    var formatPercent = d3.format('.2%')
+    var formatPercent = d3.format('%')
     var xScale = d3.scale.linear()
-        .domain([
-            d3.min([0,d3.min(data,function (d) { return d.predictionRating })]),
-            d3.max([0,d3.max(data,function (d) { return d.predictionRating })])
-        ])
+        .domain([0,6])
         .range([0,w])
     var yScale = d3.scale.linear()
-        .domain([
-            d3.min([0,d3.min(data,function (d) { return d.predictionAccuracy })]),
-            d3.max([0,d3.max(data,function (d) { return d.predictionAccuracy })])
-        ])
+        .domain([0, 1.2])
         .range([h,0])
     // SVG
     var svg = body.append('svg')
@@ -37,7 +31,7 @@ d3.csv('data.csv', function (data) {
 
     //Color scale
     var colors = d3.scale.linear()
-        .domain([0, 2.5, 5])
+        .domain([0.3, 2.5, 5])
         .range(["red", "yellow", "green"]);
 
     // Circles
@@ -67,8 +61,9 @@ d3.csv('data.csv', function (data) {
         })
         .append('title') // Tooltip
         .text(function (d) { return d.variable +
-            '\nReturn: ' + formatPercent(d.predictionAccuracy) +
-            '\nStd. Dev.: ' + formatPercent(d.predictionRating) })
+            '\nPopolazione: ' + d.groupSize +
+            '\nPunteggio: ' + formatPercent(d.predictionRating)  +
+            '\nAccuracy: ' + formatPercent(d.predictionAccuracy) })
     // X-axis
     svg.append('g')
         .attr('class','axis')
