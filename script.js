@@ -51,7 +51,7 @@ d3.csv('data.csv', function (data) {
 
     //TODO Find another way to compute the correct scale factor
     //Multiplication factor for the circle
-    var radiusScale = 10;
+    var radiusScale = 300;
 
     // Circles
     var circles = svg.selectAll('circle')
@@ -60,7 +60,7 @@ d3.csv('data.csv', function (data) {
         .append('circle')
         .attr('cx',function (d) { return xScale(d.predictionRating) })
         .attr('cy',function (d) { return yScale(d.predictionAccuracy) })
-        .attr('r',function (d) { return (d.groupSize*radiusScale)/6.28 })
+        .attr('r',function (d) { return Math.sqrt((d.groupSize*radiusScale)/3.14) })
         .attr('stroke','black')
         .attr('stroke-width',1)
         .attr('fill',function (d) { return colors(d.predictionRating * d.predictionAccuracy) })
@@ -69,14 +69,14 @@ d3.csv('data.csv', function (data) {
                 .moveToFront()
                 .transition()
                 .duration(500)
-                .attr('r',function (d) { return ((d.groupSize*radiusScale)/6.28)*1.5 })
+                .attr('r',function (d) { return Math.sqrt((d.groupSize*radiusScale)/3.14)*1.5 })
                 .attr('stroke-width',3)
         })
         .on('mouseout', function () {
             d3.select(this)
                 .transition()
                 .duration(500)
-                .attr('r',function (d) { return (d.groupSize*radiusScale)/6.28 })
+                .attr('r',function (d) { return Math.sqrt((d.groupSize*radiusScale)/3.14) })
                 .attr('stroke-width',1)
         })
         .append('title') // Tooltip
@@ -95,7 +95,7 @@ d3.csv('data.csv', function (data) {
         .attr('x',w)
         .attr('dy','.71em')
         .style('text-anchor','end')
-        .text('Accuracy');
+        .text('Punteggio');
     // Y-axis
     svg.append('g')
         .attr('class', 'axis')
@@ -107,5 +107,5 @@ d3.csv('data.csv', function (data) {
         .attr('y',5)
         .attr('dy','.71em')
         .style('text-anchor','end')
-        .text('Punteggio');
+        .text('Accuracy');
 });
