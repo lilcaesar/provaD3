@@ -49,9 +49,8 @@ d3.csv('data.csv', function (data) {
         .domain([0.3, 2.5, 5])
         .range(["red", "yellow", "green"]);
 
-    //TODO Find another way to compute the correct scale factor
-    //Multiplication factor for the circle
-    var radiusScale = 300;
+    //Multiplication factor for the circle based on interpolation
+    var radiusScale = d3.interpolate(50,500)
 
     // Circles
     var circles = svg.selectAll('circle')
@@ -60,7 +59,7 @@ d3.csv('data.csv', function (data) {
         .append('circle')
         .attr('cx',function (d) { return xScale(d.predictionRating) })
         .attr('cy',function (d) { return yScale(d.predictionAccuracy) })
-        .attr('r',function (d) { return Math.sqrt((d.groupSize*radiusScale)/3.14) })
+        .attr('r',function (d) { return Math.sqrt((radiusScale(d.groupSize))/3.14) })
         .attr('stroke','black')
         .attr('stroke-width',1)
         .attr('fill',function (d) { return colors(d.predictionRating * d.predictionAccuracy) })
@@ -69,19 +68,19 @@ d3.csv('data.csv', function (data) {
                 .moveToFront()
                 .transition()
                 .duration(500)
-                .attr('r',function (d) { return Math.sqrt((d.groupSize*radiusScale)/3.14)*1.5 })
+                .attr('r',function (d) { return Math.sqrt((radiusScale(d.groupSize))/3.14)*1.5 })
                 .attr('stroke-width',3)
         })
         .on('mouseout', function () {
             d3.select(this)
                 .transition()
                 .duration(500)
-                .attr('r',function (d) { return Math.sqrt((d.groupSize*radiusScale)/3.14) })
+                .attr('r',function (d) { return Math.sqrt((radiusScale(d.groupSize))/3.14) })
                 .attr('stroke-width',1)
         })
         .append('title') // Tooltip
-        .text(function (d) { return d.variable +
-            '\nPopolazione: ' + d.groupSize +
+        .text(function (d) { return '\nPopolazione: ' + d.groupSize +
+            '\nArea: ' + d3.min(data, d => d.groupSize)  +
             '\nPunteggio: ' + d.predictionRating  +
             '\nAccuracy: ' + formatPercent(d.predictionAccuracy) });
     // X-axis
@@ -109,3 +108,5 @@ d3.csv('data.csv', function (data) {
         .style('text-anchor','end')
         .text('Accuracy');
 });
+
+d3.select('#slider11').call(d3.slider().scale(d3.scale.ordinal().domain(["Giorno", "Settimana", "Mese", "Anno"]).rangePoints([0, 1], 0.5)).axis( d3.svg.axis() ).snap(true).value("Giorno"));
