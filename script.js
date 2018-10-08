@@ -1,4 +1,4 @@
-d3.dsv(';')('dataset.csv', function (data) {
+d3.dsv(';')('dataset2.csv', function (data) {
     // Variables
     var body = d3.select('body');
     var margin = {top: 50, right: 50, bottom: 50, left: 50};
@@ -29,6 +29,8 @@ d3.dsv(';')('dataset.csv', function (data) {
         .ticks(5)
         .orient('left');
 
+    /*** Parser begin ***/
+
     // dot notation + conversione da stringa a numero -> http://learnjsdata.com/read_data.html
     item_user_id = +data.item_user_id;
     session_id = +data.session_id;
@@ -40,33 +42,38 @@ d3.dsv(';')('dataset.csv', function (data) {
     // d.user_birthdate = +d.user_birthdate // da calcolare
     pausetime = +data.pausetime;
     mark = +data.mark;
+
     // raggruppa per item_user_id e fa la media dei voti -> http://learnjsdata.com/group_data.html
     var exp2 = d3.nest()
         .key(function (d) {
             return d.item_user_id;
         })
         // semplice media dei voti (sarebbe meglio pesata)
-        .rollup(function (v) {
-            return Math.round(d3.mean(v, function (d) {
-                return d.mark;
-            }));
-        })
+        .rollup(function(v) { return {
+            mark: Math.round(d3.mean(v, function (d) {return d.mark; })),
+            accuracy: d3.mean(v, function (d) {return d.accuracy; })
+        }; })
+
         .entries(data);
     //console.log(JSON.stringify(exp2));
 
     // raggruppo per voto e faccio la somma di quanti atleti stanno in ogni cluster (dei voti)
     var exp3 = d3.nest()
+        .key(function (d) { return d.values.mark;})
         .key(function (d) {
-            return d.values;
-        })
+            if(d.values.accuracy <= 0.33)
+                return 0.165;
+            else if(d.values.accuracy >0.33 && d.values.accuracy <= 0.66)
+                return 0.495;
+            else
+                return 0.825;})
         .rollup(function (v) {
             return v.length;
         })
         .entries(exp2);
     console.log(JSON.stringify(exp3));
 
-    // assegnare le medie dei vari utenti ai cluster dei voti (e altra metrica)
-
+    /*** Parser end ***/
 
     //Functions for setting the circle in foreground or background
     d3.selection.prototype.moveToFront = function () {
