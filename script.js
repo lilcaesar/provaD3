@@ -44,6 +44,7 @@ d3.csv('data.csv', function (data) {
         });
     };
 
+
     //Color scale
     var colors = d3.scale.linear()
         .domain([0.3, 2.5, 5])
