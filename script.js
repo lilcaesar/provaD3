@@ -6,10 +6,10 @@ d3.dsv(';')('dataset2.csv', function (data) {
     var w = 1000 - margin.left - margin.right;
     var formatPercent = d3.format('%');
     var xScale = d3.scale.linear()
-        .domain([0, 6])
+        .domain([0, 5.99])
         .range([0, w]);
     var yScale = d3.scale.linear()
-        .domain([0, 1.2])
+        .domain([0, 1])
         .range([h, 0]);
     // SVG
     var svg = body.append('svg')
@@ -73,6 +73,19 @@ d3.dsv(';')('dataset2.csv', function (data) {
         .entries(exp2);
     console.log(JSON.stringify(exp3));
 
+    var finalData = [];
+    for (var element in exp3){
+        for (i=0; i<3; i++){
+            item = {}
+            item.rating = exp3[element].key;
+            item.accuracy = exp3[element].values[i].key;
+            item.population = exp3[element].values[i].values;
+            finalData.push(item);
+        }
+    }
+
+    console.log(finalData);
+
     /*** Parser end ***/
 
     //Functions for setting the circle in foreground or background
@@ -100,22 +113,22 @@ d3.dsv(';')('dataset2.csv', function (data) {
 
     // Circles
     var circles = svg.selectAll('circle')
-        .data(exp3)
+        .data(finalData)
         .enter()
         .append('circle')
         .attr('cx', function (d) {
-            return xScale(d.key)
+            return xScale(d.rating)
         })
         .attr('cy', function (d) {
-            return yScale(0.5)
+            return yScale(d.accuracy)
         })
         .attr('r', function (d) {
-            return Math.sqrt((radiusScale(d.values)) / 3.14)
+            return Math.sqrt((radiusScale(d.population)) / 3.14)
         })
         .attr('stroke', 'black')
         .attr('stroke-width', 1)
         .attr('fill', function (d) {
-            return colors(d.key * 0.5)
+            return colors(d.rating * d.accuracy)
         })
         .on('mouseover', function () {
             d3.select(this)
@@ -123,7 +136,7 @@ d3.dsv(';')('dataset2.csv', function (data) {
                 .transition()
                 .duration(500)
                 .attr('r', function (d) {
-                    return Math.sqrt((radiusScale(d.values)) / 3.14) * 1.5
+                    return Math.sqrt((radiusScale(d.population)) / 3.14) * 1.5
                 })
                 .attr('stroke-width', 3)
         })
@@ -132,16 +145,15 @@ d3.dsv(';')('dataset2.csv', function (data) {
                 .transition()
                 .duration(500)
                 .attr('r', function (d) {
-                    return Math.sqrt((radiusScale(d.values)) / 3.14)
+                    return Math.sqrt((radiusScale(d.population)) / 3.14)
                 })
                 .attr('stroke-width', 1)
         })
         .append('title') // Tooltip
         .text(function (d) {
-            return '\nPopolazione: ' + d.values +
-                '\nArea: ' + d3.min(data, d => d.values) +
-                '\nPunteggio: ' + d.key +
-                '\nAccuracy: ' + formatPercent(0.5)
+            return '\nPopolazione: ' + d.population +
+                '\nPunteggio: ' + d.rating +
+                '\nAccuracy: ' + formatPercent(d.accuracy)
         });
     // X-axis
     svg.append('g')
