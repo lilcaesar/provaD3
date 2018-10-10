@@ -8,9 +8,12 @@ d3.dsv(';')('dataset2.csv', function (data) {
     var xScale = d3.scale.linear()
         .domain([0, 5.99])
         .range([0, w]);
-    var yScale = d3.scale.linear()
-        .domain([0, 1])
-        .range([h, 0]);
+    var yScale = d3.scale.ordinal()
+        .domain([h,0.0])
+        .rangePoints(["Bassa", "Media", "Alta"]);
+    var yScaleLabels = d3.scale.ordinal()
+        .domain(["Bassa", "Media", "Alta"])
+        .rangePoints([h,0]);
     // SVG
     var svg = body.append('svg')
         .attr('height', h + margin.top + margin.bottom)
@@ -24,9 +27,7 @@ d3.dsv(';')('dataset2.csv', function (data) {
         .orient('bottom');
     // Y-axis
     var yAxis = d3.svg.axis()
-        .scale(yScale)
-        .tickFormat(formatPercent)
-        .ticks(5)
+        .scale(yScaleLabels)
         .orient('left');
 
     /*** Parser ***/
@@ -51,7 +52,7 @@ d3.dsv(';')('dataset2.csv', function (data) {
 
     //Color scale
     var colors = d3.scale.linear()
-        .domain([0.3, 2.5, 5])
+        .domain([0, 2, 5])
         .range(["red", "yellow", "green"]);
 
     //Multiplication factor for the circle based on interpolation
@@ -66,6 +67,7 @@ d3.dsv(';')('dataset2.csv', function (data) {
             return xScale(d.rating)
         })
         .attr('cy', function (d) {
+            console.dir(yScale(h));
             return yScale(d.accuracy)
         })
         .attr('r', function (d) {
@@ -97,9 +99,7 @@ d3.dsv(';')('dataset2.csv', function (data) {
         })
         .append('title') // Tooltip
         .text(function (d) {
-            return '\nPopolazione: ' + d.population +
-                '\nPunteggio: ' + d.rating +
-                '\nAccuracy: ' + formatPercent(d.accuracy)
+            return '\nPopolazione: ' + d.population
         });
     // X-axis
     svg.append('g')
@@ -124,7 +124,7 @@ d3.dsv(';')('dataset2.csv', function (data) {
         .attr('y', 5)
         .attr('dy', '.71em')
         .style('text-anchor', 'end')
-        .text('Accuracy');
+        .text('Affidabilità');
 
     d3.select('#slider11').call(d3.slider().scale(d3.scale.ordinal().domain(["Giorno", "Settimana", "Mese", "Anno"]).rangePoints([0, 1], 0.5)).axis(d3.svg.axis()).snap(true).value("Giorno"));
 });
