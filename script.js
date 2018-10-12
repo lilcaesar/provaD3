@@ -8,12 +8,12 @@ d3.dsv(';')('dataset2.csv', function (data) {
     var xScale = d3.scale.linear()
         .domain([0, 5.99])
         .range([0, w]);
-    var yScale = d3.scale.ordinal()
-        .domain([h,0.0])
-        .rangePoints(["Bassa", "Media", "Alta"]);
+    var yScale = d3.scale.linear()
+        .domain([0, 1])
+        .range([h, 0]);
     var yScaleLabels = d3.scale.ordinal()
-        .domain(["Bassa", "Media", "Alta"])
-        .rangePoints([h,0]);
+        .domain([" ","Bassa", "Media", "Alta",""])
+        .range([h,yScale(0.165), yScale(0.495), yScale(0.825),0]);
     // SVG
     var svg = body.append('svg')
         .attr('height', h + margin.top + margin.bottom)
@@ -67,7 +67,6 @@ d3.dsv(';')('dataset2.csv', function (data) {
             return xScale(d.rating)
         })
         .attr('cy', function (d) {
-            console.dir(yScale(h));
             return yScale(d.accuracy)
         })
         .attr('r', function (d) {
