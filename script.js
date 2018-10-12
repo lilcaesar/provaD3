@@ -124,6 +124,4 @@ d3.dsv(';')('dataset2.csv', function (data) {
         .attr('dy', '.71em')
         .style('text-anchor', 'end')
         .text('Affidabilità');
-
-    d3.select('#slider11').call(d3.slider().scale(d3.scale.ordinal().domain(["Giorno", "Settimana", "Mese", "Anno"]).rangePoints([0, 1], 0.5)).axis(d3.svg.axis()).snap(true).value("Giorno"));
 });
