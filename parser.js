@@ -12,24 +12,50 @@ function parseCSV(data) {
     pausetime = +data.pausetime;
     mark = +data.mark;
 
-    // raggruppa per item_user_id e fa la media dei voti -> http://learnjsdata.com/group_data.html
-    var exp2 = d3.nest()
-        .key(function (d) {
-            return d.item_user_id;
-        })
-        // semplice media dei voti (sarebbe meglio pesata)
-        .rollup(function (v) {
-            return {
-                mark: Math.round(d3.mean(v, function (d) {
-                    return d.mark;
-                })),
-                accuracy: d3.mean(v, function (d) {
-                    return d.accuracy;
-                })
-            };
-        })
 
-        .entries(data);
+    /*** Parse date ***/
+    /*** modificare parseCSV in modo tale da avere in input una data di inizio e fine per lo slider ***/
+        // trasforma la data in un formato tale che possa essere usata da d3.min/d3.max
+    var parseDate = d3.time.format("%d/%m/%Y %H:%M").parse;
+
+    // prelevo dal csv solo le date
+    var only_dates = data.map(function(d) {
+        return  parseDate(d.creationdate)
+    });
+
+    // trovo la data min e max
+    var lastDate = d3.max(d3.values(only_dates));
+    var firstDate = d3.min(d3.values(only_dates));
+
+
+    // firstDate = parseDate('11/05/2018 04:36')
+    // console.log(firstDate)
+    // console.log(lastDate)
+
+    // filtro il dataset per data
+    var data_filt = data.filter(function (d) { return parseDate(d.creationdate) >= firstDate && parseDate(d.creationdate) <= lastDate })
+    /*** Parse date ***/
+
+
+        // raggruppa per item_user_id e fa la media dei voti -> http://learnjsdata.com/group_data.html
+    var exp2 = d3.nest()
+            .key(function (d) {
+                return d.item_user_id;
+            })
+            // semplice media dei voti (sarebbe meglio pesata)
+            .rollup(function (v) {
+                return {
+                    mark: Math.round(d3.mean(v, function (d) {
+                        return d.mark;
+                    })),
+                    accuracy: d3.mean(v, function (d) {
+                        return d.accuracy;
+                    })
+                };
+            })
+            //.entries(data);
+            .entries(data_filt);
+
     //console.log(JSON.stringify(exp2));
 
     // raggruppo per voto e faccio la somma di quanti atleti stanno in ogni cluster (dei voti)
@@ -54,7 +80,9 @@ function parseCSV(data) {
 
     var finalData = [];
     for (var element in exp3) {
-        for (i = 0; i < 3; i++) {
+        // dopo il filtro ci possono essere elementi che non esistono più
+        for (var i in exp3[element].values) {
+            //for (i = 0; i < 3; i++) {
             item = {}
             item.rating = exp3[element].key;
             item.accuracy = exp3[element].values[i].key;

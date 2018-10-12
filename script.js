@@ -31,7 +31,7 @@ d3.dsv(';')('dataset2.csv', function (data) {
         .orient('left');
 
     /*** Parser ***/
-    finalData = parseCSV(data);
+    var finalData = parseCSV(data);
     //console.log(finalData);
 
 
