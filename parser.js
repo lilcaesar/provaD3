@@ -29,14 +29,14 @@ function parseCSV(data) {
 
 
     // firstDate = parseDate('11/05/2018 04:36')
-    console.log(firstDate)
-    console.log(lastDate)
+    //console.log(firstDate)
+    //console.log(lastDate)
 
     // filtro il dataset per data
     var data_filt = data.filter(function (d) { return parseDate(d.creationdate) >= firstDate && parseDate(d.creationdate) <= lastDate })
     /*** Parse date ***/
 
-    console.log(data_filt);
+    //console.log(data_filt);
 
         // raggruppa per item_user_id e fa la media dei voti -> http://learnjsdata.com/group_data.html
     var exp2 = d3.nest()
@@ -62,12 +62,12 @@ function parseCSV(data) {
     // raggruppo per voto e faccio la somma di quanti atleti stanno in ogni cluster (dei voti)
     var exp3 = d3.nest()
         .key(function (d) {
-            return d.values.mark;
+            return d.value.mark;
         })
         .key(function (d) {
-            if (d.values.accuracy <= 0.33)
+            if (d.value.accuracy <= 0.33)
                 return 0.165;
-            else if (d.values.accuracy > 0.33 && d.values.accuracy <= 0.66)
+            else if (d.value.accuracy > 0.33 && d.value.accuracy <= 0.66)
                 return 0.495;
             else
                 return 0.825;
@@ -82,12 +82,12 @@ function parseCSV(data) {
     var finalData = [];
     for (var element in exp3) {
         // dopo il filtro ci possono essere elementi che non esistono più
-        for (var i in exp3[element].values) {
+        for (var i in exp3[element].value) {
             //for (i = 0; i < 3; i++) {
             item = {}
             item.rating = exp3[element].key;
-            item.accuracy = exp3[element].values[i].key;
-            item.population = exp3[element].values[i].values;
+            item.accuracy = exp3[element].value[i].key;
+            item.population = exp3[element].value[i].value;
             finalData.push(item);
         }
     }
