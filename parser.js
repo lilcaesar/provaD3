@@ -82,12 +82,12 @@ function parseCSV(data) {
     var finalData = [];
     for (var element in exp3) {
         // dopo il filtro ci possono essere elementi che non esistono più
-        for (var i in exp3[element].value) {
+        for (var i in exp3[element].values) {
             //for (i = 0; i < 3; i++) {
             item = {}
             item.rating = exp3[element].key;
-            item.accuracy = exp3[element].value[i].key;
-            item.population = exp3[element].value[i].value;
+            item.accuracy = exp3[element].values[i].key;
+            item.population = exp3[element].values[i].value;
             finalData.push(item);
         }
     }

@@ -5,6 +5,7 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
     var h = 600 - margin.top - margin.bottom;
     var w = 1000 - margin.left - margin.right;
     var formatPercent = d3.format('%');
+
     var xScale = d3.scaleLinear()
         .domain([0, 5.99])
         .range([0, w]);
@@ -28,7 +29,7 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
 
     /*** Parser ***/
     var finalData = parseCSV(data);
-//console.log(finalData);
+    //console.log(finalData);
 
 
 //Functions for setting the circle in foreground or background
@@ -55,7 +56,7 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
     var radiusScale = d3.interpolate(5, 100)
 
 // Circles
-    var circles = svg.selectAll('circle')
+    svg.selectAll('circle')
         .data(finalData)
         .enter()
         .append('circle')
