@@ -1,5 +1,6 @@
 function parseCSV(data) {
 
+    //console.log(data);
     // dot notation + conversione da stringa a numero -> http://learnjsdata.com/read_data.html
     item_user_id = +data.item_user_id;
     session_id = +data.session_id;
@@ -12,11 +13,10 @@ function parseCSV(data) {
     pausetime = +data.pausetime;
     mark = +data.mark;
 
-
     /*** Parse date ***/
     /*** modificare parseCSV in modo tale da avere in input una data di inizio e fine per lo slider ***/
         // trasforma la data in un formato tale che possa essere usata da d3.min/d3.max
-    var parseDate = d3.time.format("%d/%m/%Y %H:%M").parse;
+    var parseDate = d3.timeParse("%d/%m/%Y %H:%M");
 
     // prelevo dal csv solo le date
     var only_dates = data.map(function(d) {
@@ -29,13 +29,14 @@ function parseCSV(data) {
 
 
     // firstDate = parseDate('11/05/2018 04:36')
-    // console.log(firstDate)
-    // console.log(lastDate)
+    console.log(firstDate)
+    console.log(lastDate)
 
     // filtro il dataset per data
     var data_filt = data.filter(function (d) { return parseDate(d.creationdate) >= firstDate && parseDate(d.creationdate) <= lastDate })
     /*** Parse date ***/
 
+    console.log(data_filt);
 
         // raggruppa per item_user_id e fa la media dei voti -> http://learnjsdata.com/group_data.html
     var exp2 = d3.nest()
