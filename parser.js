@@ -1,3 +1,15 @@
+function getFirstDate(data){
+    return d3.min(data, function (d) {
+        return d.creationdate;
+    })
+}
+
+function getLastDate(data){
+    return d3.max(data, function (d) {
+        return d.creationdate;
+    })
+}
+
 function parseCSV(data) {
 
     //console.log(data);
@@ -16,24 +28,22 @@ function parseCSV(data) {
     /*** Parse date ***/
     /*** modificare parseCSV in modo tale da avere in input una data di inizio e fine per lo slider ***/
         // trasforma la data in un formato tale che possa essere usata da d3.min/d3.max
-    var parseDate = d3.timeParse("%d/%m/%Y %H:%M");
+    /*var parseDate = d3.timeParse("%d/%m/%Y %H:%M");
 
     // prelevo dal csv solo le date
     var only_dates = data.map(function(d) {
         return  parseDate(d.creationdate)
-    });
+    });*/
 
     // trovo la data min e max
-    var lastDate = d3.max(d3.values(only_dates));
-    var firstDate = d3.min(d3.values(only_dates));
+    var lastDate = getLastDate(data);
+    var firstDate = getFirstDate(data);
 
-
-    // firstDate = parseDate('11/05/2018 04:36')
     //console.log(firstDate)
     //console.log(lastDate)
 
     // filtro il dataset per data
-    var data_filt = data.filter(function (d) { return parseDate(d.creationdate) >= firstDate && parseDate(d.creationdate) <= lastDate })
+    var data_filt = data.filter(function (d) { return d.creationdate >= firstDate && d.creationdate <= lastDate })
     /*** Parse date ***/
 
     //console.log(data_filt);

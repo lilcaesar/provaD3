@@ -4,7 +4,6 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
     var margin = {top: 50, right: 50, bottom: 50, left: 50};
     var h = 600 - margin.top - margin.bottom;
     var w = 1000 - margin.left - margin.right;
-    var formatPercent = d3.format('%');
 
     var xScale = d3.scaleLinear()
         .domain([0, 5.99])
@@ -17,7 +16,7 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
         .range([h, yScale(0.165), yScale(0.495), yScale(0.825), 0]);
 // SVG
     var svg = body.append('svg')
-        .attr('height', h + margin.top + margin.bottom)
+        .attr('height', h +50+ margin.top + margin.bottom)
         .attr('width', w + margin.left + margin.right)
         .append('g')
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
@@ -29,7 +28,7 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
 
     /*** Parser ***/
     var finalData = parseCSV(data);
-    //console.log(finalData);
+    console.log(finalData);
 
 
 //Functions for setting the circle in foreground or background
@@ -122,4 +121,27 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
         .style('text-anchor', 'end')
         .text('Affidabilità');
 
+    var parseDate = d3.timeParse("%d/%m/%Y %H:%M");
+    var formatTime = d3.timeFormat("%Y-%m-%d")
+    var sliderScale = d3.scaleTime()
+        .domain([parseDate(getFirstDate(data)), parseDate(getLastDate(data))])
+        .range([0,w]);
+    var sliderScaleINV = d3.scaleTime()
+        .domain([0,w])
+        .range([parseDate(getFirstDate(data)), parseDate(getLastDate(data))]);
+    var sliderAxis = d3.axisBottom(sliderScale)
+        .tickFormat(formatTime);
+    var hSlider = h + 50;
+    svg.append('g')
+        .attr('class', 'axis')
+        .attr('transform', 'translate(0,' + hSlider + ')')
+        .call(sliderAxis)
+
+    var slider = createD3RangeSlider(sliderScale(parseDate(getFirstDate(data))), sliderScale(parseDate(getLastDate(data))), "#slider-container");
+
+    slider.onChange(function(newRange){
+        d3.select("#range-label").text(formatTime(sliderScaleINV(newRange.begin)) + " - " + formatTime(sliderScaleINV(newRange.end)));
+    });
+
+    slider.range(sliderScale(parseDate(getFirstDate(data))),sliderScale(parseDate(getLastDate(data))));
 });

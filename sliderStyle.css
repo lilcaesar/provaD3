@@ -1,0 +1,26 @@
+#container{
+    position: relative;
+    height: 50px;
+}
+.container {
+    margin:150px auto;
+    max-width:600px;
+}
+
+#range-label {
+    margin:30px auto;
+    background-color:#444;
+    padding:10px; border-radius:5px;
+    text-align:center;
+    font-size:1.2em;
+    color:#fff}
+
+#slider-container {
+    position: relative;
+    height:30px;
+    background-color: #eeeef5;
+}
+
+.slider{
+    left: 0px;
+}
