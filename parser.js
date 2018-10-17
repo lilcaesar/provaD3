@@ -10,7 +10,7 @@ function getLastDate(data){
     })
 }
 
-function parseCSV(data) {
+function parseCSV(data, firstDate, lastDate) {
 
     //console.log(data);
     // dot notation + conversione da stringa a numero -> http://learnjsdata.com/read_data.html
@@ -34,10 +34,6 @@ function parseCSV(data) {
     var only_dates = data.map(function(d) {
         return  parseDate(d.creationdate)
     });*/
-
-    // trovo la data min e max
-    var lastDate = getLastDate(data);
-    var firstDate = getFirstDate(data);
 
     //console.log(firstDate)
     //console.log(lastDate)
