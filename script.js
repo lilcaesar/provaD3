@@ -27,10 +27,10 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
     var yAxis = d3.axisLeft(yScaleLabels);
 
     /*** Parser ***/
-    var lastDate = getLastDate(data);
     var firstDate = getFirstDate(data);
+    var lastDate = getLastDate(data);
 
-    var finalData = parseCSV(data, lastDate, firstDate);
+    var finalData = parseCSV(data, firstDate, lastDate);
     //console.log(finalData);
 
 
@@ -129,7 +129,7 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
         .text('Affidabilità');
 
     var parseDate = d3.timeParse("%d/%m/%Y %H:%M");
-    var formatTimeReadable = d3.timeFormat("%Y-%m-%d");
+    var formatTimeReadable = d3.timeFormat("%d/%m/%Y");
     var formatTimeParser = d3.timeFormat("%d/%m/%Y %H:%M");
     var sliderScale = d3.scaleTime()
         .domain([parseDate(firstDate), parseDate(lastDate)])
