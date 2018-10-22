@@ -108,11 +108,18 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
                         return Math.sqrt((radiusScale(d.population)) / 3.14)
                     })
                     .attr('stroke-width', 1)
-            })
-            .append('title') // Tooltip
-            .text(function (d) {
-                return '\nPopolazione: ' + d.population
             });
+
+        //Testo interno dei cerchi
+        circles.append("text")
+            .text(function (d) {return d.population})
+            .attr('x', function (d) {
+                return d.cx
+            })
+            .attr('y', function (d) {
+                return d.cy
+            })
+            .style('fill', 'black');
     }
 
 // X-axis
@@ -125,6 +132,7 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
         .attr('y', -10)
         .attr('x', w)
         .attr('dy', '.71em')
+        .style('fill', 'black')
         .style('text-anchor', 'end')
         .text('Affidabilità');
 // Y-axis
@@ -137,6 +145,7 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
         .attr('x', 0)
         .attr('y', 5)
         .attr('dy', '.71em')
+        .style('fill', 'black')
         .style('text-anchor', 'end')
         .text('Punteggio');
 
