@@ -1,7 +1,7 @@
 d3.dsv(';', 'dataset2.csv').then(function (data) {
     // Variables
     var body = d3.select('body');
-    var margin = {top: 50, right: 50, bottom: 50, left: 50};
+    var margin = {top: 10, right: 50, bottom: 50, left: 50};
     var h = 600 - margin.top - margin.bottom;
     var w = 1000 - margin.left - margin.right;
 
@@ -15,7 +15,8 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
         .domain([" ", "Bassa", "Media", "Alta", ""])
         .range([h, yScale(0.165), yScale(0.495), yScale(0.825), 0]);
 // SVG
-    var svg = body.append('svg')
+    var svg = d3.select('#graphic')
+        .append('svg')
         .attr('height', h +50+ margin.top + margin.bottom)
         .attr('width', w + margin.left + margin.right)
         .append('g')
