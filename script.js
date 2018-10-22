@@ -2,18 +2,18 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
     // Variables
     var body = d3.select('body');
     var margin = {top: 10, right: 50, bottom: 50, left: 50};
-    var h = 600 - margin.top - margin.bottom;
-    var w = 1000 - margin.left - margin.right;
+    var h = 800 - margin.top - margin.bottom;
+    var w = 600 - margin.left - margin.right;
 
     var xScale = d3.scaleLinear()
-        .domain([0, 5.99])
+        .domain([0, 1])
         .range([0, w]);
     var yScale = d3.scaleLinear()
-        .domain([0, 1])
+        .domain([0.5, 5.5])
         .range([h, 0]);
-    var yScaleLabels = d3.scaleOrdinal()
+    var xScaleLabels = d3.scaleOrdinal()
         .domain([" ", "Bassa", "Media", "Alta", ""])
-        .range([h, yScale(0.165), yScale(0.495), yScale(0.825), 0]);
+        .range([w, xScale(0.165), xScale(0.495), xScale(0.825), 0]);
 // SVG
     var svg = d3.select('#graphic')
         .append('svg')
@@ -22,10 +22,10 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
         .append('g')
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 // X-axis
-    var xAxis = d3.axisBottom(xScale)
-        .ticks(5);
+    var xAxis = d3.axisBottom(xScaleLabels);
 // Y-axis
-    var yAxis = d3.axisLeft(yScaleLabels);
+    var yAxis = d3.axisLeft(yScale)
+        .ticks(5);
 
     /*** Parser ***/
     var firstDate = getFirstDate(data);
@@ -55,9 +55,20 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
         .domain([0, 2, 5])
         .range(["red", "yellow", "green"]);
 
-//Multiplication factor for the circle based on interpolation
-    var radiusScale = d3.interpolate(5, 100)
+//Area of the circle based on interpolation
+    var valMax = d3.max(finalData, function (d) {return d.population});
+    var radiusMin =500;
+    var radiusMax =10000;
 
+    function radiusScale(input){
+        if(input>=1){
+            return ((((input - 1)*(radiusMax - radiusMin))/(valMax-1))+radiusMin);
+        }else{
+            return 0;
+        }
+    }
+
+    console.log(Math.sqrt((radiusScale(138)) / 3.14));
     function updateCircles(){
         var circles = svg.selectAll('circle')
             .remove()
@@ -66,10 +77,10 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
             .enter()
             .append('circle')
             .attr('cx', function (d) {
-                return xScale(d.rating)
+                return xScale(d.accuracy)
             })
             .attr('cy', function (d) {
-                return yScale(d.accuracy)
+                return yScale(d.rating)
             })
             .attr('r', function (d) {
                 return Math.sqrt((radiusScale(d.population)) / 3.14)
@@ -115,7 +126,7 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
         .attr('x', w)
         .attr('dy', '.71em')
         .style('text-anchor', 'end')
-        .text('Punteggio');
+        .text('Affidabilità');
 // Y-axis
     svg.append('g')
         .attr('class', 'axis')
@@ -127,7 +138,7 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
         .attr('y', 5)
         .attr('dy', '.71em')
         .style('text-anchor', 'end')
-        .text('Affidabilità');
+        .text('Punteggio');
 
     var parseDate = d3.timeParse("%d/%m/%Y %H:%M");
     var formatTimeReadable = d3.timeFormat("%d/%m/%Y");
