@@ -70,12 +70,15 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
 
     console.log(Math.sqrt((radiusScale(138)) / 3.14));
     function updateCircles(){
-        var circles = svg.selectAll('circle')
+        var node = svg.selectAll('.nodes')
             .remove()
             .exit()
             .data(finalData)
             .enter()
-            .append('circle')
+            .append('g')
+            .attr('class', 'nodes');
+
+        node.append('circle')
             .attr('cx', function (d) {
                 return xScale(d.accuracy)
             })
@@ -111,15 +114,18 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
             });
 
         //Testo interno dei cerchi
-        circles.append("text")
+        node.append("text")
             .text(function (d) {return d.population})
-            .attr('x', function (d) {
-                return d.cx
+            .attr("dx",function (d) {
+                return xScale(d.accuracy)-10
             })
-            .attr('y', function (d) {
-                return d.cy
+            .attr("dy",function (d) {
+                return yScale(d.rating)+10
             })
-            .style('fill', 'black');
+            .attr("font-family", "sans-serif")
+            .attr("font-size", "20px")
+            .attr("position", "center")
+            .attr("fill", "black");
     }
 
 // X-axis
