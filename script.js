@@ -1,8 +1,8 @@
 d3.dsv(';', 'dataset2.csv').then(function (data) {
     // Variables
     var body = d3.select('body');
-    var margin = {top: 10, right: 50, bottom: 50, left: 50};
-    var h = 800 - margin.top - margin.bottom;
+    var margin = {top: 10, right: 50, bottom: 20, left: 50};
+    var h = 600 - margin.top - margin.bottom;
     var w = 600 - margin.left - margin.right;
 
     var xScale = d3.scaleLinear()
@@ -126,6 +126,8 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
                 .duration(500)
                 .attr("font-size", "30px")
                 .attr('stroke-width', 3);
+
+            d3.select(this).moveToFront();
         })
             .on('mouseout', function () {
                 d3.select(this).select('circle')
@@ -172,21 +174,25 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
         .text('Punteggio');
 
     var parseDate = d3.timeParse("%d/%m/%Y %H:%M");
+    var formatTimeReadableAxis = d3.timeFormat("%m/%Y");
     var formatTimeReadable = d3.timeFormat("%d/%m/%Y");
     var formatTimeParser = d3.timeFormat("%d/%m/%Y %H:%M");
+
     var sliderScale = d3.scaleTime()
         .domain([parseDate(firstDate), parseDate(lastDate)])
         .range([0, w]);
     var sliderScaleINV = d3.scaleTime()
         .domain([0, w])
         .range([parseDate(firstDate), parseDate(lastDate)]);
+
     var sliderAxis = d3.axisBottom(sliderScale)
-        .tickFormat(formatTimeReadable);
+        .tickFormat(formatTimeReadableAxis);
+
     var hSlider = h + 50;
     svg.append('g')
         .attr('class', 'axis')
         .attr('transform', 'translate(0,' + hSlider + ')')
-        .call(sliderAxis)
+        .call(sliderAxis);
 
     var slider = createD3RangeSlider(sliderScale(parseDate(firstDate)), sliderScale(parseDate(lastDate)), "#slider-container");
 

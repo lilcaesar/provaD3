@@ -19,9 +19,10 @@
 
 #slider-container {
     position: relative;
-    width: 30%;
+    width: 500px;
     height:40%;
     background-color: #eeeef5;
+    margin-left: 50px;
 }
 
 .slider{
