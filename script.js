@@ -17,7 +17,7 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
 // SVG
     var svg = d3.select('#graphic')
         .append('svg')
-        .attr('height', h +50+ margin.top + margin.bottom)
+        .attr('height', h + 50 + margin.top + margin.bottom)
         .attr('width', w + margin.left + margin.right)
         .append('g')
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
@@ -56,20 +56,21 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
         .range(["red", "yellow", "green"]);
 
 //Area of the circle based on interpolation
-    var valMax = d3.max(finalData, function (d) {return d.population});
-    var radiusMin =500;
-    var radiusMax =10000;
+    var valMax = d3.max(finalData, function (d) {
+        return d.population
+    });
+    var radiusMin = 500;
+    var radiusMax = 10000;
 
-    function radiusScale(input){
-        if(input>=1){
-            return ((((input - 1)*(radiusMax - radiusMin))/(valMax-1))+radiusMin);
-        }else{
+    function radiusScale(input) {
+        if (input >= 1) {
+            return ((((input - 1) * (radiusMax - radiusMin)) / (valMax - 1)) + radiusMin);
+        } else {
             return 0;
         }
     }
 
-    console.log(Math.sqrt((radiusScale(138)) / 3.14));
-    function updateCircles(){
+    function updateCircles() {
         var node = svg.selectAll('.nodes')
             .remove()
             .exit()
@@ -92,55 +93,55 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
             .attr('stroke-width', 1)
             .attr('fill', function (d) {
                 return colors(d.rating * d.accuracy)
-            })
-            .on('mouseover', function () {
-                d3.select(this)
-                    .transition()
-                    .duration(500)
-                    .attr('r', function (d) {
-                        return Math.sqrt((radiusScale(d.population)) / 3.14) * 1.5
-                    })
-                    .attr('stroke-width', 3)
-            })
-            .on('mouseout', function () {
-                d3.select(this)
-                    .transition()
-                    .duration(500)
-                    .attr('r', function (d) {
-                        return Math.sqrt((radiusScale(d.population)) / 3.14)
-                    })
-                    .attr('stroke-width', 1)
             });
 
         //Testo interno dei cerchi
         node.append("text")
-            .text(function (d) {return d.population})
-            .attr("dx",function (d) {
+            .text(function (d) {
+                return d.population
+            })
+            .attr("dx", function (d) {
                 return xScale(d.accuracy)
             })
-            .attr("dy",function (d) {
-                return yScale(d.rating) +7
+            .attr("dy", function (d) {
+                return yScale(d.rating) + 7
             })
             .attr("font-family", "sans-serif")
             .attr("font-size", "20px")
             .attr("font-weight", "bold")
             .attr("fill", "black")
-            .attr("text-anchor", "middle")
-            /*.on('mouseover', function () {
-                d3.select(this)
-                    .moveToFront()
+            .attr("text-anchor", "middle");
+
+        node.on('mouseover', function () {
+           d3.select(this).select('circle')
+               .transition()
+               .duration(500)
+               .attr('r', function (d) {
+                   return Math.sqrt((radiusScale(d.population)) / 3.14) * 1.5
+               })
+               .attr('stroke-width', 3);
+
+            d3.select(this).select('text')
+                .transition()
+                .duration(500)
+                .attr("font-size", "30px")
+                .attr('stroke-width', 3);
+        })
+            .on('mouseout', function () {
+                d3.select(this).select('circle')
                     .transition()
                     .duration(500)
-                    .attr("font-size", "30px")
-                    .attr('stroke-width', 3)
-            })
-            .on('mouseout', function () {
-                d3.select(this)
+                    .attr('r', function (d) {
+                        return Math.sqrt((radiusScale(d.population)) / 3.14)
+                    })
+                    .attr('stroke-width', 1);
+
+                d3.select(this).select('text')
                     .transition()
                     .duration(500)
                     .attr("font-size", "20px")
-                    .attr('stroke-width', 1)
-            });*/
+                    .attr('stroke-width', 1);
+            });
     }
 
 // X-axis
@@ -175,9 +176,9 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
     var formatTimeParser = d3.timeFormat("%d/%m/%Y %H:%M");
     var sliderScale = d3.scaleTime()
         .domain([parseDate(firstDate), parseDate(lastDate)])
-        .range([0,w]);
+        .range([0, w]);
     var sliderScaleINV = d3.scaleTime()
-        .domain([0,w])
+        .domain([0, w])
         .range([parseDate(firstDate), parseDate(lastDate)]);
     var sliderAxis = d3.axisBottom(sliderScale)
         .tickFormat(formatTimeReadable);
@@ -189,7 +190,7 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
 
     var slider = createD3RangeSlider(sliderScale(parseDate(firstDate)), sliderScale(parseDate(lastDate)), "#slider-container");
 
-    slider.onChange(function(newRange){
+    slider.onChange(function (newRange) {
         d3.select("#range-label").text(formatTimeReadable(sliderScaleINV(newRange.begin)) + " - " + formatTimeReadable(sliderScaleINV(newRange.end)));
         firstDate = formatTimeParser(sliderScaleINV(newRange.begin));
         lastDate = formatTimeParser(sliderScaleINV(newRange.end));
@@ -197,5 +198,5 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
         updateCircles();
     });
 
-    slider.range(sliderScale(parseDate(firstDate)),sliderScale(parseDate(lastDate)));
+    slider.range(sliderScale(parseDate(firstDate)), sliderScale(parseDate(lastDate)));
 });
