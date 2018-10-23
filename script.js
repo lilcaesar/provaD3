@@ -95,7 +95,6 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
             })
             .on('mouseover', function () {
                 d3.select(this)
-                    .moveToFront()
                     .transition()
                     .duration(500)
                     .attr('r', function (d) {
@@ -117,15 +116,31 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
         node.append("text")
             .text(function (d) {return d.population})
             .attr("dx",function (d) {
-                return xScale(d.accuracy)-10
+                return xScale(d.accuracy)
             })
             .attr("dy",function (d) {
-                return yScale(d.rating)+10
+                return yScale(d.rating) +7
             })
             .attr("font-family", "sans-serif")
             .attr("font-size", "20px")
-            .attr("position", "center")
-            .attr("fill", "black");
+            .attr("font-weight", "bold")
+            .attr("fill", "black")
+            .attr("text-anchor", "middle")
+            /*.on('mouseover', function () {
+                d3.select(this)
+                    .moveToFront()
+                    .transition()
+                    .duration(500)
+                    .attr("font-size", "30px")
+                    .attr('stroke-width', 3)
+            })
+            .on('mouseout', function () {
+                d3.select(this)
+                    .transition()
+                    .duration(500)
+                    .attr("font-size", "20px")
+                    .attr('stroke-width', 1)
+            });*/
     }
 
 // X-axis
