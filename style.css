@@ -17,12 +17,11 @@
 }
 
 #startdate{
-    /*border: 1px solid black;*/
     width: 17%;
     height: 20px;
     border-radius: 5px;
     position: relative;
-    top: 25px;
+    top: 20px;
     left: -35px;
 }
 
@@ -31,7 +30,6 @@
     height: 20px;
     border-radius: 5px;
     position: relative;
-    top: 5px;
-    right: 10px;
+    top: 20px;
+    left: -35px;
 }
-

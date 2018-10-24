@@ -204,15 +204,17 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
         ele.setAttribute("id", "startdate");
 
     ele.innerHTML = firstDate.substring(0, firstDate.length-6);
-    node.parentNode.insertBefore(ele, node.nextSibling);
+    node.appendChild(ele);
 
     // enddate
     var node1 = document.querySelector(".handle.EE"),
-        ele2 = document.createElement("div");
-    ele2.setAttribute("id", "enddate");
+        ele1 = document.createElement("div");
+    ele1.setAttribute("id", "enddate");
 
-    ele2.innerHTML = lastDate.substring(0, lastDate.length-6);
-    node1.parentNode.insertBefore(ele2, node1.nextSibling);
+    ele1.innerHTML = lastDate.substring(0, lastDate.length-6);
+    node1.appendChild(ele1);
+
+
 
 
     // change slider position
