@@ -196,8 +196,32 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
 
     var slider = createD3RangeSlider(sliderScale(parseDate(firstDate)), sliderScale(parseDate(lastDate)), "#slider-container");
 
+    //document.getElementById("startdate").innerHTML = firstDate.substring(0, firstDate.length-6);
+
+    // startdate
+    var node = document.querySelector(".handle.WW"),
+        ele = document.createElement("div");
+        ele.setAttribute("id", "startdate");
+
+    ele.innerHTML = firstDate.substring(0, firstDate.length-6);
+    node.parentNode.insertBefore(ele, node.nextSibling);
+
+    // enddate
+    var node1 = document.querySelector(".handle.EE"),
+        ele2 = document.createElement("div");
+    ele2.setAttribute("id", "enddate");
+
+    ele2.innerHTML = lastDate.substring(0, lastDate.length-6);
+    node1.parentNode.insertBefore(ele2, node1.nextSibling);
+
+
+    // change slider position
     slider.onChange(function (newRange) {
-        d3.select("#range-label").text(formatTimeReadable(sliderScaleINV(newRange.begin)) + " - " + formatTimeReadable(sliderScaleINV(newRange.end)));
+        //d3.select("#range-label").text(formatTimeReadable(sliderScaleINV(newRange.begin)) + " - " + formatTimeReadable(sliderScaleINV(newRange.end)));
+        d3.select("#startdate").text(formatTimeReadable(sliderScaleINV(newRange.begin)));
+        d3.select("#enddate").text(formatTimeReadable(sliderScaleINV(newRange.end)));
+
+
         firstDate = formatTimeParser(sliderScaleINV(newRange.begin));
         lastDate = formatTimeParser(sliderScaleINV(newRange.end));
         finalData = parseCSV(data, firstDate, lastDate);
