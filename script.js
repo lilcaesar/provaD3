@@ -17,7 +17,7 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
 // SVG
     var svg = d3.select('#graphic')
         .append('svg')
-        .attr('height', h + 50 + margin.top + margin.bottom)
+        .attr('height', h + 30 + margin.top + margin.bottom)
         .attr('width', w + margin.left + margin.right)
         .append('g')
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
@@ -188,7 +188,7 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
     var sliderAxis = d3.axisBottom(sliderScale)
         .tickFormat(formatTimeReadableAxis);
 
-    var hSlider = h + 50;
+    var hSlider = h + 30;
     svg.append('g')
         .attr('class', 'axis')
         .attr('transform', 'translate(0,' + hSlider + ')')
@@ -216,14 +216,10 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
 
 
 
-
     // change slider position
     slider.onChange(function (newRange) {
-        //d3.select("#range-label").text(formatTimeReadable(sliderScaleINV(newRange.begin)) + " - " + formatTimeReadable(sliderScaleINV(newRange.end)));
         d3.select("#startdate").text(formatTimeReadable(sliderScaleINV(newRange.begin)));
         d3.select("#enddate").text(formatTimeReadable(sliderScaleINV(newRange.end)));
-
-
         firstDate = formatTimeParser(sliderScaleINV(newRange.begin));
         lastDate = formatTimeParser(sliderScaleINV(newRange.end));
         finalData = parseCSV(data, firstDate, lastDate);

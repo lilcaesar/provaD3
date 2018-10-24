@@ -1,6 +1,8 @@
 #container{
     position: relative;
     height: 50px;
+    /*border: 1px solid red;*/
+
 }
 .container {
     margin:150px auto;
@@ -20,7 +22,7 @@
 #slider-container {
     position: relative;
     width: 500px;
-    height:40%;
+    height:30%;
     background-color: #eeeef5;
     margin-left: 50px;
 }

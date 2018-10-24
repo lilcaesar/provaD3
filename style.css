@@ -9,27 +9,47 @@
     font-size: 11px;
 }
 
-#slider11{
-    width: 50%;
-    position: fixed;
-    bottom: 10%;
-    left: 7%;
-}
-
-#startdate{
+/** css date **/
+#startdate, #enddate{
     width: 17%;
     height: 20px;
     border-radius: 5px;
     position: relative;
-    top: 20px;
+    top: 15px;
     left: -35px;
 }
+/** css date **/
 
-#enddate{
-    width: 17%;
-    height: 20px;
+#button-container{
+    /*border: 1px solid red;*/
+    width: 40%;
+    margin-left: 10.5%;
+    margin-top: -10px;
+}
+
+#button-container button {
+    background-color: #4CAF50; /* Green background */
+    border: 1px solid green; /* Green border */
+    color: white; /* White text */
+    padding: 5px 20px; /* Some padding */
+    cursor: pointer; /* Pointer/hand icon */
+    float: left; /* Float the buttons side by side */
     border-radius: 5px;
-    position: relative;
-    top: 20px;
-    left: -35px;
+    margin-left: 1%;
+}
+
+/* Clear floats (clearfix hack) */
+#button-container:after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+#button-container button:not(:last-child) {
+    border-right: none; /* Prevent double borders */
+}
+
+/* Add a background color on hover */
+#button-container button:hover {
+    background-color: #3e8e41;
 }
