@@ -4,13 +4,14 @@
     stroke: black;
     shape-rendering: crispEdges;
 }
+
 .axis text {
     font-family: sans-serif;
     font-size: 11px;
 }
 
 /** css date **/
-#startdate, #enddate{
+#startdate, #enddate {
     width: 17%;
     height: 20px;
     border-radius: 5px;
@@ -18,16 +19,21 @@
     top: 15px;
     left: -35px;
 }
+
 /** css date **/
 
-#button-container{
+#button-container {
     /*border: 1px solid red;*/
     width: 40%;
     margin-left: 10.5%;
     margin-top: -10px;
 }
 
-#button-container button {
+#button-container input[type="radio"] {
+    display: none;
+}
+
+#button-container .radioTimeRange {
     background-color: #4CAF50; /* Green background */
     border: 1px solid green; /* Green border */
     color: white; /* White text */
@@ -45,11 +51,15 @@
     display: table;
 }
 
-#button-container button:not(:last-child) {
+#button-container .radioTimeRange:not(:last-child) {
     border-right: none; /* Prevent double borders */
 }
 
 /* Add a background color on hover */
-#button-container button:hover {
+#button-container .radioTimeRange:hover {
     background-color: #3e8e41;
+}
+
+#button-container input[type="radio"]:checked + label{
+    background-color: #004e27;
 }
