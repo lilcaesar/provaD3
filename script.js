@@ -1,3 +1,5 @@
+
+
 d3.dsv(';', 'dataset2.csv').then(function (data) {
     // Variables
     var body = d3.select('body');
@@ -62,89 +64,7 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
     var radiusMin = 500;
     var radiusMax = 10000;
 
-    function radiusScale(input) {
-        if (input >= 1) {
-            return ((((input - 1) * (radiusMax - radiusMin)) / (valMax - 1)) + radiusMin);
-        } else {
-            return 0;
-        }
-    }
 
-    function updateCircles() {
-        var node = svg.selectAll('.nodes')
-            .remove()
-            .exit()
-            .data(finalData)
-            .enter()
-            .append('g')
-            .attr('class', 'nodes');
-
-        node.append('circle')
-            .attr('cx', function (d) {
-                return xScale(d.accuracy)
-            })
-            .attr('cy', function (d) {
-                return yScale(d.rating)
-            })
-            .attr('r', function (d) {
-                return Math.sqrt((radiusScale(d.population)) / 3.14)
-            })
-            .attr('stroke', 'black')
-            .attr('stroke-width', 1)
-            .attr('fill', function (d) {
-                return colors(d.rating * d.accuracy)
-            });
-
-        //Testo interno dei cerchi
-        node.append("text")
-            .text(function (d) {
-                return d.population
-            })
-            .attr("dx", function (d) {
-                return xScale(d.accuracy)
-            })
-            .attr("dy", function (d) {
-                return yScale(d.rating) + 7
-            })
-            .attr("font-family", "sans-serif")
-            .attr("font-size", "20px")
-            .attr("font-weight", "bold")
-            .attr("fill", "black")
-            .attr("text-anchor", "middle");
-
-        node.on('mouseover', function () {
-           d3.select(this).select('circle')
-               .transition()
-               .duration(500)
-               .attr('r', function (d) {
-                   return Math.sqrt((radiusScale(d.population)) / 3.14) * 1.5
-               })
-               .attr('stroke-width', 3);
-
-            d3.select(this).select('text')
-                .transition()
-                .duration(500)
-                .attr("font-size", "30px")
-                .attr('stroke-width', 3);
-
-            d3.select(this).moveToFront();
-        })
-            .on('mouseout', function () {
-                d3.select(this).select('circle')
-                    .transition()
-                    .duration(500)
-                    .attr('r', function (d) {
-                        return Math.sqrt((radiusScale(d.population)) / 3.14)
-                    })
-                    .attr('stroke-width', 1);
-
-                d3.select(this).select('text')
-                    .transition()
-                    .duration(500)
-                    .attr("font-size", "20px")
-                    .attr('stroke-width', 1);
-            });
-    }
 
 // X-axis
     svg.append('g')
@@ -196,35 +116,201 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
 
     var slider = createD3RangeSlider(sliderScale(parseDate(firstDate)), sliderScale(parseDate(lastDate)), "#slider-container");
 
-    //document.getElementById("startdate").innerHTML = firstDate.substring(0, firstDate.length-6);
-
-    // startdate
-    var node = document.querySelector(".handle.WW"),
-        ele = document.createElement("div");
-        ele.setAttribute("id", "startdate");
-
-    ele.innerHTML = firstDate.substring(0, firstDate.length-6);
-    node.appendChild(ele);
-
-    // enddate
-    var node1 = document.querySelector(".handle.EE"),
-        ele1 = document.createElement("div");
-    ele1.setAttribute("id", "enddate");
-
-    ele1.innerHTML = lastDate.substring(0, lastDate.length-6);
-    node1.appendChild(ele1);
-
-
+    // inizializza la startdate e enddate sugli estremi dello slider
+    createSlidersStartEndDate();
 
     // change slider position
     slider.onChange(function (newRange) {
+        // modifica date estremi slider
         d3.select("#startdate").text(formatTimeReadable(sliderScaleINV(newRange.begin)));
         d3.select("#enddate").text(formatTimeReadable(sliderScaleINV(newRange.end)));
+        // modifica date per il nuovo parsing degli allenamenti
         firstDate = formatTimeParser(sliderScaleINV(newRange.begin));
         lastDate = formatTimeParser(sliderScaleINV(newRange.end));
         finalData = parseCSV(data, firstDate, lastDate);
+        // modifca grafico (cerchi)
         updateCircles();
     });
 
+    // setta il range dello slider
     slider.range(sliderScale(parseDate(firstDate)), sliderScale(parseDate(lastDate)));
+
+    // inizializza la startdate e enddate sugli estremi dello slider
+    function createSlidersStartEndDate(){
+        // startdate
+        var node = document.querySelector(".handle.WW"),
+            ele = document.createElement("div");
+        ele.setAttribute("id", "startdate");
+
+        ele.innerHTML = firstDate.substring(0, firstDate.length-6);
+        node.appendChild(ele);
+
+        // enddate
+        var node1 = document.querySelector(".handle.EE"),
+            ele1 = document.createElement("div");
+        ele1.setAttribute("id", "enddate");
+
+        ele1.innerHTML = lastDate.substring(0, lastDate.length-6);
+        node1.appendChild(ele1);
+    }
+
+    // aggiorna il grafico in base allo slider
+    function updateCircles() {
+        var node = svg.selectAll('.nodes')
+            .remove()
+            .exit()
+            .data(finalData)
+            .enter()
+            .append('g')
+            .attr('class', 'nodes');
+
+        node.append('circle')
+            .attr('cx', function (d) {
+                return xScale(d.accuracy)
+            })
+            .attr('cy', function (d) {
+                return yScale(d.rating)
+            })
+            .attr('r', function (d) {
+                return Math.sqrt((radiusScale(d.population)) / 3.14)
+            })
+            .attr('stroke', 'black')
+            .attr('stroke-width', 1)
+            .attr('fill', function (d) {
+                return colors(d.rating * d.accuracy)
+            });
+
+        //Testo interno dei cerchi
+        node.append("text")
+            .text(function (d) {
+                return d.population
+            })
+            .attr("dx", function (d) {
+                return xScale(d.accuracy)
+            })
+            .attr("dy", function (d) {
+                return yScale(d.rating) + 7
+            })
+            .attr("font-family", "sans-serif")
+            .attr("font-size", "20px")
+            .attr("font-weight", "bold")
+            .attr("fill", "black")
+            .attr("text-anchor", "middle");
+
+        node.on('mouseover', function () {
+            d3.select(this).select('circle')
+                .transition()
+                .duration(500)
+                .attr('r', function (d) {
+                    return Math.sqrt((radiusScale(d.population)) / 3.14) * 1.5
+                })
+                .attr('stroke-width', 3);
+
+            d3.select(this).select('text')
+                .transition()
+                .duration(500)
+                .attr("font-size", "30px")
+                .attr('stroke-width', 3);
+
+            d3.select(this).moveToFront();
+        })
+            .on('mouseout', function () {
+                d3.select(this).select('circle')
+                    .transition()
+                    .duration(500)
+                    .attr('r', function (d) {
+                        return Math.sqrt((radiusScale(d.population)) / 3.14)
+                    })
+                    .attr('stroke-width', 1);
+
+                d3.select(this).select('text')
+                    .transition()
+                    .duration(500)
+                    .attr("font-size", "20px")
+                    .attr('stroke-width', 1);
+            });
+    }
+
+    // funzione......
+    function radiusScale(input) {
+        if (input >= 1) {
+            return ((((input - 1) * (radiusMax - radiusMin)) / (valMax - 1)) + radiusMin);
+        } else {
+            return 0;
+        }
+    }
+
+
+    // aggiorna il grafico e lo slider tenendo conto degli allenamenti dell'ultimo mese
+    var month_button = document.querySelector('#last-month');
+    month_button.onclick = function () {
+        //console.log('month')
+
+        /*d3.select("#startdate").text(formatTimeReadable(sliderScaleINV(newRange.begin)));
+        d3.select("#enddate").text(formatTimeReadable(sliderScaleINV(newRange.end)));
+        // modifica date per il nuovo parsing degli allenamenti
+        firstDate = formatTimeParser(sliderScaleINV(newRange.begin));
+        lastDate = formatTimeParser(sliderScaleINV(newRange.end));*/
+
+
+        /** swappare data **/
+
+        var olderMonthDate = lastDate
+
+        // inverto l'ordine del mese e giorno
+        var day = olderMonthDate.substring(0,2);
+        var month = olderMonthDate.substring(3,5);
+        var year = olderMonthDate.substring(6,10);
+        //var time = formatTimeParser(olderMonthDate).substring(11,16);
+        olderMonthDate = month +'/'+day+'/'+year//+' '+time;
+        //console.log(olderMonthDate)
+
+        // credo una data in formato m%/d%/
+        olderMonthDate = new Date(olderMonthDate);
+        //console.log(olderMonthDate)
+
+        // sottraggo un mese dalla lastDate
+        olderMonthDate.setMonth(olderMonthDate.getMonth() - 1, olderMonthDate.getDate());
+        //console.log(olderMonthDate)
+        //console.log(formatTimeParser(olderMonthDate))
+
+        // porto in formato %d/%m/y
+        olderMonthDate = formatTimeReadable(olderMonthDate)
+        firstDate = olderMonthDate
+
+        //console.log(firstDate)
+        //console.log(lastDate)
+
+
+
+        // modifica date per il nuovo parsing degli allenamenti
+
+        /*d3.select("#startdate").text(formatTimeReadable(sliderScaleINV(firstDate)));
+        d3.select("#enddate").text(formatTimeReadable(sliderScaleINV(lastDate)));
+
+        slider.range(sliderScale(parseDate(firstDate)), sliderScale(parseDate(lastDate)));*/
+
+
+        finalData = parseCSV(data, firstDate, lastDate);
+        // modifca grafico (cerchi)
+        updateCircles();
+    };
+
+    // aggiorna il grafico e lo slider tenendo conto degli allenamenti dell'ultima settimana
+    var week_button = document.querySelector('#last-week');
+    week_button.onclick = function () {
+        console.log('week')
+    };
+
+    // aggiorna il grafico e lo slider tenendo conto degli allenamenti dell'ultimo giorno
+    var day_button = document.querySelector('#last-login');
+    day_button.onclick = function () {
+        console.log('login')
+    };
+
+
+
 });
+
+
+
