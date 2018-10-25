@@ -244,54 +244,35 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
     // aggiorna il grafico e lo slider tenendo conto degli allenamenti dell'ultimo mese
     var month_button = document.querySelector('#last-month');
     month_button.onclick = function () {
-        //console.log('month')
-
-        /*d3.select("#startdate").text(formatTimeReadable(sliderScaleINV(newRange.begin)));
-        d3.select("#enddate").text(formatTimeReadable(sliderScaleINV(newRange.end)));
-        // modifica date per il nuovo parsing degli allenamenti
-        firstDate = formatTimeParser(sliderScaleINV(newRange.begin));
-        lastDate = formatTimeParser(sliderScaleINV(newRange.end));*/
-
-
-        /** swappare data **/
-
-        var olderMonthDate = lastDate
+        var olderMonthDate = lastDate;
 
         // inverto l'ordine del mese e giorno
         var day = olderMonthDate.substring(0,2);
         var month = olderMonthDate.substring(3,5);
         var year = olderMonthDate.substring(6,10);
-        //var time = formatTimeParser(olderMonthDate).substring(11,16);
-        olderMonthDate = month +'/'+day+'/'+year//+' '+time;
-        //console.log(olderMonthDate)
+        var time = firstDate.substring(11,16);
+        olderMonthDate = month +'/'+day+'/'+year;
 
         // credo una data in formato m%/d%/
         olderMonthDate = new Date(olderMonthDate);
-        //console.log(olderMonthDate)
 
         // sottraggo un mese dalla lastDate
         olderMonthDate.setMonth(olderMonthDate.getMonth() - 1, olderMonthDate.getDate());
-        //console.log(olderMonthDate)
-        //console.log(formatTimeParser(olderMonthDate))
 
         // porto in formato %d/%m/y
-        olderMonthDate = formatTimeReadable(olderMonthDate)
-        firstDate = olderMonthDate
+        olderMonthDate = formatTimeReadable(olderMonthDate);
 
-        //console.log(firstDate)
-        //console.log(lastDate)
+        var newFirstDate = olderMonthDate;
 
-
+        slider.range(sliderScale(parseDate(newFirstDate+" "+time)), sliderScale(parseDate(lastDate)));
+        var newLastDate = lastDate.substring(0,10);
 
         // modifica date per il nuovo parsing degli allenamenti
 
-        /*d3.select("#startdate").text(formatTimeReadable(sliderScaleINV(firstDate)));
-        d3.select("#enddate").text(formatTimeReadable(sliderScaleINV(lastDate)));
+        d3.select("#startdate").text(newFirstDate);
+        d3.select("#enddate").text(newLastDate);
 
-        slider.range(sliderScale(parseDate(firstDate)), sliderScale(parseDate(lastDate)));*/
-
-
-        finalData = parseCSV(data, firstDate, lastDate);
+        finalData = parseCSV(data, newFirstDate, newLastDate);
         // modifca grafico (cerchi)
         updateCircles();
     };
@@ -299,7 +280,37 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
     // aggiorna il grafico e lo slider tenendo conto degli allenamenti dell'ultima settimana
     var week_button = document.querySelector('#last-week');
     week_button.onclick = function () {
-        console.log('week')
+        var olderWeekDate = lastDate;
+
+        // inverto l'ordine del mese e giorno
+        var day = olderWeekDate.substring(0,2);
+        var month = olderWeekDate.substring(3,5);
+        var year = olderWeekDate.substring(6,10);
+        var time = firstDate.substring(11,16);
+        olderWeekDate = month +'/'+day+'/'+year;
+
+        // credo una data in formato m%/d%/
+        olderWeekDate = new Date(olderWeekDate);
+
+        // sottraggo un mese dalla lastDate
+        olderWeekDate.setDate(olderWeekDate.getDate() - 7);
+
+        // porto in formato %d/%m/y
+        olderWeekDate = formatTimeReadable(olderWeekDate);
+
+        var newFirstDate = olderWeekDate;
+
+        slider.range(sliderScale(parseDate(newFirstDate+" "+time)), sliderScale(parseDate(lastDate)));
+        var newLastDate = lastDate.substring(0,10);
+
+        // modifica date per il nuovo parsing degli allenamenti
+
+        d3.select("#startdate").text(newFirstDate);
+        d3.select("#enddate").text(newLastDate);
+
+        finalData = parseCSV(data, newFirstDate, newLastDate);
+        // modifca grafico (cerchi)
+        updateCircles();
     };
 
     // aggiorna il grafico e lo slider tenendo conto degli allenamenti dell'ultimo giorno
@@ -308,7 +319,15 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
         console.log('login')
     };
 
-
+    var reset_button = document.querySelector('#reset');
+    reset_button.onclick = function () {
+        firstDate=getFirstDate(data);
+        lastDate=getLastDate(data);
+        d3.select("#startdate").text(firstDate);
+        d3.select("#enddate").text(lastDate);
+        slider.range(sliderScale(parseDate(firstDate)), sliderScale(parseDate(lastDate)));
+        updateCircles();
+    };
 
 });
 
