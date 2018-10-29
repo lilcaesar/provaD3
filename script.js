@@ -37,7 +37,6 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
 
     var finalData = parseCSV(data, firstDate, lastDate);
 
-
 //Funzioni per mettere i cerchi in primo piano o secondo piano
     d3.selection.prototype.moveToFront = function () {
         return this.each(function () {
@@ -338,7 +337,6 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
         slider.range(sliderScale(parseDate(firstDate)), sliderScale(parseDate(lastDate)));
         updateCircles();
     };
-
 });
 
 

@@ -4,17 +4,13 @@
     <meta charset="UTF-8">
     <title>Training</title>
     <script type="text/javascript" src="d3.v5.js"></script>
-
-    <link rel='stylesheet' href='style.css'>
 </head>
 <body>
-<script type='text/javascript' src='trainingScript.js'></script>
-
 <div id="container">
     <div id="top-bar">
         <div id="athlete-info">
             <h1>Atleta</h1>
-            <img src="profile-pic.jpg" alt="profile-pic">
+            <img src="profile-pic.png" alt="profile-pic">
             <p id="name">Mario Rossi</p>
             <p id="age">27 anni</p>
             <p>Livello (?)</p>
@@ -34,21 +30,23 @@
     </div>
     <div id="bottom-bar">
         <div id="training-charts">
-            <div id="speed">
+            <div id="speed-container">
                 <h1>Velocità</h1>
-                <div id="speed-chart"></div>
+                <svg id="speed-chart"></svg>
             </div>
-            <div id="bpm">
+            <div id="bpm-container">
                 <h1>B.P.M.</h1>
-                <div id="bpm-chart"></div>
+                <svg id="bpm-chart"></svg>
             </div>
-            <div id="Height">
+            <div id="height-container">
                 <h1>Altezza</h1>
-                <div id="height-chart"></div>
+                <svg id="height-chart"></svg>
             </div>
         </div>
     </div>
 </div>
+
+<script type='text/javascript' src='trainingScript.js'></script>
 
 </body>
 </html>
