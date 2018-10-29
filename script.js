@@ -11,8 +11,8 @@ d3.dsv(';', 'dataset2.csv').then(function (data) {
         .domain([0, 1])
         .range([0, w]);
     var yScale = d3.scaleLinear()
-        .domain([0.5, 5.5])
-        .range([h, 0]);
+        .domain([0.5, 1, 2, 3, 4, 5, 5.5])
+        .range([h, 9*h/10, 7.5*h/10, h/2, 2.5*h/10, h/10, 0]);
     var xScaleLabels = d3.scaleOrdinal()
         .domain([" ", "Bassa", "Media", "Alta", ""])
         .range([w, xScale(0.165), xScale(0.495), xScale(0.825), 0]);
