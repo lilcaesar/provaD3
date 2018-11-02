@@ -1,0 +1,112 @@
+/** principal container **/
+#container{
+
+}
+
+
+/***** top bar items begin *****/
+#top-bar{
+    border: 1px solid black;
+    display: flex;
+    justify-content: center;
+
+}
+
+/*** athlete info begin ***/
+#athlete-info{
+    border: 1px solid black;
+    width: 30%;
+    height: 320px;
+    margin: 5px;
+    position: relative;
+    text-align: center;
+}
+
+#athlete-info h1{
+    text-align: center;
+
+}
+
+#athlete-info img{
+    float: left;
+    display: inline;
+}
+
+#athlete-profile-info{
+    display: inline;
+    float:right;
+    width: 30%;
+}
+
+#athlete-info p{
+    text-align: left;
+    margin-right: 10%;
+}
+
+#athlete-buttons{
+    border: 1px solid black;
+    position: absolute;
+    bottom: 0;
+    margin-left: 10%;
+    margin-bottom: 2%;
+}
+/*** athlete info end ***/
+
+
+
+/*** athlete training begin ***/
+#athlete-training{
+    border: 1px solid black;
+    width: 30%;
+    height: 320px;
+    margin: 5px;
+    text-align: center;
+}
+
+#training-info{
+    border: 1px solid black;
+    margin: 5px;
+    width: 50%;
+    display: inline-block;
+}
+/*** athlete training end ***/
+
+
+/* clear trick */
+#clear{
+    clear:both;
+}
+/***** top bar items end *****/
+
+
+/***** bottom bar items begin *****/
+#bottom-bar{
+    border: 1px solid black;
+}
+
+#training-charts{
+    border: 1px solid black;
+    margin: 5px;
+    display: flex;
+    justify-content: center;
+    height: 350px;
+}
+
+#training-charts > div{
+    width: 20%;
+    text-align: center;
+    margin: 10px;
+}
+
+#speed-container{
+    border: 1px solid black;
+}
+
+#bpm-container{
+    border: 1px solid black;
+}
+
+#height-container{
+    border: 1px solid black;
+}
+/***** bottom bar items end *****/

@@ -27,9 +27,9 @@ var training = {
 
 d3.select("#age").text(computeAge(training.user_birthdate) + " anni");
 d3.select("#predicted").text(training.mark);
-d3.select("#duration").text(Math.trunc(training.duration / 60) + "min " + training.duration % 60 + "s");
-d3.select("#rest-time").text(Math.trunc(training.pausetime / 60) + "min " + training.pausetime % 60 + "s");
-d3.select("#calories").text(training.calories + " Kcal");
+d3.select("#duration").text("Durata: " + Math.trunc(training.duration / 60) + "min " + training.duration % 60 + "s");
+d3.select("#rest-time").text("Riposo: " +Math.trunc(training.pausetime / 60) + "min " + training.pausetime % 60 + "s");
+d3.select("#calories").text("Calorie: " +training.calories + " Kcal");
 
 function computeAge(birthdate) {
     var parseDate = d3.timeParse("%d/%m/%Y");
