@@ -63,6 +63,31 @@
     text-align: center;
 }
 
+/* da modificare */
+#score-slider{
+    border: 1px solid black;
+    height: 50px;
+    margin-bottom: 1%;
+}
+
+#athlete-marks{
+    border: 1px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#predicted-img{
+    margin-right: 3%;
+    width: 7%;
+    height: 7%;
+}
+
+#user-given-img{
+    width: 12%;
+    height: 12%;
+}
+
 #training-info{
     border: 1px solid black;
     margin: 5px;
