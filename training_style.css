@@ -6,15 +6,16 @@
 
 /***** top bar items begin *****/
 #top-bar{
-    border: 1px solid black;
+    /*border: 1px solid black;*/
     display: flex;
     justify-content: center;
-
+    margin-top: 1%;
 }
 
 /*** athlete info begin ***/
 #athlete-info{
     border: 1px solid black;
+    border-radius: 20px;
     width: 30%;
     height: 320px;
     margin: 5px;
@@ -30,6 +31,7 @@
 #athlete-info img{
     float: left;
     display: inline;
+    margin-left: 10%
 }
 
 #athlete-profile-info{
@@ -47,7 +49,7 @@
     border: 1px solid black;
     position: absolute;
     bottom: 0;
-    margin-left: 10%;
+    margin-left: 20%;
     margin-bottom: 2%;
 }
 /*** athlete info end ***/
@@ -57,6 +59,7 @@
 /*** athlete training begin ***/
 #athlete-training{
     border: 1px solid black;
+    border-radius: 20px;
     width: 30%;
     height: 320px;
     margin: 5px;
@@ -71,7 +74,7 @@
 }
 
 #athlete-marks{
-    border: 1px solid black;
+    /*border: 1px solid black;*/
     display: flex;
     justify-content: center;
     align-items: center;
@@ -89,7 +92,7 @@
 }
 
 #training-info{
-    border: 1px solid black;
+    /*border: 1px solid black;*/
     margin: 5px;
     width: 50%;
     display: inline-block;
@@ -106,11 +109,11 @@
 
 /***** bottom bar items begin *****/
 #bottom-bar{
-    border: 1px solid black;
+    /*border: 1px solid black;*/
 }
 
 #training-charts{
-    border: 1px solid black;
+    /*border: 1px solid black;*/
     margin: 5px;
     display: flex;
     justify-content: center;
@@ -118,9 +121,10 @@
 }
 
 #training-charts > div{
-    width: 20%;
+    width: 19%;
     text-align: center;
     margin: 10px;
+    border-radius: 20px;
 }
 
 #speed-container{
