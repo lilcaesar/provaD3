@@ -23,35 +23,55 @@
     text-align: center;
 }
 
+
 #athlete-info h1{
     text-align: center;
-
 }
 
-#athlete-info img{
-    float: left;
+.athlete-info-class{
+    display: flex;
+    justify-content: center;
+    padding: 5px;
+}
+
+.athlete-info-class > div{
+    margin-left: 35px;
+}
+
+#athlete-img-actions{
+    border: 1px solid black;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+
+#athlete-img-actions img{
+    /*float: left;
     display: inline;
-    margin-left: 10%
+    margin-left: 10%;*/
+}
+
+#athlete-buttons{
+    /*border: 1px solid black;
+    position: absolute;
+    bottom: 0;
+    margin-left: 20%;
+    margin-bottom: 2%;*/
 }
 
 #athlete-profile-info{
+    border: 1px solid black;/*
     display: inline;
     float:right;
-    width: 30%;
+    width: 30%;*/
 }
 
-#athlete-info p{
+#athlete-profile-info p{
     text-align: left;
     margin-right: 10%;
 }
 
-#athlete-buttons{
-    border: 1px solid black;
-    position: absolute;
-    bottom: 0;
-    margin-left: 20%;
-    margin-bottom: 2%;
-}
 /*** athlete info end ***/
 
 
