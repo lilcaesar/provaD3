@@ -37,13 +37,109 @@ function computeAge(birthdate) {
     return age;
 }
 
-var chartsHeight = 100;
-var chartsWidth = 100;
+var chartsHeight = 200;
+var chartsWidth = 200;
 
 var speedDelta = training.maxspeed - training.minspeed;
+var bpmDelta = training.maxbpm - training.minbpm;
+var altitudeDelta = training.maxaltitude - training.minaltitude;
+
 var yScaleSpeed = d3.scaleLinear()
     .domain([training.minspeed - (speedDelta / 5), training.maxspeed + (speedDelta / 5)])
     .range([chartsHeight, 0]);
-var xScaleSpeed = d3.scaleLinear()
+var yScaleBPM = d3.scaleLinear()
+    .domain([training.minbpm - (bpmDelta / 5), training.maxbpm + (bpmDelta / 5)])
+    .range([chartsHeight, 0]);
+var yScaleAltitude = d3.scaleLinear()
+    .domain([training.minaltitude - (altitudeDelta / 5), training.maxaltitude + (altitudeDelta / 5)])
+    .range([chartsHeight, 0]);
+var xScale = d3.scaleLinear()
     .domain([0, 1])
     .range([0, chartsWidth]);
+
+var xAxis = d3.axisBottom(xScale)
+    .ticks(0);
+var yAxisSpeed = d3.axisLeft(yScaleSpeed);
+var yAxisBPM = d3.axisLeft(yScaleBPM);
+var yAxisAltitude = d3.axisLeft(yScaleAltitude);
+
+d3.select("#speed-chart")
+    .append('g')
+    .attr('class', 'axis')
+    .attr('transform', 'translate(5,' + chartsHeight + ')')
+    .call(xAxis)
+    .append('text') // X-axis Label
+    .attr('class', 'label')
+    .attr('y', 0)
+    .attr('x', chartsWidth)
+    .attr('dy', '.71em')
+    .style('fill', 'black')
+    .style('text-anchor', 'end');
+
+d3.select("#speed-chart")
+    .append('g')
+    .attr('class', 'axis')
+    .attr('transform', 'translate(5,0)')
+    .call(yAxisSpeed)
+    .append('text') // y-axis Label
+    .attr('class', 'label')
+    .attr('transform', 'rotate(-90)')
+    .attr('x', 0)
+    .attr('y', 5)
+    .attr('dy', '.71em')
+    .style('fill', 'black')
+    .style('text-anchor', 'end');
+
+d3.select("#bpm-chart")
+    .append('g')
+    .attr('class', 'axis')
+    .attr('transform', 'translate(5,' + chartsHeight + ')')
+    .call(xAxis)
+    .append('text') // X-axis Label
+    .attr('class', 'label')
+    .attr('y', 0)
+    .attr('x', chartsWidth)
+    .attr('dy', '.71em')
+    .style('fill', 'black')
+    .style('text-anchor', 'end');
+
+d3.select("#bpm-chart")
+    .append('g')
+    .attr('class', 'axis')
+    .attr('transform', 'translate(5,0)')
+    .call(yAxisBPM)
+    .append('text') // y-axis Label
+    .attr('class', 'label')
+    .attr('transform', 'rotate(-90)')
+    .attr('x', 0)
+    .attr('y', 5)
+    .attr('dy', '.71em')
+    .style('fill', 'black')
+    .style('text-anchor', 'end');
+
+d3.select("#altitude-chart")
+    .append('g')
+    .attr('class', 'axis')
+    .attr('transform', 'translate(5,' + chartsHeight + ')')
+    .call(xAxis)
+    .append('text') // X-axis Label
+    .attr('class', 'label')
+    .attr('y', 0)
+    .attr('x', chartsWidth)
+    .attr('dy', '.71em')
+    .style('fill', 'black')
+    .style('text-anchor', 'end');
+
+d3.select("#altitude-chart")
+    .append('g')
+    .attr('class', 'axis')
+    .attr('transform', 'translate(5,0)')
+    .call(yAxisAltitude)
+    .append('text') // y-axis Label
+    .attr('class', 'label')
+    .attr('transform', 'rotate(-90)')
+    .attr('x', 0)
+    .attr('y', 5)
+    .attr('dy', '.71em')
+    .style('fill', 'black')
+    .style('text-anchor', 'end');

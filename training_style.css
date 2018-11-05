@@ -125,17 +125,11 @@
     text-align: center;
     margin: 10px;
     border-radius: 20px;
-}
-
-#speed-container{
     border: 1px solid black;
 }
 
-#bpm-container{
-    border: 1px solid black;
-}
-
-#height-container{
-    border: 1px solid black;
+.chart{
+    height: 210px;
+    width: 210px;
 }
 /***** bottom bar items end *****/
