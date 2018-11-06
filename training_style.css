@@ -19,27 +19,27 @@
     width: 30%;
     height: 320px;
     margin: 5px;
-    position: relative;
     text-align: center;
 }
 
 
 #athlete-info h1{
     text-align: center;
+    height: 10%;
 }
 
 .athlete-info-class{
     display: flex;
-    justify-content: center;
+    justify-content: space-evenly;
     padding: 5px;
 }
 
 .athlete-info-class > div{
-    margin-left: 35px;
+    /*margin-left: 25px;*/
 }
 
 #athlete-img-actions{
-    border: 1px solid black;
+    /*border: 1px solid black;*/
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -58,10 +58,11 @@
     bottom: 0;
     margin-left: 20%;
     margin-bottom: 2%;*/
+    margin-top: 5%;
 }
 
 #athlete-profile-info{
-    border: 1px solid black;/*
+    /*border: 1px solid black;
     display: inline;
     float:right;
     width: 30%;*/
@@ -69,7 +70,6 @@
 
 #athlete-profile-info p{
     text-align: left;
-    margin-right: 10%;
 }
 
 /*** athlete info end ***/
@@ -84,6 +84,10 @@
     height: 320px;
     margin: 5px;
     text-align: center;
+}
+
+#athlete-training h1{
+    height: 10%;
 }
 
 /* da modificare */
