@@ -231,3 +231,21 @@ d3.select("#altitude-chart").append("circle")
     .attr("cy", yScaleAltitude(training.avgaltitude))
     .attr("r", 10)
     .attr("fill", "red");
+
+var rankSlider = d3.sliderHorizontal()
+    .min(1)
+    .max(5)
+    .width(480)
+    .ticks(5)
+    .step(1)
+    .tickFormat(d3.format("d"))
+    .default(training.mark).on('onchange', val => {
+        d3.select("#user-given").text(d3.format('d')(val));
+    });
+
+d3.select("#score-slider").append("svg")
+    .attr("width", 510)
+    .attr("height", 50)
+    .append("g")
+    .attr("transform", "translate(15,10)")
+    .call(rankSlider);
