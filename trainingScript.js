@@ -1,28 +1,29 @@
+//Training id 5859
 var training = {
-    accuracy: "0.093507671",
-    avgaltitude: "0",
-    avgbpm: "0",
-    avgspeed: "1.101.600.006.222.720",
-    calories: "6",
-    creationdate: "26/05/2016 13:10",
-    distance: "14.752.000.427.246.000",
-    duration: "517",
-    isafitresult: "1",
-    item_user_id: "12747",
-    mark: "4",
-    maxaltitude: "0",
-    maxbpm: "0",
-    maxspeed: "10.713.600.274.175.400",
-    minaltitude: "0",
-    minbpm: "0",
-    minspeed: "0",
-    pausetime: "35",
-    session_id: "245258",
-    user_birthdate: "02/01/2001",
+    accuracy: 0.555079895,
+    avgaltitude: 0,      //??????????????
+    avgbpm: 164.8582897,
+    avgspeed: 10.42488221,
+    calories: 535,
+    creationdate: "08/04/2018 06:29",
+    distance: 8499.174805,
+    duration: 2935,
+    isafitresult: "0",
+    item_user_id: "9520",
+    mark: 5,
+    maxaltitude: 47.34367371,
+    maxbpm: 178,
+    maxspeed: 35.61146545,
+    minaltitude: 44.99152374,
+    minbpm: 112,
+    minspeed: 0.098058484,
+    pausetime: 50,
+    session_id: "191331",
+    user_birthdate: "03/12/1972",
     user_consent: "1",
     user_gender: "M",
-    user_is_tester: "1",
-    user_lastlogin: "24/07/2018 13:42"
+    user_is_tester: "0",
+    user_lastlogin: "20/12/2017 20:00"
 };
 
 d3.select("#age").text(computeAge(training.user_birthdate) + " anni");
@@ -59,10 +60,14 @@ var xScale = d3.scaleLinear()
 
 var xAxis = d3.axisBottom(xScale)
     .ticks(0);
-var yAxisSpeed = d3.axisLeft(yScaleSpeed);
-var yAxisBPM = d3.axisLeft(yScaleBPM);
-var yAxisAltitude = d3.axisLeft(yScaleAltitude);
+var yAxisSpeed = d3.axisLeft(yScaleSpeed)
+    .ticks(0);
+var yAxisBPM = d3.axisLeft(yScaleBPM)
+    .ticks(0);
+var yAxisAltitude = d3.axisLeft(yScaleAltitude)
+    .ticks(0);
 
+//SPEED CHART
 d3.select("#speed-chart")
     .append('g')
     .attr('class', 'axis')
@@ -73,7 +78,7 @@ d3.select("#speed-chart")
     .attr('y', 0)
     .attr('x', chartsWidth)
     .attr('dy', '.71em')
-    .style('fill', 'black')
+    .style('fill', 'red')
     .style('text-anchor', 'end');
 
 d3.select("#speed-chart")
@@ -87,9 +92,37 @@ d3.select("#speed-chart")
     .attr('x', 0)
     .attr('y', 5)
     .attr('dy', '.71em')
-    .style('fill', 'black')
+    .style('fill', 'red')
     .style('text-anchor', 'end');
 
+d3.select("#speed-chart").append("line")
+    .attr("x1", xScale(0.5))
+    .attr("y1", yScaleSpeed(training.maxspeed))
+    .attr("x2", xScale(0.5))
+    .attr("y2", yScaleSpeed(training.minspeed))
+    .attr("stroke-width", 2)
+    .attr("stroke", "red");
+d3.select("#speed-chart").append("line")
+    .attr("x1", xScale(0.55))
+    .attr("y1", yScaleSpeed(training.maxspeed))
+    .attr("x2", xScale(0.45))
+    .attr("y2", yScaleSpeed(training.maxspeed))
+    .attr("stroke-width", 2)
+    .attr("stroke", "red");
+d3.select("#speed-chart").append("line")
+    .attr("x1", xScale(0.55))
+    .attr("y1", yScaleSpeed(training.minspeed))
+    .attr("x2", xScale(0.45))
+    .attr("y2", yScaleSpeed(training.minspeed))
+    .attr("stroke-width", 2)
+    .attr("stroke", "red");
+d3.select("#speed-chart").append("circle")
+    .attr("cx", xScale(0.5))
+    .attr("cy", yScaleSpeed(training.avgspeed))
+    .attr("r", 10)
+    .attr("fill", "red");
+
+//BPM CHART
 d3.select("#bpm-chart")
     .append('g')
     .attr('class', 'axis')
@@ -117,6 +150,34 @@ d3.select("#bpm-chart")
     .style('fill', 'black')
     .style('text-anchor', 'end');
 
+d3.select("#bpm-chart").append("line")
+    .attr("x1", xScale(0.5))
+    .attr("y1", yScaleBPM(training.maxbpm))
+    .attr("x2", xScale(0.5))
+    .attr("y2", yScaleBPM(training.minbpm))
+    .attr("stroke-width", 2)
+    .attr("stroke", "red");
+d3.select("#bpm-chart").append("line")
+    .attr("x1", xScale(0.55))
+    .attr("y1", yScaleBPM(training.maxbpm))
+    .attr("x2", xScale(0.45))
+    .attr("y2", yScaleBPM(training.maxbpm))
+    .attr("stroke-width", 2)
+    .attr("stroke", "red");
+d3.select("#bpm-chart").append("line")
+    .attr("x1", xScale(0.55))
+    .attr("y1", yScaleBPM(training.minbpm))
+    .attr("x2", xScale(0.45))
+    .attr("y2", yScaleBPM(training.minbpm))
+    .attr("stroke-width", 2)
+    .attr("stroke", "red");
+d3.select("#bpm-chart").append("circle")
+    .attr("cx", xScale(0.5))
+    .attr("cy", yScaleBPM(training.avgbpm))
+    .attr("r", 10)
+    .attr("fill", "red");
+
+//ALTITUDE CHART
 d3.select("#altitude-chart")
     .append('g')
     .attr('class', 'axis')
@@ -143,3 +204,30 @@ d3.select("#altitude-chart")
     .attr('dy', '.71em')
     .style('fill', 'black')
     .style('text-anchor', 'end');
+
+d3.select("#altitude-chart").append("line")
+    .attr("x1", xScale(0.5))
+    .attr("y1", yScaleAltitude(training.maxaltitude))
+    .attr("x2", xScale(0.5))
+    .attr("y2", yScaleAltitude(training.minaltitude))
+    .attr("stroke-width", 2)
+    .attr("stroke", "red");
+d3.select("#altitude-chart").append("line")
+    .attr("x1", xScale(0.55))
+    .attr("y1", yScaleAltitude(training.maxaltitude))
+    .attr("x2", xScale(0.45))
+    .attr("y2", yScaleAltitude(training.maxaltitude))
+    .attr("stroke-width", 2)
+    .attr("stroke", "red");
+d3.select("#altitude-chart").append("line")
+    .attr("x1", xScale(0.55))
+    .attr("y1", yScaleAltitude(training.minaltitude))
+    .attr("x2", xScale(0.45))
+    .attr("y2", yScaleAltitude(training.minaltitude))
+    .attr("stroke-width", 2)
+    .attr("stroke", "red");
+d3.select("#altitude-chart").append("circle")
+    .attr("cx", xScale(0.5))
+    .attr("cy", yScaleAltitude(training.avgaltitude))
+    .attr("r", 10)
+    .attr("fill", "red");
