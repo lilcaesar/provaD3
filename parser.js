@@ -96,6 +96,7 @@ function parseCSV(data, firstDate, lastDate) {
     pausetime = +data.pausetime;
     mark = +data.mark;
 
+
     /*** Parse date ***/
     /*** modificare parseCSV in modo tale da avere in input una data di inizio e fine per lo slider ***/
         // trasforma la data in un formato tale che possa essere usata da d3.min/d3.max
