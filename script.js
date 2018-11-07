@@ -120,7 +120,8 @@ d3.dsv(';', 'dataset_prova.csv').then(function (data) {
 
     //Asse con le label dello slider
     var sliderAxis = d3.axisBottom(sliderScale)
-        .tickFormat(formatTimeReadableAxis);
+        .tickFormat(formatTimeReadableAxis)
+        .ticks(d3.timeMonth.every(6));
 
     //Altezza dell'asse dello slider
     var hSlider = h + 30;
@@ -194,6 +195,7 @@ d3.dsv(';', 'dataset_prova.csv').then(function (data) {
             })
             .attr('stroke', 'black')
             .attr('stroke-width', 1)
+            .attr('cursor', 'pointer')
             .attr('fill', function (d) {
                 return colors(d.rating * d.accuracy)
             });
@@ -213,7 +215,8 @@ d3.dsv(';', 'dataset_prova.csv').then(function (data) {
             .attr("font-size", "20px")
             .attr("font-weight", "bold")
             .attr("fill", "black")
-            .attr("text-anchor", "middle");
+            .attr("text-anchor", "middle")
+            .attr('cursor', 'pointer');
 
         node.on('mouseover', function () {
             d3.select(this).select('circle')
@@ -247,7 +250,8 @@ d3.dsv(';', 'dataset_prova.csv').then(function (data) {
                     .attr("font-size", "20px")
                     .attr('stroke-width', 1);
             })
-            .on('click', function () {
+            .on('click', function (d) {
+                fillUserList(d.users);
                 openNav();
             });
     }
@@ -347,5 +351,48 @@ function openNav() {
 }
 
 function closeNav() {
-    document.getElementById("user-list").style.width = "0";
+    var el = document.getElementById("user-list");
+    el.style.width = "0";
+    var users = el.getElementsByClassName('user-instance');
+    while (users[0]) {
+        users[0].parentNode.removeChild(users[0]);
+    }
+}
+
+function fillUserList(users){
+    users.forEach(function (element) {
+        var parent = document.getElementById("user-list");
+        var newDiv =document.createElement("div");
+        newDiv.setAttribute("class", "user-instance");
+
+        var profilePic=document.createElement("img");
+        profilePic.src = "img/profile-pic.png";
+        profilePic.style.height = "50px";
+        profilePic.style.width = "50px";
+        profilePic.setAttribute("class", "user-profile-pic");
+
+        var info=document.createElement("div");
+        info.setAttribute("class", "user-info");
+        var name=document.createElement("p");
+        name.innerHTML= "Mario Rossi" + element.key;
+        name.setAttribute("class", "user-name");
+
+        var date=document.createElement("p");
+        date.innerHTML=element.value.trainings[0].creationdate;
+        date.setAttribute("class", "user-date");
+
+        info.appendChild(name);
+        info.appendChild(date);
+
+        var arrow=document.createElement("img");
+        arrow.src = "img/arrow.png";
+        arrow.style.height = "50px";
+        arrow.style.width = "15px";
+        arrow.setAttribute("class", "user-arrow");
+
+        newDiv.appendChild(profilePic);
+        newDiv.appendChild(info);
+        newDiv.appendChild(arrow);
+        parent.appendChild(newDiv);
+    })
 }
