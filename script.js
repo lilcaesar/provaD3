@@ -251,6 +251,7 @@ d3.dsv(';', 'dataset_prova.csv').then(function (data) {
                     .attr('stroke-width', 1);
             })
             .on('click', function (d) {
+                deleteUserList();
                 fillUserList(d.users);
                 openNav();
             });
@@ -350,13 +351,17 @@ function openNav() {
     document.getElementById("user-list").style.width = "500px";
 }
 
-function closeNav() {
+function deleteUserList() {
     var el = document.getElementById("user-list");
-    el.style.width = "0";
     var users = el.getElementsByClassName('user-instance');
     while (users[0]) {
         users[0].parentNode.removeChild(users[0]);
     }
+}
+
+function closeNav() {
+    document.getElementById("user-list").style.width = "0";
+    deleteUserList();
 }
 
 function fillUserList(users){
@@ -364,6 +369,9 @@ function fillUserList(users){
         var parent = document.getElementById("user-list");
         var newDiv =document.createElement("div");
         newDiv.setAttribute("class", "user-instance");
+        newDiv.onclick=function () {
+            window.location = 'training.html';
+        };
 
         var profilePic=document.createElement("img");
         profilePic.src = "img/profile-pic.png";
