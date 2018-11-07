@@ -246,6 +246,9 @@ d3.dsv(';', 'dataset_prova.csv').then(function (data) {
                     .duration(500)
                     .attr("font-size", "20px")
                     .attr('stroke-width', 1);
+            })
+            .on('click', function () {
+                openNav();
             });
     }
 
@@ -339,5 +342,10 @@ d3.dsv(';', 'dataset_prova.csv').then(function (data) {
     };
 });
 
+function openNav() {
+    document.getElementById("user-list").style.width = "500px";
+}
 
-
+function closeNav() {
+    document.getElementById("user-list").style.width = "0";
+}

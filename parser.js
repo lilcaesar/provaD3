@@ -304,7 +304,7 @@ function parseCSV(data, firstDate, lastDate) {
         }
     }
 
-    console.log(finalData);
+    //console.log(finalData);
 
     return finalData;
 }
