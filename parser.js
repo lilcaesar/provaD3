@@ -20,7 +20,7 @@ function getFirstDate(data){
                 min = only_dates[i]
         }
     }
-    
+
     return min;
 }
 
@@ -212,7 +212,10 @@ function getUsersAverageMark(data_filt) {
                 accuracy: d3.mean(v, function (d) {
                     return d.accuracy;
                 }),
-                trainings: v
+                //trainings: v
+                trainings:
+                    v.sort(function(a,b) {
+                        return (parseDate(a.creationdate) > parseDate(b.creationdate)) ? 1 : ((parseDate(b.creationdate) > parseDate(a.creationdate)) ? -1 : 0);})
             };
         })
         .entries(data_filt);
@@ -308,3 +311,5 @@ function parseCSV(data, firstDate, lastDate) {
 
     return finalData;
 }
+
+var parseDate = d3.timeParse("%d/%m/%Y %H:%M");
