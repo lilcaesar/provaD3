@@ -198,7 +198,8 @@ d3.dsv(';', 'dataset_prova.csv').then(function (data) {
             .attr('cursor', 'pointer')
             .attr('fill', function (d) {
                 return colors(d.rating * d.accuracy)
-            });
+            })
+            .attr('class', 'circle');
 
         //Testo interno dei cerchi
         node.append("text")
@@ -216,22 +217,19 @@ d3.dsv(';', 'dataset_prova.csv').then(function (data) {
             .attr("font-weight", "bold")
             .attr("fill", "black")
             .attr("text-anchor", "middle")
-            .attr('cursor', 'pointer');
+            .attr('cursor', 'pointer')
+            .attr('class', 'circle-text');
 
         node.on('mouseover', function () {
             d3.select(this).select('circle')
                 .transition()
                 .duration(500)
-                .attr('r', function (d) {
-                    return Math.sqrt((radiusScale(d.population)) / 3.14) * 1.5
-                })
                 .attr('stroke-width', 3);
 
             d3.select(this).select('text')
                 .transition()
                 .duration(500)
-                .attr("font-size", "30px")
-                .attr('stroke-width', 3);
+                .attr("font-size", "25px");
 
             d3.select(this).moveToFront();
         })
@@ -239,18 +237,16 @@ d3.dsv(';', 'dataset_prova.csv').then(function (data) {
                 d3.select(this).select('circle')
                     .transition()
                     .duration(500)
-                    .attr('r', function (d) {
-                        return Math.sqrt((radiusScale(d.population)) / 3.14)
-                    })
                     .attr('stroke-width', 1);
 
                 d3.select(this).select('text')
                     .transition()
                     .duration(500)
-                    .attr("font-size", "20px")
-                    .attr('stroke-width', 1);
+                    .attr("font-size", "20px");
             })
             .on('click', function (d) {
+                d3.selectAll('circle').attr('fill-opacity',0.3);
+                d3.select(this).select('circle').attr('fill-opacity',1.0);
                 deleteUserList();
                 fillUserList(d.users);
                 openNav();
@@ -360,13 +356,21 @@ function deleteUserList() {
 }
 
 function closeNav() {
+    d3.selectAll('circle').attr('fill-opacity',1.0);
     document.getElementById("user-list").style.width = "0";
     deleteUserList();
 }
 
 function fillUserList(users){
+    var parent = document.getElementById("user-list");
+    var notFound = document.createElement("p");
+    notFound.innerHTML = "Utente non trovato";
+    notFound.setAttribute("id", "not-found-user-search");
+    notFound.setAttribute("class", "not-found-text");
+    notFound.style.display="none";
+    parent.appendChild(notFound);
+
     users.forEach(function (element) {
-        var parent = document.getElementById("user-list");
         var newDiv =document.createElement("div");
         newDiv.setAttribute("class", "user-instance");
         newDiv.onclick=function () {
@@ -411,12 +415,20 @@ function searchUser() {
     filter = input.value.toUpperCase();
     list = document.getElementById("user-list");
     el = list.getElementsByClassName('user-instance');
+    var found=false;
     for (i = 0; i < el.length; i++) {
         a = el[i].getElementsByClassName('user-name')[0];
         if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
             el[i].style.display = "";
+            found=true;
         } else {
             el[i].style.display = "none";
         }
+    }
+    var notFoundText = document.getElementById('not-found-user-search');
+    if(found){
+        notFoundText.style.display = "none";
+    }else{
+        notFoundText.style.display = "";
     }
 }
