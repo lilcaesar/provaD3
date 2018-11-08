@@ -375,8 +375,8 @@ function fillUserList(users){
 
         var profilePic=document.createElement("img");
         profilePic.src = "img/profile-pic.png";
-        profilePic.style.height = "50px";
-        profilePic.style.width = "50px";
+        profilePic.style.height = "90px";
+        profilePic.style.width = "90px";
         profilePic.setAttribute("class", "user-profile-pic");
 
         var info=document.createElement("div");
@@ -394,8 +394,8 @@ function fillUserList(users){
 
         var arrow=document.createElement("img");
         arrow.src = "img/arrow.png";
-        arrow.style.height = "50px";
-        arrow.style.width = "15px";
+        arrow.style.height = "90px";
+        arrow.style.width = "35px";
         arrow.setAttribute("class", "user-arrow");
 
         newDiv.appendChild(profilePic);
