@@ -404,3 +404,19 @@ function fillUserList(users){
         parent.appendChild(newDiv);
     })
 }
+
+function searchUser() {
+    var input, filter, list, el, a, i;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    list = document.getElementById("user-list");
+    el = list.getElementsByClassName('user-instance');
+    for (i = 0; i < el.length; i++) {
+        a = el[i].getElementsByClassName('user-name')[0];
+        if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
+            el[i].style.display = "";
+        } else {
+            el[i].style.display = "none";
+        }
+    }
+}
