@@ -17,6 +17,10 @@ d3.dsv(';', 'dataset_prova.csv').then(function (data) {
     var xScaleLabels = d3.scaleOrdinal()
         .domain([" ", "Bassa", "Media", "Alta", ""])
         .range([w, xScale(0.165), xScale(0.495), xScale(0.825), 0]);
+
+    var xScaleLabelsINV = d3.scaleOrdinal()
+        .domain([0.165, 0.495, 0.825])
+        .range(["Bassa", "Media", "Alta"]);
 // SVG
     var svg = d3.select('#graphic')
         .append('svg')
@@ -181,7 +185,7 @@ d3.dsv(';', 'dataset_prova.csv').then(function (data) {
             .data(finalData)
             .enter()
             .append('g')
-            .attr('class', 'nodes');
+            .attr('class', 'nodes active-element');
 
         node.append('circle')
             .attr('cx', function (d) {
@@ -248,7 +252,7 @@ d3.dsv(';', 'dataset_prova.csv').then(function (data) {
                 d3.selectAll('circle').attr('fill-opacity',0.3);
                 d3.select(this).select('circle').attr('fill-opacity',1.0);
                 deleteUserList();
-                fillUserList(d.users);
+                fillUserList(d.users, d.rating, xScaleLabelsINV(d.accuracy));
                 openNav();
             });
     }
@@ -329,7 +333,6 @@ d3.dsv(';', 'dataset_prova.csv').then(function (data) {
     // aggiorna il grafico e lo slider tenendo conto degli allenamenti dell'ultimo giorno
     var day_button = document.querySelector('#last-login');
     day_button.onclick = function () {
-        console.log('login')
     };
 
     var reset_button = document.querySelector('#reset');
@@ -361,7 +364,7 @@ function closeNav() {
     deleteUserList();
 }
 
-function fillUserList(users){
+function fillUserList(users, mark, accuracy){
     var parent = document.getElementById("user-list");
     var notFound = document.createElement("p");
     notFound.innerHTML = "Utente non trovato";
@@ -406,7 +409,10 @@ function fillUserList(users){
         newDiv.appendChild(info);
         newDiv.appendChild(arrow);
         parent.appendChild(newDiv);
-    })
+    });
+
+    var summary = document.getElementById("summary");
+    summary.innerHTML = "Voto "+mark+" - Affidabilità "+accuracy;
 }
 
 function searchUser() {
@@ -432,3 +438,21 @@ function searchUser() {
         notFoundText.style.display = "";
     }
 }
+
+function hasSomeParentTheClass (el, cls) {
+    while ((el = el.parentElement) && !el.classList.contains(cls)){
+        return false;
+    }
+    return true;
+}
+
+document.addEventListener('click', function (event) {
+    var isOpen = (document.getElementById("user-list").clientWidth > 0);
+    var isOnImportantElement = false;
+    if (hasSomeParentTheClass(event.target, "active-element")) {
+        isOnImportantElement = true;
+    }
+    if ((isOpen) && (!isOnImportantElement)) {
+        closeNav();
+    }
+});
