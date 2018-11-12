@@ -346,10 +346,12 @@ d3.dsv(';', 'dataset_prova.csv').then(function (data) {
     };
 });
 
+//Apre la barra laterale
 function openNav() {
     document.getElementById("user-list").style.width = "500px";
 }
 
+//Cancella tutti i div degli utenti nella barra laterale
 function deleteUserList() {
     var el = document.getElementById("user-list");
     var users = el.getElementsByClassName('user-instance');
@@ -358,12 +360,14 @@ function deleteUserList() {
     }
 }
 
+//Chiude la barra laterale, reimposta l'opacità dei cerchi a 1 e richiama la funzione per l'eliminazione degli utenti
 function closeNav() {
     d3.selectAll('circle').attr('fill-opacity',1.0);
     document.getElementById("user-list").style.width = "0";
     deleteUserList();
 }
 
+//Riempie la barra laterale con gli utenti presenti nel cerchio selezionato
 function fillUserList(users, mark, accuracy){
     var parent = document.getElementById("user-list");
     var notFound = document.createElement("p");
@@ -415,6 +419,7 @@ function fillUserList(users, mark, accuracy){
     summary.innerHTML = "Voto "+mark+" - Affidabilità "+accuracy;
 }
 
+//Barra di ricerca con aggiornamento in tempo reale della lista
 function searchUser() {
     var input, filter, list, el, a, i;
     input = document.getElementById("myInput");
@@ -431,6 +436,7 @@ function searchUser() {
             el[i].style.display = "none";
         }
     }
+    //Se non ci sono risultati mostro la scritta di avviso
     var notFoundText = document.getElementById('not-found-user-search');
     if(found){
         notFoundText.style.display = "none";
@@ -439,15 +445,16 @@ function searchUser() {
     }
 }
 
+//Funzione che restituisce true se l'elemento o uno dei suoi padri ha la classe cls
 function hasSomeParentTheClass (el, cls) {
-    while ((el = el.parentElement) && !el.classList.contains(cls)){
-        return false;
+    if ((el)&&(el.classList.contains(cls))) {
+        return true;
     }
-    return true;
+    return el.parentElement && hasSomeParentTheClass(el.parentElement, cls);
 }
 
+//Chiude la barra laterale se premo fuori da un elemento con la classe "active-element" e la barra laterale è aperta
 document.addEventListener('click', function (event) {
-    console.log(event);
     var isOpen = (document.getElementById("user-list").clientWidth > 0);
     var isOnImportantElement = false;
     if (hasSomeParentTheClass(event.target, "active-element")&&(!(event.target.classList.contains("gr__localhost")))) {
