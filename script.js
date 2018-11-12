@@ -447,9 +447,10 @@ function hasSomeParentTheClass (el, cls) {
 }
 
 document.addEventListener('click', function (event) {
+    console.log(event);
     var isOpen = (document.getElementById("user-list").clientWidth > 0);
     var isOnImportantElement = false;
-    if (hasSomeParentTheClass(event.target, "active-element")) {
+    if (hasSomeParentTheClass(event.target, "active-element")&&(!(event.target.classList.contains("gr__localhost")))) {
         isOnImportantElement = true;
     }
     if ((isOpen) && (!isOnImportantElement)) {
