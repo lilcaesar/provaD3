@@ -1,5 +1,7 @@
 /**
  * Description: restituisce la data dell'allenamento più vecchio.
+ * 
+ * Info: Legge una data con formato -> 2016-05-26 13:10:02
  *
  * @param {array} data: dataset iniziale.
  */
@@ -8,19 +10,20 @@ function getFirstDate(data){
     // prendo solo le date
     var only_dates = data.map(function(d) { return d.creationdate });
     var min = only_dates[0];
-
+    
     // verifico qual è la minore
     for(var i in only_dates){
         if(only_dates.hasOwnProperty(i)) {
-            var year = only_dates[i].substring(6, 10);
-            var month = only_dates[i].substring(3, 5);
-            var day = only_dates[i].substring(0, 2);
+            var year = only_dates[i].substring(0, 4);
+            var month = only_dates[i].substring(5, 7);
+            var day = only_dates[i].substring(8, 10);
 
             if (!checkFirstDate(min, year, month, day))
                 min = only_dates[i]
         }
     }
 
+    console.log(min)
     return min;
 }
 
@@ -38,15 +41,16 @@ function getLastDate(data){
     // verifico qual è la massima
     for(var i in only_dates){
         if(only_dates.hasOwnProperty(i)) {
-            var year = only_dates[i].substring(6, 10);
-            var month = only_dates[i].substring(3, 5);
-            var day = only_dates[i].substring(0, 2);
+            var year = only_dates[i].substring(0, 4);
+            var month = only_dates[i].substring(5, 7);
+            var day = only_dates[i].substring(8, 10);
 
             if (!checkLastDate(max, year, month, day))
                 max= only_dates[i]
         }
     }
 
+    console.log(max)
     return max;
 }
 
@@ -60,9 +64,9 @@ function getLastDate(data){
 function compareDates(current, first, last){
 
     // suddivido la stringa in anno, mese e giorno
-    var year = +current.substring(6,10)
-    var month = +current.substring(3,5)
-    var day = +current.substring(0,2)
+    var year = +current.substring(0,4)
+    var month = +current.substring(5,7)
+    var day = +current.substring(8,10)
 
     // aggiungere controllo sul tempo???
     return checkFirstDate(first, year, month, day) && checkLastDate(last, year, month, day)
@@ -78,9 +82,9 @@ function compareDates(current, first, last){
  */
 function checkFirstDate(first, y, m, d){
 
-    var first_year = +first.substring(6,10);
-    var first_month = +first.substring(3,5);
-    var first_day = +first.substring(0,2);
+    var first_year = +first.substring(0,4);
+    var first_month = +first.substring(5,7);
+    var first_day = +first.substring(8,10);
 
     if(y > first_year)
         return true;
@@ -110,9 +114,9 @@ function checkFirstDate(first, y, m, d){
  * @param {string} d: giorno della data da esaminare.
  */
 function checkLastDate(last, y, m, d){
-    var last_year = +last.substring(6,10);
-    var last_month = +last.substring(3,5);
-    var last_day = +last.substring(0,2);
+    var last_year = +last.substring(0,4);
+    var last_month = +last.substring(5,7);
+    var last_day = +last.substring(8,10);
 
     if(y < last_year)
         return true;
@@ -312,4 +316,4 @@ function parseCSV(data, firstDate, lastDate) {
     return finalData;
 }
 
-var parseDate = d3.timeParse("%d/%m/%Y %H:%M");
+var parseDate = d3.timeParse("%Y/%m/%d %H:%M:%S");
