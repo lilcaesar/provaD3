@@ -268,10 +268,10 @@ function groupPopulation(exp2){
  */
 function parseCSV(data, firstDate, lastDate) {
 
-    //console.log(data);
+    console.log(data);
     // dot notation + conversione da stringa a numero -> http://learnjsdata.com/read_data.html
     item_user_id = +data.item_user_id;
-    creationdate = +data.creationdate
+    creationdate = +data.creationdate;
     session_id = +data.session_id;
     avgspeed = +data.avgspeed;
     distance = +data.distance;

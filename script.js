@@ -105,13 +105,13 @@ d3.dsv(',', 'datasets/workout_item.csv').then(function (data) {
         .text('Punteggio');
 
     //Funzione per parsare le date da quel formato stringa nel formato interpretabile da d3 (e browser)
-    var parseDate = d3.timeParse("%d/%m/%Y %H:%M");
+    var parseDate = d3.timeParse("%Y-%m-%d %H:%M:%S");
     //Trasformazione da data a stringa per gli l'asse dello slider
     var formatTimeReadableAxis = d3.timeFormat("%m/%Y");
     //Trasformazione da data a stringa per l'output in pagina
     var formatTimeReadable = d3.timeFormat("%d/%m/%Y");
     //Trasformazione da data a stringa per utilizzabile da ParseCSV
-    var formatTimeParser = d3.timeFormat("%d/%m/%Y %H:%M");
+    var formatTimeParser = d3.timeFormat("%Y-%m-%d %H:%M:%S");
 
     //Scale da data a pixel
     var sliderScale = d3.scaleTime()
