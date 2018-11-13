@@ -109,7 +109,7 @@ d3.dsv(',', 'datasets/workout_item.csv').then(function (data) {
     //Trasformazione da data a stringa per gli l'asse dello slider
     var formatTimeReadableAxis = d3.timeFormat("%m/%Y");
     //Trasformazione da data a stringa per l'output in pagina
-    var formatTimeReadable = d3.timeFormat("%d/%m/%Y");
+    var formatTimeReadable = d3.timeFormat("%Y-%m-%d");
     //Trasformazione da data a stringa per utilizzabile da ParseCSV
     var formatTimeParser = d3.timeFormat("%Y-%m-%d %H:%M:%S");
 
@@ -145,8 +145,8 @@ d3.dsv(',', 'datasets/workout_item.csv').then(function (data) {
     // change slider position
     slider.onChange(function (newRange) {
         // modifica date estremi slider
-        d3.select("#startdate").text(formatTimeReadable(sliderScaleINV(newRange.begin)));
-        d3.select("#enddate").text(formatTimeReadable(sliderScaleINV(newRange.end)));
+        d3.select("#startdate").text(formatTimeReadable(sliderScaleINV(newRange.begin)).replace(/-/g,"/"));
+        d3.select("#enddate").text(formatTimeReadable(sliderScaleINV(newRange.end)).replace(/-/g,"/"));
         // modifica date per il nuovo parsing degli allenamenti
         firstDate = formatTimeParser(sliderScaleINV(newRange.begin));
         lastDate = formatTimeParser(sliderScaleINV(newRange.end));
@@ -264,14 +264,15 @@ d3.dsv(',', 'datasets/workout_item.csv').then(function (data) {
         var olderMonthDate = lastDate;
 
         // inverto l'ordine del mese e giorno
-        var day = olderMonthDate.substring(0, 2);
-        var month = olderMonthDate.substring(3, 5);
-        var year = olderMonthDate.substring(6, 10);
-        var time = firstDate.substring(11, 16);
-        olderMonthDate = month + '/' + day + '/' + year;
+        var day = olderMonthDate.substring(8, 10);
+        var month = olderMonthDate.substring(5, 7);
+        var year = olderMonthDate.substring(0, 4);
+        var time = firstDate.substring(11, 19);
+        olderMonthDate = year + '-' + month + '-' + day;
 
         // credo una data in formato m%/d%/
         olderMonthDate = new Date(olderMonthDate);
+
 
         // sottraggo un mese dalla lastDate
         olderMonthDate.setMonth(olderMonthDate.getMonth() - 1, olderMonthDate.getDate());
@@ -286,8 +287,8 @@ d3.dsv(',', 'datasets/workout_item.csv').then(function (data) {
 
         // modifica date per il nuovo parsing degli allenamenti
 
-        d3.select("#startdate").text(newFirstDate);
-        d3.select("#enddate").text(newLastDate);
+        d3.select("#startdate").text(newFirstDate.replace(/-/g,"/"));
+        d3.select("#enddate").text(newLastDate.replace(/-/g,"/"));
 
         finalData = parseCSV(data, newFirstDate, newLastDate);
         // modifca grafico (cerchi)
@@ -300,11 +301,11 @@ d3.dsv(',', 'datasets/workout_item.csv').then(function (data) {
         var olderWeekDate = lastDate;
 
         // inverto l'ordine del mese e giorno
-        var day = olderWeekDate.substring(0, 2);
-        var month = olderWeekDate.substring(3, 5);
-        var year = olderWeekDate.substring(6, 10);
-        var time = firstDate.substring(11, 16);
-        olderWeekDate = month + '/' + day + '/' + year;
+        var day = olderWeekDate.substring(8, 10);
+        var month = olderWeekDate.substring(5, 7);
+        var year = olderWeekDate.substring(0, 4);
+        var time = firstDate.substring(11, 19);
+        olderWeekDate = year + '-' + month + '-' + day;
 
         // credo una data in formato m%/d%/
         olderWeekDate = new Date(olderWeekDate);
@@ -322,8 +323,8 @@ d3.dsv(',', 'datasets/workout_item.csv').then(function (data) {
 
         // modifica date per il nuovo parsing degli allenamenti
 
-        d3.select("#startdate").text(newFirstDate);
-        d3.select("#enddate").text(newLastDate);
+        d3.select("#startdate").text(newFirstDate.replace(/-/g,"/"));
+        d3.select("#enddate").text(newLastDate.replace(/-/g,"/"));
 
         finalData = parseCSV(data, newFirstDate, newLastDate);
         // modifca grafico (cerchi)

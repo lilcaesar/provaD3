@@ -23,7 +23,7 @@ function getFirstDate(data){
         }
     }
 
-    console.log(min)
+    //console.log(min)
     return min;
 }
 
@@ -50,7 +50,7 @@ function getLastDate(data){
         }
     }
 
-    console.log(max)
+    //console.log(max)
     return max;
 }
 
@@ -170,23 +170,23 @@ function retrieveUsers(exp2, mark, accuracy){
 // restituisce gli user id appartenenti ad una categoria mark/accuracy
 function retrieveAllUsers(exp2){
 
-    var userList = []
-    var marks = [1,2,3,4,5]
-    var accur = [0.165, 0.495, 0.825]
+    var userList = [];
+    var marks = [1,2,3,4,5];
+    var accur = [0.165, 0.495, 0.825];
 
     for(var i in exp2){
-        item = {}
+        item = {};
         // sistemo i valori dell'accuratezza
         if (exp2[i].value.accuracy <= 0.33)
             exp2[i].value.accuracy = 0.165;
         else if (exp2[i].value.accuracy > 0.33 && exp2[i].value.accuracy <= 0.66)
             exp2[i].value.accuracy =  0.495;
         else
-            exp2[i].value.accuracy = 0.825
+            exp2[i].value.accuracy = 0.825;
 
-        for(var m in marks){
+        /*for(var m in marks){
 
-        }
+        }*/
 
     }
 
@@ -268,7 +268,7 @@ function groupPopulation(exp2){
  */
 function parseCSV(data, firstDate, lastDate) {
 
-    console.log(data);
+    //console.log(data);
     // dot notation + conversione da stringa a numero -> http://learnjsdata.com/read_data.html
     item_user_id = +data.item_user_id;
     creationdate = +data.creationdate;
