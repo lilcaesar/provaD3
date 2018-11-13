@@ -1,4 +1,4 @@
-d3.dsv(';', 'dataset_prova.csv').then(function (data) {
+d3.dsv(',', 'datasets/workout_item.csv').then(function (data) {
     // Variables
     var body = d3.select('body');
     var margin = {top: 10, right: 50, bottom: 20, left: 50};
