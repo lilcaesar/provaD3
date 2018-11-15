@@ -316,4 +316,4 @@ function parseCSV(data, firstDate, lastDate) {
     return finalData;
 }
 
-var parseDate = d3.timeParse("%Y/%m/%d %H:%M:%S");
+var parseDate = d3.timeParse("%Y-%m-%d %H:%M:%S");

@@ -249,3 +249,9 @@ d3.select("#score-slider").append("svg")
     .append("g")
     .attr("transform", "translate(15,10)")
     .call(rankSlider);
+
+var gpsData = Papa.parse("datasets/gps_300k_coords.csv",{
+    delimiter:","
+});
+
+console.log("ciao");

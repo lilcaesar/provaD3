@@ -384,7 +384,8 @@ function fillUserList(users, mark, accuracy){
         var newDiv =document.createElement("div");
         newDiv.setAttribute("class", "user-instance");
         newDiv.onclick=function () {
-            window.location = 'training.html';
+            //window.location = 'training.html';
+            console.log(element);
         };
 
         var profilePic=document.createElement("img");
