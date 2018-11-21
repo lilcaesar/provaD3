@@ -1,159 +1,166 @@
-/** principal container **/
-#container{
-
+body{
+    background: -webkit-linear-gradient(left, #3931af, #00c6ff);
 }
 
-
-/***** top bar items begin *****/
-#top-bar{
-    /*border: 1px solid black;*/
-    display: flex;
-    justify-content: center;
-    margin-top: 1%;
+.emp-profile{
+    padding: 3%;
+    margin-top: 2%;
+    margin-bottom: 3%;
+    border-radius: 0.5rem;
+    background: #fff;
 }
-
-/*** athlete info begin ***/
-#athlete-info{
-    border: 1px solid black;
-    border-radius: 20px;
-    width: 30%;
-    height: 320px;
-    margin: 5px;
+.profile-user-name{
     text-align: center;
 }
-
-
-#athlete-info h1{
+.profile-img{
     text-align: center;
-    height: 10%;
 }
-
-.athlete-info-class{
-    display: flex;
-    justify-content: space-evenly;
-    padding: 5px;
+.profile-img img{
+    width: 50%;
+    height: 20%;
 }
-
-.athlete-info-class > div{
-    /*margin-left: 25px;*/
+.profile-img .file {
+    position: relative;
+    overflow: hidden;
+    margin-top: -20%;
+    width: 70%;
+    border: none;
+    border-radius: 0;
+    font-size: 15px;
+    background: #212529b8;
 }
-
-#athlete-img-actions{
-    /*border: 1px solid black;*/
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-
-#athlete-img-actions img{
-    /*float: left;
-    display: inline;
-    margin-left: 10%;*/
-}
-
-#athlete-buttons{
-    /*border: 1px solid black;
+.profile-img .file input {
     position: absolute;
-    bottom: 0;
-    margin-left: 20%;
-    margin-bottom: 2%;*/
+    opacity: 0;
+    right: 0;
+    top: 0;
+}
+.profile-head h5{
+    color: #333;
+}
+.profile-head h6{
+    color: #0062cc;
+}
+.profile-edit-btn{
+    border: none;
+    border-radius: 1.5rem;
+    width: 90%;
+    padding: 2%;
+    font-weight: 600;
+    color: #6c757d;
+    cursor: pointer;
+}
+.proile-rating{
+    font-size: 12px;
+    color: #818182;
+    margin-top: 5%;
+}
+.proile-rating span{
+    color: #495057;
+    font-size: 15px;
+    font-weight: 600;
+}
+.profile-head .nav-tabs{
+    margin-bottom:5%;
+}
+.profile-head .nav-tabs .nav-link{
+    font-weight:600;
+    border: none;
+}
+.profile-head .nav-tabs .nav-link.active{
+    border: none;
+    border-bottom:2px solid #0062cc;
+}
+.profile-work{
+    padding: 5%;
+    margin-top: -13%;
+}
+.profile-work p {
+    font-size: 14px;
+    color: #818182;
+    font-weight: 600;
+    margin-top: 10%;
+}
+.profile-work span {
+    font-size: 14px;
+    color: #0062cc;
+    font-weight: 600;
+    /*margin-top: 10%;*/
+}
+.profile-work a{
+    pointer-events: none;
+    text-decoration: none;
+    color: #0062cc;
+    font-weight: 600;
+    font-size: 14px;
+}
+.profile-work ul{
+    list-style: none;
+}
+.profile-tab label{
+    font-weight: 600;
+}
+.profile-tab p{
+    font-weight: 600;
+    color: #0062cc;
+}
+
+/**/
+.graphic{
+    text-align: center;
+    margin-top: 2%;
+    /*margin-top: -8%;*/
+}
+.graphic img{
+    width: 50%;
+    height: 20%;
+}
+
+.divider-line {
+    border: 0;
+    height: 1px;
+    background-image: -webkit-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+    background-image: -moz-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+    background-image: -ms-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+    background-image: -o-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+}
+
+
+.user-buttons{
+    margin-top: 3%;
+    text-align: center;
+}
+
+.slider-img-robot img{
+    width: 35px;
+}
+
+.slider-img-human img{
+    width: 28px;
+
+}
+
+.slider-mark p{
+    text-decoration: none;
+    color: #000000;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.slider-tick-label{
+    font-size: 15px;
+    font-weight: 600;
+}
+
+/* margine tra slider e voti*/
+.marks-with-margin{
     margin-top: 5%;
 }
 
-#athlete-profile-info{
-    /*border: 1px solid black;
-    display: inline;
-    float:right;
-    width: 30%;*/
+.slider-with-margin{
+    margin-top: 7%;
 }
 
-#athlete-profile-info p{
-    text-align: left;
-}
-
-/*** athlete info end ***/
-
-
-
-/*** athlete training begin ***/
-#athlete-training{
-    border: 1px solid black;
-    border-radius: 20px;
-    width: 30%;
-    height: 320px;
-    margin: 5px;
-    text-align: center;
-}
-
-#athlete-training h1{
-    height: 10%;
-}
-
-/* da modificare */
-#score-slider{
-    border: 1px solid black;
-    height: 50px;
-    margin-bottom: 1%;
-}
-
-#athlete-marks{
-    /*border: 1px solid black;*/
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-#predicted-img{
-    margin-right: 3%;
-    width: 7%;
-    height: 7%;
-}
-
-#user-given-img{
-    width: 12%;
-    height: 12%;
-}
-
-#training-info{
-    /*border: 1px solid black;*/
-    margin: 5px;
-    width: 50%;
+.make-divs-inline{
     display: inline-block;
 }
-/*** athlete training end ***/
-
-
-/* clear trick */
-#clear{
-    clear:both;
-}
-/***** top bar items end *****/
-
-
-/***** bottom bar items begin *****/
-#bottom-bar{
-    /*border: 1px solid black;*/
-}
-
-#training-charts{
-    /*border: 1px solid black;*/
-    margin: 5px;
-    display: flex;
-    justify-content: center;
-    height: 350px;
-}
-
-#training-charts > div{
-    width: 19%;
-    text-align: center;
-    margin: 10px;
-    border-radius: 20px;
-    border: 1px solid black;
-}
-
-.chart{
-    height: 210px;
-    width: 210px;
-}
-/***** bottom bar items end *****/

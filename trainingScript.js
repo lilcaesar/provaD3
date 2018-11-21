@@ -358,6 +358,11 @@ function compute3DDistance(cPoint1, cPoint2) {
     return Math.sqrt(Math.pow((cPoint2[0] - cPoint1[0]), 2) + Math.pow((cPoint2[1] - cPoint1[1]), 2) + Math.pow((cPoint2[2] - cPoint1[2]), 2));
 }
 
+// quando viene cambiato il valore dello slider, cambia anche quello di testo vicino all'immagine dell'omino
+function changeSlider(e){
+    document.getElementById("robot-mark").innerHTML = e;
+}
+
 //Longitude, latitude, altitude
 var point1 = [9.14152226780488, 39.21016079317073, 50];
 var point2 = [9.141527010706035, 39.21015075612293, 47];

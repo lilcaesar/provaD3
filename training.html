@@ -1,77 +1,239 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Training</title>
-    <script type="text/javascript" src="d3.v5.js"></script>
-    <script src="https://unpkg.com/d3-simple-slider"></script>
-    <script src="papaparse.js"></script>
+    <title>Single training page</title>
+    <!--
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="bootstrap/bootstrap.min.js"></script>
+    <link rel='stylesheet' href='bootstrap/bootstrap.min.css'>-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.2.3/bootstrap-slider.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.2.3/css/bootstrap-slider.min.css">
 
     <link rel='stylesheet' href='training_style.css'>
-</head>
-<body>
+    <script src="trainingScript.js"></script>
 
-<div id="container">
-    <div id="top-bar">
-        <div id="athlete-info">
-            <h1>Atleta</h1>
-            <div class="athlete-info-class">
-                <div id="athlete-img-actions">
-                    <img src="img/profile-pic.png" alt="profile-pic">
-                    <div id="athlete-buttons">
-                        <button id="send-msg">Invia messaggio</button>
+</head>
+
+<!------ Include the above in your HEAD tag ---------->
+
+<body>
+<div class="container emp-profile">
+    <!--<form method="post">-->
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="profile-user-name"><h5>Mario Rossi</h5></div>
+                <div class="profile-img">
+                    <img src="img/profile-pic.png" alt=""/>
+                </div>
+                <div class="user-buttons">
+                    <button type="button" class="btn btn-primary btn-sm">Invia messaggio</button>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="profile-work">
+                    <p>Voto atleta</p>
+                </div>
+
+                <div align="center" class="slider-mark">
+                    <div class="slider-with-margin"><input
+                            id="ex7"
+                            type="text"
+                            name="somename"
+                            data-provide="slider"
+                            data-slider-ticks="[1, 2, 3, 4, 5]"
+                            data-slider-ticks-labels='["1", "2", "3", "4", "5"]'
+                            data-slider-min="1"
+                            data-slider-max="5"
+                            data-slider-step="1"
+                            data-slider-value="3"
+                            data-slider-tooltip="hide"
+                            onchange="changeSlider(this.value)"></div>
+
+                    <div class="center-block marks-with-margin">
+                        <div class="col-sm-3 make-divs-inline">
+                            <div class="slider-img-robot"><img src="img/robot.PNG" alt=""/></div>
+                        </div>
+                        <div class="col-sm-2 make-divs-inline">
+                            <p>4</p>
+                        </div>
+                        <div class="col-sm-2 make-divs-inline">
+                            <div class="slider-img-human"><img src="img/human.PNG" alt=""/></div>
+                        </div>
+                        <div class="col-sm-3 make-divs-inline">
+                            <p id="robot-mark">?</p>
+                        </div>
                     </div>
                 </div>
-                <div id="athlete-profile-info">
-                    <p id="name">Mario Rossi</p>
-                    <p id="age">27 anni</p>
-                    <p>Livello (?)</p>
+
+
+            </div>
+            <div class="col-md-3">
+                <div class="profile-work">
+                    <p>Info atleta</p>
+                    <div class="row">
+                        <div class="col-md-6"><span>Et&aacute</span></div>
+                        <div class="col-md-6"><a>27 Anni</a></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6"><span>Livello</span></div>
+                        <div class="col-md-6"><a>-</a></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6"><span>Professione</span></div>
+                        <div class="col-md-6"><a>-</a></div>
+                    </div>
+                    <!--<div class="row">
+                        <div class="col-md-6"><span>...</span></div>
+                        <div class="col-md-6"><a>???</a></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6"><span>...</span></div>
+                        <div class="col-md-6"><a>???</a></div>
+                    </div>-->
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="profile-work">
+                    <p>Info allenamento</p>
+                    <div class="row">
+                        <div class="col-md-6"><span>Durata</span></div>
+                        <div class="col-md-6"><a>30min 27s</a></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6"><span>Calorie</span></div>
+                        <div class="col-md-6"><a>400 Kcal</a></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6"><span>Pausa</span></div>
+                        <div class="col-md-6"><a>3s</a></div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div id ="athlete-training">
-            <div id="score">
-                <h1>Allenamento 5 Ottobre 2018</h1>
-                <div id="score-slider"></div>
-
-                <div id="athlete-marks">
-                    <img id ="predicted-img" src="img/ai.png" alt="machine-mark">
-                    <div id="predicted">4</div>
-                    <img id ="user-given-img" src="img/user.png" alt="user-mark">
-                    <div id="user-given">N/A</div>
-                </div>
-            </div>
-
-            <div id="training-info">
-                <p id="duration">Durata: 30min 27s</p>
-                <p id="rest-time">Riposo: 3s</p>
-                <p id="calories">Calorie: 400 Kcal</p>
-            </div>
-        </div>
-        <div id="clear"></div>
-
     </div>
 
-
-    <div id="bottom-bar">
-        <!--<div id="training-charts">
-            <div id="speed-container">
-                <h1>Velocità</h1>
-                <svg class="chart" id="speed-chart"></svg>
+    <!--
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="profile-user-name"><h5>Mario Rossi</h5></div>
+                    <div class="profile-img">
+                        <img src="img/profile-pic.png" alt=""/>
+                    </div>
+                    <div class="user-buttons">
+                        <button type="button" class="btn btn-primary btn-sm">Invia messaggio</button>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="profile-head">
+                        <h5>
+                            Allenamento 15/03/2018
+                        </h5>
+                        <p class="proile-rating">slider...</p>
+                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Andamento</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Timeline</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-primary btn-sm">Small button</button>
+                </div>
             </div>
-            <div id="bpm-container">
-                <h1>B.P.M.</h1>
-                <svg class="chart" id="bpm-chart"></svg>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="profile-work">
+                        <p>Informazioni atleta</p>
+                        <div class="row">
+                            <div class="col-md-6"><span>Et&aacute</span></div>
+                            <div class="col-md-6 text-right"><a>27 Anni</a></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6"><span>Livello</span></div>
+                            <div class="col-md-6 text-right"><a>???</a></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6"><span>Professione</span></div>
+                            <div class="col-md-6 text-right"><a>???</a></div>
+                        </div>
+                        <p>Informazioni allenamento</p>
+                        <div class="row">
+                            <div class="col-md-6"><span>Durata</span></div>
+                            <div class="col-md-6 text-right"><a>30min 27s</a></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6"><span>Calorie</span></div>
+                            <div class="col-md-6 text-right"><a>400 Kcal</a></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6"><span>Pausa</span></div>
+                            <div class="col-md-6 text-right"><a>3s</a></div>
+                        </div>
+                    </div>
+                </div>
+                -->
+    <div class="col">
+        <div class="graphic">
+            <hr class="divider-line">
+            <div class="profile-user-name">
+                <h5>Grafico allenamento</h5>
             </div>
-            <div id="altitude-container">
-                <h1>Altezza</h1>
-                <svg class="chart" id="altitude-chart"></svg>
+            <img src="img/grafico_1.png" alt=""/>
+        </div>
+        <!--
+        <div class="row">
+            <div class="col-md-6">
+                <label>User Id</label>
+            </div>
+            <div class="col-md-6">
+                <p>Kshiti123</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <label>Name</label>
+            </div>
+            <div class="col-md-6">
+                <p>Kshiti Ghelani</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <label>Email</label>
+            </div>
+            <div class="col-md-6">
+                <p>kshitighelani@gmail.com</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <label>Phone</label>
+            </div>
+            <div class="col-md-6">
+                <p>123 456 7890</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <label>Profession</label>
+            </div>
+            <div class="col-md-6">
+                <p>Web Developer and Designer</p>
             </div>
         </div>-->
     </div>
+    <!--</form>-->
 </div>
-
-<script type='text/javascript' src='trainingScript.js'></script>
 
 </body>
 </html>
