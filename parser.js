@@ -219,7 +219,7 @@ function getUsersAverageMark(data_filt) {
                 //trainings: v
                 trainings:
                     v.sort(function(a,b) {
-                        return (parseDate(a.creationdate) > parseDate(b.creationdate)) ? 1 : ((parseDate(b.creationdate) > parseDate(a.creationdate)) ? -1 : 0);})
+                        return (parseDate(a.creationdate) < parseDate(b.creationdate)) ? 1 : ((parseDate(b.creationdate) < parseDate(a.creationdate)) ? -1 : 0);})
             };
         })
         .entries(data_filt);
