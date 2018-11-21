@@ -328,6 +328,7 @@ d3.select("#altitude-chart").append("circle")
     .attr("r", 10)
     .attr("fill", "red");*/
 
+/*
 var rankSlider = d3.sliderHorizontal()
     .min(1)
     .max(5)
@@ -344,7 +345,7 @@ d3.select("#score-slider").append("svg")
     .attr("height", 50)
     .append("g")
     .attr("transform", "translate(15,10)")
-    .call(rankSlider);
+    .call(rankSlider);*/
 
 function computeCartesianPoint(point) {
     var x = point[2] * Math.cos(point[1]) * Math.sin(point[0]);
