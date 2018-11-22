@@ -30,8 +30,7 @@ var gpsData;
 var WARData;
 var WAData;
 var chartsNumber;
-var activityDistances = [];
-var activityTimes = [];
+var activities = [];
 
 var files = ['datasets/gps_300k_coords.csv', 'datasets/workout_activity_result.csv', 'datasets/workout_activity.csv'];
 var allResults = [];
@@ -332,6 +331,14 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                     });
                     return data;
                 }
+
+                function getActivityInformations(w_a_id){
+                    data = WAData.filter(function (d) {
+                        return d.wactivity_id == w_a_id;
+                    });
+                    return data;
+                }
+
                 gpsData = filterByTraining(gpsData, 11);
                 WARData= filterByTraining(WARData, 11);
                 chartsNumber = WARData.length;
@@ -344,8 +351,12 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
 
                 for(var i = 0; i<gpsData.length; i++){
                     if(gpsData[i].workout_activity_id != currentActivityID){
-                        activityDistances.push(currentActivityDistanceValues);
-                        activityTimes.push(currentActivityTimeValues);
+                        var temporaryActivity = getActivityInformations(gpsData[i-1].workout_activity_id);
+                        var informations=({
+                            type: temporaryActivity[0].wactivity_label,
+                            pauseTime: (gpsData[i].time-gpsData[i-1].time)/1000,
+                            comment: temporaryActivity[0].wactivity_comment});
+                        activities.push({info:informations, distances:currentActivityDistanceValues, times:currentActivityTimeValues});
                         currentActivityDistanceValues = [];
                         currentActivityTimeValues = [];
                         currentActivityDistance = -1;
@@ -367,12 +378,15 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                         currentActivityTimeValues.push(currentActivityTime);
                     }
                     if(i==gpsData.length-1){
-                        activityDistances.push(currentActivityDistanceValues);
-                        activityTimes.push(currentActivityTimeValues);
+                        var temporaryActivity = getActivityInformations(gpsData[i-1].workout_activity_id);
+                        var informations=({
+                            type: temporaryActivity[0].wactivity_label,
+                            pauseTime: (gpsData[i].time-gpsData[i-1].time)/1000,
+                            comment: temporaryActivity[0].wactivity_comment});
+                        activities.push({info:informations, distances:currentActivityDistanceValues, times:currentActivityTimeValues});
                     }
                 }
-                /*console.log(activityDistances);
-                console.log(activityTimes);*/
+                console.log(activities);
 
 
 
