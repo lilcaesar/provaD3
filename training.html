@@ -17,15 +17,11 @@
     <link rel='stylesheet' href='training_style.css'>
     <script src="papaparse.js"></script>
     <script src="d3.v5.js"></script>
-    <script src="trainingScript.js"></script>
 
 </head>
 
-<!------ Include the above in your HEAD tag ---------->
-
 <body>
 <div class="container emp-profile">
-    <!--<form method="post">-->
 
     <div class="container">
         <div class="row">
@@ -63,7 +59,7 @@
                             <div class="slider-img-robot"><img src="img/robot.PNG" alt=""/></div>
                         </div>
                         <div class="col-sm-2 make-divs-inline">
-                            <p>4</p>
+                            <p id="predicted">4</p>
                         </div>
                         <div class="col-sm-2 make-divs-inline">
                             <div class="slider-img-human"><img src="img/human.PNG" alt=""/></div>
@@ -81,7 +77,7 @@
                     <p>Info atleta</p>
                     <div class="row">
                         <div class="col-md-6"><span>Et&aacute</span></div>
-                        <div class="col-md-6"><a>27 Anni</a></div>
+                        <div class="col-md-6"><a id="age">27 Anni</a></div>
                     </div>
                     <div class="row">
                         <div class="col-md-6"><span>Livello</span></div>
@@ -91,14 +87,6 @@
                         <div class="col-md-6"><span>Professione</span></div>
                         <div class="col-md-6"><a>-</a></div>
                     </div>
-                    <!--<div class="row">
-                        <div class="col-md-6"><span>...</span></div>
-                        <div class="col-md-6"><a>???</a></div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6"><span>...</span></div>
-                        <div class="col-md-6"><a>???</a></div>
-                    </div>-->
                 </div>
             </div>
             <div class="col-md-3">
@@ -106,136 +94,31 @@
                     <p>Info allenamento</p>
                     <div class="row">
                         <div class="col-md-6"><span>Durata</span></div>
-                        <div class="col-md-6"><a>30min 27s</a></div>
+                        <div class="col-md-6"><a id="duration" >30min 27s</a></div>
                     </div>
                     <div class="row">
                         <div class="col-md-6"><span>Calorie</span></div>
-                        <div class="col-md-6"><a>400 Kcal</a></div>
+                        <div class="col-md-6"><a id="calories">400 Kcal</a></div>
                     </div>
                     <div class="row">
                         <div class="col-md-6"><span>Pausa</span></div>
-                        <div class="col-md-6"><a>3s</a></div>
+                        <div class="col-md-6"><a id="rest-time">3s</a></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!--
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="profile-user-name"><h5>Mario Rossi</h5></div>
-                    <div class="profile-img">
-                        <img src="img/profile-pic.png" alt=""/>
-                    </div>
-                    <div class="user-buttons">
-                        <button type="button" class="btn btn-primary btn-sm">Invia messaggio</button>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="profile-head">
-                        <h5>
-                            Allenamento 15/03/2018
-                        </h5>
-                        <p class="proile-rating">slider...</p>
-                        <ul class="nav nav-tabs" id="myTab" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Andamento</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Timeline</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <button type="button" class="btn btn-primary btn-sm">Small button</button>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="profile-work">
-                        <p>Informazioni atleta</p>
-                        <div class="row">
-                            <div class="col-md-6"><span>Et&aacute</span></div>
-                            <div class="col-md-6 text-right"><a>27 Anni</a></div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6"><span>Livello</span></div>
-                            <div class="col-md-6 text-right"><a>???</a></div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6"><span>Professione</span></div>
-                            <div class="col-md-6 text-right"><a>???</a></div>
-                        </div>
-                        <p>Informazioni allenamento</p>
-                        <div class="row">
-                            <div class="col-md-6"><span>Durata</span></div>
-                            <div class="col-md-6 text-right"><a>30min 27s</a></div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6"><span>Calorie</span></div>
-                            <div class="col-md-6 text-right"><a>400 Kcal</a></div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6"><span>Pausa</span></div>
-                            <div class="col-md-6 text-right"><a>3s</a></div>
-                        </div>
-                    </div>
-                </div>
-                -->
     <div class="col">
-        <div class="graphic">
+        <div id="graphic-container" class="graphic">
             <hr class="divider-line">
             <div class="profile-user-name">
                 <h5>Grafico allenamento</h5>
             </div>
-            <img src="img/grafico_1.png" alt=""/>
         </div>
-        <!--
-        <div class="row">
-            <div class="col-md-6">
-                <label>User Id</label>
-            </div>
-            <div class="col-md-6">
-                <p>Kshiti123</p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
-                <label>Name</label>
-            </div>
-            <div class="col-md-6">
-                <p>Kshiti Ghelani</p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
-                <label>Email</label>
-            </div>
-            <div class="col-md-6">
-                <p>kshitighelani@gmail.com</p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
-                <label>Phone</label>
-            </div>
-            <div class="col-md-6">
-                <p>123 456 7890</p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
-                <label>Profession</label>
-            </div>
-            <div class="col-md-6">
-                <p>Web Developer and Designer</p>
-            </div>
-        </div>-->
     </div>
-    <!--</form>-->
 </div>
 
+<script src="trainingScript.js"></script>
 </body>
 </html>
