@@ -373,12 +373,19 @@ function closeNav() {
 //Riempie la barra laterale con gli utenti presenti nel cerchio selezionato
 function fillUserList(users, mark, accuracy){
     var parent = document.getElementById("user-list");
+    var notFound = document.createElement("div");
+    notFound.innerHTML = "Utente non trovato!";
+    notFound.setAttribute("id", "not-found-user-search");
+    notFound.setAttribute("class", "alert alert-warning not-found-text");
+    notFound.style.display="none";
+    parent.appendChild(notFound);
+    /*
     var notFound = document.createElement("p");
     notFound.innerHTML = "Utente non trovato";
     notFound.setAttribute("id", "not-found-user-search");
     notFound.setAttribute("class", "not-found-text");
     notFound.style.display="none";
-    parent.appendChild(notFound);
+    parent.appendChild(notFound);*/
 
     users.forEach(function (element) {
         var newDiv =document.createElement("div");
@@ -419,7 +426,7 @@ function fillUserList(users, mark, accuracy){
     });
 
     var summary = document.getElementById("summary");
-    summary.innerHTML = "Voto "+mark+" - Affidabilità "+accuracy;
+    summary.innerHTML = "Voto: "+mark+" - Affidabilità: "+accuracy;
 }
 
 //Barra di ricerca con aggiornamento in tempo reale della lista

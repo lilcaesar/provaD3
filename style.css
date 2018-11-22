@@ -10,6 +10,8 @@
     font-size: 11px;
 }
 
+
+
 /** css date **/
 #startdate, #enddate {
     width: 17%;
@@ -17,16 +19,15 @@
     border-radius: 5px;
     position: relative;
     top: 15px;
-    left: -35px;
+    left: -28px;
+    font-size: 15px;
+    font-weight: 600;
 }
 
 /** css date **/
 
 #button-container {
-    /*border: 1px solid red;*/
-    width: 50%;
-    margin-left: 5.8%;
-    margin-top: -10px;
+    margin-left: 3%;
 }
 
 #button-container input[type="radio"] {
@@ -34,14 +35,7 @@
 }
 
 #button-container .radioTimeRange {
-    background-color: #4CAF50; /* Green background */
-    border: 1px solid green; /* Green border */
-    color: white; /* White text */
-    padding: 5px 20px; /* Some padding */
-    cursor: pointer; /* Pointer/hand icon */
-    float: left; /* Float the buttons side by side */
-    border-radius: 5px;
-    margin-left: 1%;
+
 }
 
 /* Clear floats (clearfix hack) */
@@ -94,6 +88,9 @@
     margin-top: 10px;
     display: flex;
     justify-content: space-evenly;
+    align-items: center;
+    font-size: 15px;
+    font-weight: 600;
 }
 
 #search-bar-container{
@@ -111,3 +108,14 @@
     border: 1px solid #ddd;
     margin-bottom: 12px;
 }
+
+.bubble-summary{
+    text-align: center;
+    font-size: 17px;
+    font-weight: 600;
+}
+
+/*
+.make-divs-inline{
+    display: inline-block;
+}*/

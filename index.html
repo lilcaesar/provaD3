@@ -10,6 +10,13 @@
 
     <link rel='stylesheet' href='style.css'>
     <link rel='stylesheet' href='sliderStyle.css'>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+
+
 </head>
 <body>
 
@@ -17,6 +24,42 @@
 <script type='text/javascript' src='parser.js'></script>
 <script type='text/javascript' src='script.js'></script>
 
+
+<div class="col">
+    <div class="row" id="graphic">
+
+    </div>
+    <div class="row" id="container">
+        <div id="slider-container" class="active-element"></div>
+    </div>
+
+    <div id="button-container" class="row active-element float-left">
+
+        <div class="col-sm make-divs-inline">
+        <input type="radio" name="timeRange" id="last-month" value="last-mont">
+        <label for="last-month" class="btn btn-primary btn-sm">Ultimo mese</label>
+        </div>
+
+        <div class="col-sm make-divs-inline">
+        <input type="radio" name="timeRange" id="last-week" value="last-week">
+        <label for="last-week" class="btn btn-primary btn-sm">Ultima settimana</label>
+        </div>
+
+        <div class="col-sm make-divs-inline">
+        <input type="radio" name="timeRange" id="last-login" value="last-login">
+        <label for="last-login" class="btn btn-primary btn-sm">Ultimo login</label>
+        </div>
+
+        <div class="col-sm make-divs-inline">
+        <input type="radio" name="timeRange" id="reset" value="reset">
+        <label for="reset" class="btn btn-primary btn-sm">Reset</label>
+        </div>
+
+    </div>
+</div>
+
+
+<!--
 <div id="graphic">
 
 </div>
@@ -34,11 +77,11 @@
     <label for="last-login" class="radioTimeRange">Ultimo login</label>
     <input type="radio" name="timeRange" id="reset" value="reset">
     <label for="reset" class="radioTimeRange">Reset</label>
-</div>
+</div>-->
 
 <div id="user-list" class="sidenav active-element">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-    <p id="summary"></p>
+    <p id="summary" class="bubble-summary"></p>
     <div id="search-bar-container">
         <input type="text" id="myInput" onkeyup="searchUser()" placeholder="Ricerca un atleta" title="Scrivi un nome">
     </div>
