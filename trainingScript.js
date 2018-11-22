@@ -386,9 +386,31 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                         activities.push({info:informations, distances:currentActivityDistanceValues, times:currentActivityTimeValues});
                     }
                 }
-                console.log(activities);
 
+                function computeTotalTime(activityArray) {
+                    var sum=0;
+                    activityArray.forEach(function (activity) {
+                        sum=sum+activity.times[activity.times.length-1]+activity.info.pauseTime;
+                    });
+                    return sum;
+                }
 
+                function computeMaxDistance(activityArray) {
+                    var currentMaxDistance = -1;
+                    activityArray.forEach(function (activity) {
+                       if(activity.distances[activity.distances.length-1]>currentMaxDistance){
+                           currentMaxDistance = activity.distances[activity.distances.length-1];
+                       }
+                    });
+                    return currentMaxDistance;
+                }
+
+                var totalTime = computeTotalTime(activities);
+                var maxDistance = computeMaxDistance(activities);
+
+                /*for(var graphIndex=0; graphIndex<chartsNumber; graphIndex++){
+
+                }*/
 
             }
         }
