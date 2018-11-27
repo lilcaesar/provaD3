@@ -35,14 +35,12 @@ var activities = [];
 var files = ['datasets/gps_300k_coords.csv', 'datasets/workout_activity_result.csv', 'datasets/workout_activity.csv'];
 var allResults = [];
 
-
-var width = document.getElementById('graphic-container').offsetWidth;
-var height = document.getElementById('graphic-container').offsetHeight;
 var svg = d3.select('#graphic-container').append("svg")
     .attr("id", 'svg-container')
     .attr("width", '100%')
-    .attr("height", '300')
     .attr('preserveAspectRatio', 'xMinYMin');
+
+svg.attr("height", document.getElementById('svg-container').getBoundingClientRect().width/3);
 
 d3.select("#age").text(computeAge(training.user_birthdate) + " anni");
 d3.select("#predicted").text(training.mark);
@@ -120,8 +118,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                 WARData = filterByTraining(WARData, 11);
                 chartsNumber = WARData.length;
 
-                var currentActivityDistanceValues = [];
-                var currentActivityTimeValues = [];
+                var currentActivityDataArray = [];
                 var currentActivityDistance = -1;
                 var currentActivityTime = -1;
                 var currentActivityID = gpsData[0].workout_activity_id;
@@ -136,11 +133,9 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                         });
                         activities.push({
                             info: informations,
-                            distances: currentActivityDistanceValues,
-                            times: currentActivityTimeValues
+                            data: currentActivityDataArray
                         });
-                        currentActivityDistanceValues = [];
-                        currentActivityTimeValues = [];
+                        currentActivityDataArray = [];
                         currentActivityDistance = -1;
                         currentActivityTime = -1;
                         currentActivityID = gpsData[i].workout_activity_id;
@@ -148,16 +143,14 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                     if (currentActivityDistance == -1) {
                         currentActivityDistance = 0;
                         currentActivityTime = 0;
-                        currentActivityDistanceValues.push(currentActivityDistance);
-                        currentActivityTimeValues.push(currentActivityTime);
+                        currentActivityDataArray.push({distance:currentActivityDistance, time:currentActivityTime});
                     } else {
                         currentActivityDistance = currentActivityDistance + compute3DDistance(
                             computeCartesianPoint([gpsData[i].longitude, gpsData[i].latitude, gpsData[i].altitude]),
                             computeCartesianPoint([gpsData[i - 1].longitude, gpsData[i - 1].latitude, gpsData[i - 1].altitude])
                         );
                         currentActivityTime = currentActivityTime + ((gpsData[i].time - gpsData[i - 1].time) / 1000);
-                        currentActivityDistanceValues.push(currentActivityDistance);
-                        currentActivityTimeValues.push(currentActivityTime);
+                        currentActivityDataArray.push({distance:currentActivityDistance, time:currentActivityTime});
                     }
                     if (i == gpsData.length - 1) {
                         var temporaryActivity = getActivityInformations(gpsData[i - 1].workout_activity_id);
@@ -168,8 +161,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                         });
                         activities.push({
                             info: informations,
-                            distances: currentActivityDistanceValues,
-                            times: currentActivityTimeValues
+                            data:currentActivityDataArray
                         });
                     }
                 }
@@ -177,7 +169,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                 function computeTotalTime(activityArray) {
                     var sum = 0;
                     activityArray.forEach(function (activity) {
-                        sum = sum + activity.times[activity.times.length - 1] + activity.info.pauseTime;
+                        sum = sum + activity.data[activity.data.length - 1].time + activity.info.pauseTime;
                     });
                     return sum;
                 }
@@ -185,8 +177,8 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                 function computeMaxDistance(activityArray) {
                     var currentMaxDistance = -1;
                     activityArray.forEach(function (activity) {
-                        if (activity.distances[activity.distances.length - 1] > currentMaxDistance) {
-                            currentMaxDistance = activity.distances[activity.distances.length - 1];
+                        if (activity.data[activity.data.length - 1].distance > currentMaxDistance) {
+                            currentMaxDistance = activity.data[activity.data.length - 1].distance;
                         }
                     });
                     return currentMaxDistance;
@@ -196,25 +188,29 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                 var maxDistance = computeMaxDistance(activities);
                 var currentChartPosition = 0;
 
-                var yScale = d3.scaleLinear()
-                    .domain([0, maxDistance])
-                    .range([300, 0]);
-                var yAxis = d3.axisLeft(yScale)
-                    .ticks(0);
-
                 var svgContainerWidth = document.getElementById("svg-container").getBoundingClientRect().width;
                 var svgContainerHeight = document.getElementById("svg-container").getBoundingClientRect().height;
 
+                var yScale = d3.scaleLinear()
+                    .domain([0, maxDistance])
+                    .range([svgContainerHeight, 0]);
+                var yAxis = d3.axisLeft(yScale);
+
+
                 for (var graphIndex = 0; graphIndex < chartsNumber; graphIndex++) {
-                    var currentActivityMaxTime = activities[graphIndex].times[activities[graphIndex].times.length - 1];
+                    var currentActivityMaxTime = activities[graphIndex].data[activities[graphIndex].data.length - 1].time;
                     var xProportion = currentActivityMaxTime / totalTime;
                     var currentWidth = svgContainerWidth * xProportion;
 
                     var xScale = d3.scaleLinear()
-                        .domain(0, currentActivityMaxTime)
+                        .domain([0, currentActivityMaxTime])
                         .range([0, currentWidth]);
-                    var xAxis = d3.axisBottom(xScale)
-                        .ticks(0);
+                    var xAxis = d3.axisBottom(xScale);
+
+                    /*var line = d3.line()
+                        .x(function (d) { return xScale(d.time)})
+                        .y(function (d) { return yScale(d.distance)})
+                        .curve(d3.curveMonotoneX);*/
 
                     svg.append('g')
                         .attr('class', 'axis')
@@ -224,15 +220,51 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
 
                     svg.append('g')
                         .attr('class', 'axis')
-                        .attr('transform', 'translate(' + (currentChartPosition).toString() + ',300)')
+                        .attr('transform', 'translate(' + (currentChartPosition).toString() + ','+svgContainerHeight+')')
                         .call(xAxis)
                         .style({'stroke-width': '1px'});
+
+                    /*svg.append("path")
+                        .datum(activities[graphIndex].data)
+                        .attr('class', 'line')
+                        .attr("d", line);*/
+
+                    svg.selectAll('circle')
+                        .data(activities[graphIndex].data)
+                        .enter()
+                        .append('circle')
+                        .attr('cx', function (d) {
+                            return xScale(d.time)
+                        })
+                        .attr('cy', function (d) {
+                            return yScale(d.distance)
+                        })
+                        .attr('r', 5)
+                        .attr('fill', "#ffab00");
+
 
                     currentChartPosition = currentChartPosition + currentWidth +30;
                 }
 
+                svg.append('text') // X-axis Label
+                    .attr('class', 'label')
+                    .attr('y', (svgContainerHeight+10))
+                    .attr('x', (svgContainerWidth+(30*(chartsNumber-1))))
+                    .attr('dy', '.71em')
+                    .style('fill', 'black')
+                    .style('text-anchor', 'end')
+                    .text('Secondi');
+                svg.append('text') // Y-axis Label
+                    .attr('class', 'label')
+                    .attr('x', 10)
+                    .attr('y', -20)
+                    .attr('dy', '.71em')
+                    .style('fill', 'black')
+                    .style('text-anchor', 'end')
+                    .text('Metri');
+
                 d3.select('#svg-container')
-                    .attr('viewBox', '-10 0 ' + (svgContainerWidth+(30*chartsNumber)) + ' ' + (svgContainerHeight+10));
+                    .attr('viewBox', '-30 -30 ' + (svgContainerWidth+(30*chartsNumber)) + ' ' + (svgContainerHeight+20));
             }
         }
     });
