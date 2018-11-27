@@ -91,18 +91,18 @@ d3.dsv(',', 'datasets/workout_item.csv').then(function (data) {
         .style('text-anchor', 'end')
         .text('Affidabilità');
 // Y-axis
-        svg.append('g')
-            .attr('class', 'axis')
-            .call(yAxis)
-            .append('text') // y-axis Label
-            .attr('class', 'label')
-            .attr('transform', 'rotate(-90)')
-            .attr('x', 0)
-            .attr('y', 5)
-            .attr('dy', '.71em')
-            .style('fill', 'black')
-            .style('text-anchor', 'end')
-            .text('Punteggio');
+    svg.append('g')
+        .attr('class', 'axis')
+        .call(yAxis)
+        .append('text') // y-axis Label
+        .attr('class', 'label')
+        .attr('transform', 'rotate(-90)')
+        .attr('x', 0)
+        .attr('y', 5)
+        .attr('dy', '.71em')
+        .style('fill', 'black')
+        .style('text-anchor', 'end')
+        .text('Punteggio');
 
     //Funzione per parsare le date da quel formato stringa nel formato interpretabile da d3 (e browser)
     var parseDate = d3.timeParse("%Y-%m-%d %H:%M:%S");
