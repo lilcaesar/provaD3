@@ -38,10 +38,11 @@ var allResults = [];
 
 var width =document.getElementById('graphic-container').offsetWidth;
 var height =document.getElementById('graphic-container').offsetHeight;
-var svg = d3.select('.graphic').append("svg")
+var svg = d3.select('#graphic-container').append("svg")
     .attr("width", '100%')
-    .attr("height", '100%')
+    .attr("height", '200')
     .attr('viewBox','0 0 '+Math.min(width,height)+' '+Math.min(width,height))
+    //.attr('viewBox','0 0 1200 500')
     .attr('preserveAspectRatio','xMinYMin');
 
 d3.select("#age").text(computeAge(training.user_birthdate) + " anni");
@@ -206,34 +207,89 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
 
                 var yScale = d3.scaleLinear()
                     .domain([0, maxDistance])
-                    .range([5, 0]);
-
+                    .range([maxDistance/2, 0 ]);
                 var yAxis = d3.axisLeft(yScale)
-                    .ticks(0);
+                    .ticks(5);
 
                 /*var xScaleVector = [];
                 var xAxisVector = [];*/
 
+                // lunghezza di ogni grafico (la prima è 40 dal bordo sinistro)
+                var oldXProportion = 30;
+                // distanza tra ogni grafico
+                var distanceFromGraphs = 30;
+                // distanza dei grafici dal titolo superiore
+                var distanceFromTop = 30;
+
                 for(var graphIndex=0; graphIndex<chartsNumber; graphIndex++){
                     var currentActivityMaxTime = activities[graphIndex].times[activities[graphIndex].times.length-1];
-                    var xProportion = currentActivityMaxTime/totalTime*100;
+                    // con 1000 ho dei valori che sommati danno 1000 (un po' meno della larghezza dell'svg)
+                    var xProportion = currentActivityMaxTime/totalTime*1000;
+                    //console.log(currentActivityMaxTime, xProportion, maxDistance, totalTime/2)
+                    console.log(xProportion, activities[graphIndex].info.type);
+
+                    // X Axis
                     var xScale= d3.scaleLinear()
-                        .domain(0, currentActivityMaxTime)
-                        .range([0, 5]);
+                        .domain([0, xProportion])
+                        .range([0, xProportion]);
+                    xScale.nice();
                     var xAxis = d3.axisBottom(xScale)
-                        .ticks(0);
+                        .ticks(5);
 
                     svg.append('g')
                         .attr('class', 'axis')
+                        // idem come sopra, ma la distanza dal top è pari a maxDistance/2
+                        .attr('transform', 'translate('+(oldXProportion).toString()+',' +((maxDistance/2)+distanceFromTop)+ ')')
+                        .call(xAxis)
+                        //.style({'stroke-width':'1px'});
+
+
+                    // Y Axis
+                    svg.append('g')
+                        .attr('class', 'axis')
+                        // translate(x,y) -> oldXProportion è la lunghezza dell'nesimo grafico (15 è lo spazio dal top)
+                        .attr('transform', 'translate('+(oldXProportion).toString()+','+distanceFromTop+')')
                         .call(yAxis)
                         .style({'stroke-width':'1px'});
 
-                    svg.append('g')
-                        .attr('class', 'axis')
-                        .attr('transform', 'translate('+(5*graphIndex).toString()+',5)')
-                        .call(xAxis)
-                        .style({'stroke-width':'1px'});
+                    // inserimento metrica asse Y
+                    if(graphIndex == 0){
+                        d3.select('g')
+                            .append('text') // y-axis Label
+                            .attr('class', 'label')
+                            //.attr('transform', 'rotate(-90)')
+                            .attr('x', distanceFromGraphs)
+                            .attr('y', -maxDistance/2)
+                            .attr('dy', '.71em')
+                            .style('fill', 'black')
+                            .style('text-anchor', 'end')
+                            .style("font-size", "13px")
+                            .text('Metri');
+                    }
+
+                    // inserimento metrica asse X
+                    if(graphIndex == chartsNumber-1){
+                        d3.select('g')
+                            .append('text') // X-axis Label
+                            .attr('class', 'label')
+                            .attr('y', 0)
+                            .attr('x', totalTime/2)
+                            .attr('dy', '.71em')
+                            .style('fill', 'black')
+                            .style('text-anchor', 'end')
+                            .style("font-size", "13px")
+                            .text('Minuti');
+                    }
+
+
+                    // aggiorno oldXProportion e lascio uno spazio dal prossimo grafico di 20
+                    oldXProportion = oldXProportion + xProportion + distanceFromGraphs;
                 }
+
+                d3.select('svg').attr("height", (maxDistance/2)+distanceFromTop*2)
+                d3.select('svg').attr('viewBox','0 0 '+((totalTime/2)+30)+' '+maxDistance/2)
+
+
             }
         }
     });
