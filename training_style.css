@@ -9,15 +9,6 @@ body{
     border-radius: 0.5rem;
     background: #fff;
 }
-
-
-@media (min-width: 1300px) {
-    .container {
-        max-width: 1290px;
-    }
-}
-
-
 .profile-user-name{
     text-align: center;
 }
@@ -123,10 +114,6 @@ body{
 .graphic img{
     width: 50%;
     height: 20%;
-}
-
-#graphic-container{
-    text-align: center;
 }
 
 .divider-line {
