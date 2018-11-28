@@ -127,6 +127,9 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                     if (gpsData[i].workout_activity_id != currentActivityID) {
                         var temporaryActivity = getActivityInformations(gpsData[i - 1].workout_activity_id);
                         var informations = ({
+                            objective: temporaryActivity[0].wactivity_type,
+                            objectiveTimeValue: temporaryActivity[0].wactivity_time,
+                            objectiveDistanceValue: temporaryActivity[0].wactivity_distance,
                             type: temporaryActivity[0].wactivity_label,
                             pauseTime: (gpsData[i].time - gpsData[i - 1].time) / 1000,
                             comment: temporaryActivity[0].wactivity_comment
@@ -155,6 +158,9 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                     if (i == gpsData.length - 1) {
                         var temporaryActivity = getActivityInformations(gpsData[i - 1].workout_activity_id);
                         var informations = ({
+                            objective: temporaryActivity[0].wactivity_type,
+                            objectiveTimeValue: temporaryActivity[0].wactivity_time,
+                            objectiveDistanceValue: temporaryActivity[0].wactivity_distance,
                             type: temporaryActivity[0].wactivity_label,
                             pauseTime: (gpsData[i].time - gpsData[i - 1].time) / 1000,
                             comment: temporaryActivity[0].wactivity_comment
@@ -194,23 +200,23 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                 var yScale = d3.scaleLinear()
                     .domain([0, maxDistance])
                     .range([svgContainerHeight, 0]);
-                var yAxis = d3.axisLeft(yScale);
-
+                var yAxis = d3.axisLeft(yScale)
+                    .ticks(0);
 
                 for (var graphIndex = 0; graphIndex < chartsNumber; graphIndex++) {
                     var currentActivityMaxTime = activities[graphIndex].data[activities[graphIndex].data.length - 1].time;
+                    var currentActivityMaxDistance = activities[graphIndex].data[activities[graphIndex].data.length - 1].distance;
+                    var currentActivityObjective = activities[graphIndex].info.objective;
+                    var currentActivityObjectiveTimeValue = activities[graphIndex].info.objectiveTimeValue;
+                    var currentActivityObjectiveDistanceValue = activities[graphIndex].info.objectiveDistanceValue;
                     var xProportion = currentActivityMaxTime / totalTime;
                     var currentWidth = svgContainerWidth * xProportion;
 
                     var xScale = d3.scaleLinear()
                         .domain([0, currentActivityMaxTime])
                         .range([0, currentWidth]);
-                    var xAxis = d3.axisBottom(xScale);
-
-                    /*var line = d3.line()
-                        .x(function (d) { return xScale(d.time)})
-                        .y(function (d) { return yScale(d.distance)})
-                        .curve(d3.curveMonotoneX);*/
+                    var xAxis = d3.axisBottom(xScale)
+                        .ticks(0);
 
                     svg.append('g')
                         .attr('class', 'axis')
@@ -224,24 +230,83 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                         .call(xAxis)
                         .style({'stroke-width': '1px'});
 
-                    /*svg.append("path")
-                        .datum(activities[graphIndex].data)
-                        .attr('class', 'line')
-                        .attr("d", line);*/
+                    var	valueline = d3.line()
+                        .x(function(d) { return xScale(d.time)+currentChartPosition; })
+                        .y(function(d) { return yScale(d.distance); });
 
-                    svg.selectAll('circle')
-                        .data(activities[graphIndex].data)
-                        .enter()
-                        .append('circle')
-                        .attr('cx', function (d) {
-                            return xScale(d.time)
-                        })
-                        .attr('cy', function (d) {
-                            return yScale(d.distance)
-                        })
-                        .attr('r', 5)
-                        .attr('fill', "#ffab00");
+                    svg.append("path")
+                        .attr("class", "data-line")
+                        .attr("d", valueline(activities[graphIndex].data));
 
+                    //Punto dell'obiettivo
+                    if(currentActivityObjective=="TIME") {
+                        svg.append("circle")
+                            .attr("cx", xScale(currentActivityObjectiveTimeValue) + currentChartPosition)
+                            .attr("cy", yScale(currentActivityMaxDistance))
+                            .attr("r", 6)
+                            .attr("fill", "green");
+
+                        svg.append("line")
+                            .attr('x1', xScale(currentActivityObjectiveTimeValue)+currentChartPosition)
+                            .attr('y1', yScale(0))
+                            .attr('x2', xScale(currentActivityObjectiveTimeValue)+currentChartPosition)
+                            .attr('y2', yScale(currentActivityMaxDistance))
+                            .style("stroke", "blue");
+                    }else if(currentActivityObjective=="DISTANCE"){
+                        svg.append("circle")
+                            .attr("cx", xScale(currentActivityMaxTime) + currentChartPosition)
+                            .attr("cy", yScale(currentActivityObjectiveDistanceValue))
+                            .attr("r", 6)
+                            .attr("fill", "green");
+
+                        svg.append("line")
+                            .attr('x1', xScale(0)+currentChartPosition)
+                            .attr('y1', yScale(currentActivityObjectiveDistanceValue))
+                            .attr('x2', xScale(currentActivityMaxTime)+currentChartPosition)
+                            .attr('y2', yScale(currentActivityObjectiveDistanceValue))
+                            .style("stroke", "blue");
+                    }
+
+                    //Punto del risultato dell'utente
+                    svg.append("line")
+                        .attr('x1', xScale(0)+currentChartPosition)
+                        .attr('y1', yScale(currentActivityMaxDistance))
+                        .attr('x2', xScale(currentActivityMaxTime)+currentChartPosition)
+                        .attr('y2', yScale(currentActivityMaxDistance))
+                        .style("stroke", "blue")
+                        .style("stroke-dasharray", ("3, 3"));
+
+                    svg.append("line")
+                        .attr('x1', xScale(currentActivityMaxTime)+currentChartPosition)
+                        .attr('y1', yScale(0))
+                        .attr('x2', xScale(currentActivityMaxTime)+currentChartPosition)
+                        .attr('y2', yScale(currentActivityMaxDistance))
+                        .style("stroke", "blue")
+                        .style("stroke-dasharray", ("3, 3"));
+
+                    svg.append("circle")
+                        .attr("cx", xScale(currentActivityMaxTime)+currentChartPosition)
+                        .attr("cy", yScale(currentActivityMaxDistance))
+                        .attr("r", 4)
+                        .attr("fill", "red");
+
+                    svg.append('text') //Distanza
+                        .attr('class', 'result-value')
+                        .attr('y', yScale(currentActivityMaxDistance))
+                        .attr('x', xScale(0)+currentChartPosition)
+                        .attr('dy', '.71em')
+                        .style('fill', 'black')
+                        .style('text-anchor', 'end')
+                        .text(parseInt(currentActivityMaxDistance));
+
+                    svg.append('text') //Tempo
+                        .attr('class', 'result-value')
+                        .attr('y', yScale(0)+5)
+                        .attr('x', xScale(currentActivityMaxTime)+currentChartPosition)
+                        .attr('dy', '.71em')
+                        .style('fill', 'black')
+                        .style('text-anchor', 'end')
+                        .text(parseInt(currentActivityMaxTime));
 
                     currentChartPosition = currentChartPosition + currentWidth +30;
                 }

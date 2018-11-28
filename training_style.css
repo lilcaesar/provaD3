@@ -180,3 +180,9 @@ body{
         max-width: 1700px;
     }
 }
+
+.data-line {
+    stroke: #ffc322;
+    stroke-width: 3;
+    fill: none;
+}
