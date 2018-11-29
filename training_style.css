@@ -183,6 +183,6 @@ body{
 
 .data-line {
     stroke: #ffc322;
-    stroke-width: 3;
+    stroke-width: 3px;
     fill: none;
 }
