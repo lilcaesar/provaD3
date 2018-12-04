@@ -56,7 +56,6 @@ var customBeforePan = function(oldPan, newPan){
         , topLimit = -(gutterHeight-sizes.height)
         , bottomLimit = 0
 
-    console.log(panZoomInstance.getSizes().realZoom);
     customPan = {}
     customPan.x = Math.max(leftLimit, Math.min(rightLimit, newPan.x))
     customPan.y = Math.max(topLimit, Math.min(bottomLimit, newPan.y))
@@ -140,7 +139,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
 
                 gpsData = filterByTraining(gpsData, 11);
                 WARData = filterByTraining(WARData, 11);
-                chartsNumber = WARData.length;
+                chartsNumber = WARData.length-1;
 
                 var currentActivityDataArray = [];
                 var currentActivityDistance = -1;
@@ -223,7 +222,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
 
                 var yScale = d3.scaleLinear()
                     .domain([0, maxDistance])
-                    .range([svgContainerHeight-20, 10]);
+                    .range([svgContainerHeight-20, 30]);
                 var yAxis = d3.axisLeft(yScale)
                     .ticks(0);
 
@@ -285,7 +284,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
 
                         svg.append("line")
                             .attr('class', 'expected-range')
-                            .attr('x1', xScale(0)+currentChartPosition)
+                            .attr('x1', xScale(0)+currentChartPosition+1)
                             .attr('y1', yScale(currentActivityObjectiveDistanceValue))
                             .attr('x2', xScale(currentActivityMaxTime)+currentChartPosition)
                             .attr('y2', yScale(currentActivityObjectiveDistanceValue))
@@ -345,6 +344,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                     }
 
                     svg.append("circle")
+                        .attr('id', 'result-point'+graphIndex)
                         .attr('class', 'result-point')
                         .attr("cx", xScale(currentActivityMaxTime)+currentChartPosition)
                         .attr("cy", yScale(currentActivityMaxDistance))
@@ -352,6 +352,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                         .attr("fill", "red");
 
                     svg.append('text') //Distanza
+                        .attr('id', 'result-value-distance'+graphIndex)
                         .attr('class', 'result-value-distance')
                         .attr('y', yScale(currentActivityMaxDistance))
                         .attr('x', xScale(0)+currentChartPosition)
@@ -361,6 +362,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                         .text(parseInt(currentActivityMaxDistance));
 
                     svg.append('text') //Tempo
+                        .attr('id', 'result-value-time'+graphIndex)
                         .attr('class', 'result-value-time')
                         .attr('y', yScale(0)+5)
                         .attr('x', xScale(currentActivityMaxTime)+currentChartPosition)
@@ -368,8 +370,6 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                         .style('fill', 'black')
                         .style('text-anchor', 'end')
                         .text(parseInt(currentActivityMaxTime));
-
-
 
                     currentChartPosition = currentChartPosition + currentWidth +30;
                 }
@@ -423,7 +423,23 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                         d3.selectAll(".data-line").style("stroke-width", (3/scale)+'px');
                         d3.selectAll(".axis").style("stroke-width", (1/scale)+'px');
                     },
-                    beforePan: customBeforePan
+                    beforePan: customBeforePan,
+                    onPan: function (pan) {
+                        //console.log(d3.selectAll(".result-point")._groups[0][0].cx.animVal.value);
+                        var points = d3.selectAll(".result-point")._groups[0];
+                        var labelDistances = d3.selectAll(".result-value-distance")._groups[0];
+                        var labelTimes = d3.selectAll(".result-value-time")._groups[0];
+                        for(var i=0; i<points.length; i++){
+                            if(((points[i].cx.animVal.value+pan.x)>0)&&
+                                ((points[i].cx.animVal.value+pan.x)<svgContainerWidth)&&
+                                ((points[i].cy.animVal.value+pan.y)>0)&&
+                                ((points[i].cy.animVal.value+pan.y)<svgContainerHeight)){
+                                console.log("DENTRO");
+                            }else{
+                                console.log("FUORI");
+                            }
+                        }
+                    }
                 });
 
             }
