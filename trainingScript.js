@@ -44,22 +44,19 @@ var svg = d3.select('#graphic-container')
 
 svg.attr("height", document.getElementById('svg-container').getBoundingClientRect().width/3);
 
-/*var svgG = svg.append("g")
-    .attr("class", "svg-pan-zoom_viewport");*/
-
 var customBeforePan = function(oldPan, newPan){
-    console.log(this.getSizes());
     var stopHorizontal = false
         , stopVertical = false
         , gutterWidth = (panZoomInstance.getSizes().viewBox.width * panZoomInstance.getSizes().realZoom)
         , gutterHeight = (panZoomInstance.getSizes().viewBox.height * panZoomInstance.getSizes().realZoom)
         // Computed variables
         , sizes = this.getSizes()
-        , leftLimit = -((sizes.viewBox.x + sizes.viewBox.width) * sizes.realZoom) + gutterWidth
-        , rightLimit = sizes.width - gutterWidth - (sizes.viewBox.x * sizes.realZoom)
-        , topLimit = -((sizes.viewBox.y + sizes.viewBox.height) * sizes.realZoom) + gutterHeight
-        , bottomLimit = sizes.height - gutterHeight - (sizes.viewBox.y * sizes.realZoom)
+        , leftLimit = -(gutterWidth-sizes.width)
+        , rightLimit = 0
+        , topLimit = -(gutterHeight-sizes.height)
+        , bottomLimit = 0
 
+    console.log(panZoomInstance.getSizes().realZoom);
     customPan = {}
     customPan.x = Math.max(leftLimit, Math.min(rightLimit, newPan.x))
     customPan.y = Math.max(topLimit, Math.min(bottomLimit, newPan.y))
@@ -219,14 +216,14 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
 
                 var totalTime = computeTotalTime(activities);
                 var maxDistance = computeMaxDistance(activities);
-                var currentChartPosition = 0;
+                var currentChartPosition = 40;
 
                 var svgContainerWidth = document.getElementById("svg-container").getBoundingClientRect().width;
                 var svgContainerHeight = document.getElementById("svg-container").getBoundingClientRect().height;
 
                 var yScale = d3.scaleLinear()
                     .domain([0, maxDistance])
-                    .range([svgContainerHeight, 0]);
+                    .range([svgContainerHeight-20, 10]);
                 var yAxis = d3.axisLeft(yScale)
                     .ticks(0);
 
@@ -253,17 +250,17 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
 
                     svg.append('g')
                         .attr('class', 'axis')
-                        .attr('transform', 'translate(' + (currentChartPosition).toString() + ','+svgContainerHeight+')')
+                        .attr('transform', 'translate(' + (currentChartPosition).toString() + ','+(svgContainerHeight-20)+')')
                         .call(xAxis)
                         .style({'stroke-width': '1px'});
 
                     var	valueline = d3.line()
                         .x(function(d) { return xScale(d.time)+currentChartPosition; })
                         .y(function(d) { return yScale(d.distance); });
-
+                    var range;
                     //Punto dell'obiettivo
                     if(currentActivityObjective=="TIME") {
-                        var range = xScale(currentActivityObjectiveTimeValue * 0.05);
+                        range = xScale(currentActivityObjectiveTimeValue * 0.05);
 
                             svg.append("line")
                             .attr('class', 'expected-range')
@@ -284,7 +281,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                             .style("stroke-width", '2px');
 
                     }else if(currentActivityObjective=="DISTANCE"){
-                        var range = yScale(currentActivityObjectiveDistanceValue * 0.05);
+                        range = svgContainerHeight-(yScale(currentActivityObjectiveDistanceValue * 0.05));
 
                         svg.append("line")
                             .attr('class', 'expected-range')
@@ -379,22 +376,24 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
 
                 svg.append('text') // X-axis Label
                     .attr('class', 'label')
-                    .attr('y', (svgContainerHeight+20))
-                    .attr('x', (svgContainerWidth+(30*(chartsNumber-1))))
+                    .attr('id', 'label-x')
+                    .attr('y', (svgContainerHeight))
+                    .attr('x', (svgContainerWidth+(30*(chartsNumber))))
                     .attr('dy', '12px')
                     .style('fill', 'black')
                     .style('text-anchor', 'end')
                     .text('Secondi');
                 svg.append('text') // Y-axis Label
                     .attr('class', 'label')
-                    .attr('x', 10)
-                    .attr('y', -20)
+                    .attr('id', 'label-y')
+                    .attr('x', 40)
+                    .attr('y', 10)
                     .attr('dy', '12px')
                     .style('fill', 'black')
                     .style('text-anchor', 'end')
                     .text('Metri');
 
-                svgViewport=[-30, -30, (svgContainerWidth+(30*chartsNumber)),(svgContainerHeight+20)];
+                svgViewport=[0, 0, (svgContainerWidth+(30*chartsNumber)),(svgContainerHeight+20)];
                 d3.select('#svg-container')
                     .attr('viewBox', svgViewport[0] +" "+ svgViewport[1] +" "+ svgViewport[2] +" " +svgViewport[3]);
 
@@ -408,11 +407,13 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                     zoomScaleSensitivity: 0.2,
                     minZoom: 1,
                     maxZoom: 10,
-                    fit: false,
+                    fit: true,
                     contain: false,
                     center: false,
                     refreshRate: 'auto',
                     onZoom: function(scale){
+                        d3.selectAll(".label").style("font-size", (16/scale)+'px');
+                        d3.select('#label-y').attr('x', 40/scale).attr('y', 10/scale);
                         d3.selectAll(".result-value-distance").style("font-size", (16/scale)+'px');
                         d3.selectAll(".result-value-time").style("font-size", (16/scale)+'px');
                         d3.selectAll(".result-point").attr("r", 4/scale);
