@@ -356,6 +356,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                         .attr('class', 'result-value-distance')
                         .attr('y', yScale(currentActivityMaxDistance))
                         .attr('x', xScale(0)+currentChartPosition)
+                        .attr('original-x', xScale(0)+currentChartPosition)
                         .attr('dy', '8px')
                         .style('fill', 'black')
                         .style('text-anchor', 'end')
@@ -366,6 +367,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                         .attr('class', 'result-value-time')
                         .attr('y', yScale(0)+5)
                         .attr('x', xScale(currentActivityMaxTime)+currentChartPosition)
+                        .attr('original-y', yScale(0)+5)
                         .attr('dy', '8px')
                         .style('fill', 'black')
                         .style('text-anchor', 'end')
@@ -407,7 +409,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                     zoomScaleSensitivity: 0.2,
                     minZoom: 1,
                     maxZoom: 10,
-                    fit: true,
+                    fit: false,
                     contain: false,
                     center: false,
                     refreshRate: 'auto',
@@ -422,26 +424,60 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                         d3.selectAll(".expected-line").style("stroke-width", (2/scale)+'px');
                         d3.selectAll(".data-line").style("stroke-width", (3/scale)+'px');
                         d3.selectAll(".axis").style("stroke-width", (1/scale)+'px');
+
+                        var points = d3.selectAll(".result-point")._groups[0];
+                        for(var i=0; i<points.length; i++){
+                            var labelDistance = d3.select("#result-value-distance"+i);
+                            var labelTime = d3.select("#result-value-time"+i);
+                            var xp = points[i].cx.animVal.value*this.getSizes().realZoom+this.getPan().x;
+                            var yp = points[i].cy.animVal.value*this.getSizes().realZoom+this.getPan().y;
+                            if((xp>=0)&&(yp>=0)){
+                                labelDistance.style("visibility","visible");
+                                labelTime.style("visibility","visible");
+                                if(labelDistance.attr("original-x")*this.getSizes().realZoom+this.getPan().x<25){
+                                    labelDistance.attr("x",(25-this.getPan().x)/(this.getSizes().realZoom));
+                                }else{
+                                    labelDistance.attr("x",labelDistance.attr("original-x"));
+                                }
+                                if(labelTime.attr("original-y")*this.getSizes().realZoom+this.getPan().y>(svgContainerHeight-15)){
+                                    labelTime.attr("y",(svgContainerHeight-15-this.getPan().y)/(this.getSizes().realZoom));
+                                }else{
+                                    labelTime.attr("y",labelTime.attr("original-y"));
+                                }
+                            }else{
+                                labelDistance.style("visibility","hidden");
+                                labelTime.style("visibility","hidden");
+                            }
+                        }
                     },
                     beforePan: customBeforePan,
                     onPan: function (pan) {
-                        //console.log(d3.selectAll(".result-point")._groups[0][0].cx.animVal.value);
                         var points = d3.selectAll(".result-point")._groups[0];
-                        var labelDistances = d3.selectAll(".result-value-distance")._groups[0];
-                        var labelTimes = d3.selectAll(".result-value-time")._groups[0];
                         for(var i=0; i<points.length; i++){
-                            if(((points[i].cx.animVal.value+pan.x)>0)&&
-                                ((points[i].cx.animVal.value+pan.x)<svgContainerWidth)&&
-                                ((points[i].cy.animVal.value+pan.y)>0)&&
-                                ((points[i].cy.animVal.value+pan.y)<svgContainerHeight)){
-                                console.log("DENTRO");
+                            var labelDistance = d3.select("#result-value-distance"+i);
+                            var labelTime = d3.select("#result-value-time"+i);
+                            var xp = points[i].cx.animVal.value*this.getSizes().realZoom+this.getPan().x;
+                            var yp = points[i].cy.animVal.value*this.getSizes().realZoom+this.getPan().y;
+                            if((xp>=0)&&(yp>=0)){
+                                labelDistance.style("visibility","visible");
+                                labelTime.style("visibility","visible");
+                                if(labelDistance.attr("original-x")*this.getSizes().realZoom+this.getPan().x<25){
+                                    labelDistance.attr("x",(25-this.getPan().x)/(this.getSizes().realZoom));
+                                }else{
+                                    labelDistance.attr("x",labelDistance.attr("original-x"));
+                                }
+                                if(labelTime.attr("original-y")*this.getSizes().realZoom+this.getPan().y>(svgContainerHeight-15)){
+                                    labelTime.attr("y",(svgContainerHeight-15-this.getPan().y)/(this.getSizes().realZoom));
+                                }else{
+                                    labelTime.attr("y",labelTime.attr("original-y"));
+                                }
                             }else{
-                                console.log("FUORI");
+                                labelDistance.style("visibility","hidden");
+                                labelTime.style("visibility","hidden");
                             }
                         }
                     }
                 });
-
             }
         }
     });
