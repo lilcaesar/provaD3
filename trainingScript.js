@@ -44,6 +44,8 @@ var svg = d3.select('#graphic-container')
 
 svg.attr("height", document.getElementById('svg-container').getBoundingClientRect().width/3);
 
+var paths = [];
+
 var customBeforePan = function(oldPan, newPan){
     var stopHorizontal = false
         , stopVertical = false
@@ -233,7 +235,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                     var currentActivityObjectiveTimeValue = activities[graphIndex].info.objectiveTimeValue;
                     var currentActivityObjectiveDistanceValue = activities[graphIndex].info.objectiveDistanceValue;
                     var xProportion = currentActivityMaxTime / totalTime;
-                    var currentWidth = svgContainerWidth * xProportion;
+                    var currentWidth = (svgContainerWidth-20) * xProportion;
 
                     var xScale = d3.scaleLinear()
                         .domain([0, currentActivityMaxTime])
@@ -322,9 +324,9 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                         .style("stroke-width", '2px')
                         .style("stroke-dasharray", ("3, 3"));
 
-                    svg.append("path")
+                    paths.push(svg.append("path")
                         .attr("class", "data-line")
-                        .attr("d", valueline(activities[graphIndex].data));
+                        .attr("d", valueline(activities[graphIndex].data)));
 
                     if(currentActivityObjective=="TIME") {
                         svg.append("circle")
@@ -354,8 +356,9 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                     svg.append('text') //Distanza
                         .attr('id', 'result-value-distance'+graphIndex)
                         .attr('class', 'result-value-distance')
-                        .attr('y', yScale(currentActivityMaxDistance))
+                        .attr('y', yScale(currentActivityMaxDistance)-2)
                         .attr('x', xScale(0)+currentChartPosition)
+                        .attr('original-y', yScale(currentActivityMaxDistance))
                         .attr('original-x', xScale(0)+currentChartPosition)
                         .attr('dy', '8px')
                         .style('fill', 'black')
@@ -368,6 +371,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                         .attr('y', yScale(0)+5)
                         .attr('x', xScale(currentActivityMaxTime)+currentChartPosition)
                         .attr('original-y', yScale(0)+5)
+                        .attr('original-x', xScale(currentActivityMaxTime)+currentChartPosition)
                         .attr('dy', '8px')
                         .style('fill', 'black')
                         .style('text-anchor', 'end')
@@ -439,11 +443,13 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                 }else{
                                     labelDistance.attr("x",labelDistance.attr("original-x"));
                                 }
+                                labelDistance.attr("y",labelDistance.attr("original-y")-7);
                                 if(labelTime.attr("original-y")*this.getSizes().realZoom+this.getPan().y>(svgContainerHeight-15)){
-                                    labelTime.attr("y",(svgContainerHeight-15-this.getPan().y)/(this.getSizes().realZoom));
+                                    labelTime.attr("y",((svgContainerHeight-15-this.getPan().y)/(this.getSizes().realZoom))-(this.getSizes().realZoom));
                                 }else{
                                     labelTime.attr("y",labelTime.attr("original-y"));
                                 }
+                                labelTime.attr("x",(1*labelTime.attr("original-x")));
                             }else{
                                 labelDistance.style("visibility","hidden");
                                 labelTime.style("visibility","hidden");
@@ -466,11 +472,13 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                 }else{
                                     labelDistance.attr("x",labelDistance.attr("original-x"));
                                 }
+                                labelDistance.attr("y",labelDistance.attr("original-y")-7);
                                 if(labelTime.attr("original-y")*this.getSizes().realZoom+this.getPan().y>(svgContainerHeight-15)){
-                                    labelTime.attr("y",(svgContainerHeight-15-this.getPan().y)/(this.getSizes().realZoom));
+                                    labelTime.attr("y",((svgContainerHeight-15-this.getPan().y)/(this.getSizes().realZoom))-(this.getSizes().realZoom));
                                 }else{
                                     labelTime.attr("y",labelTime.attr("original-y"));
                                 }
+                                labelTime.attr("x",(1*labelTime.attr("original-x")));
                             }else{
                                 labelDistance.style("visibility","hidden");
                                 labelTime.style("visibility","hidden");
