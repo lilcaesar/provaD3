@@ -341,6 +341,14 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                             .attr("r", 6)
                             .attr("fill", "green");
 
+                        svg.append("svg:image")
+                            .attr('id','time-img')
+                            .attr('xlink:href', 'img/time.png')
+                            .attr('x', xScale(currentActivityObjectiveTimeValue) + currentChartPosition - xScale(currentActivityObjectiveTimeValue)/2 - 20)
+                            .attr('y', yScale(currentActivityMaxDistance) - 50)
+                            .attr('width', 40)
+                            .attr('height', 40)
+
                     } else if (currentActivityObjective == "DISTANCE") {
                         svg.append("circle")
                             .attr('class', 'expected-point')
@@ -348,6 +356,14 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                             .attr("cy", yScale(currentActivityObjectiveDistanceValue))
                             .attr("r", 6)
                             .attr("fill", "green");
+
+                        svg.append("svg:image")
+                            .attr('id','distance-img')
+                            .attr('xlink:href', 'img/road.png')
+                            .attr('x', xScale(currentActivityMaxTime) + currentChartPosition - xScale(currentActivityMaxTime)/2 - 20)
+                            .attr('y', yScale(currentActivityObjectiveDistanceValue))
+                            .attr('width', 40)
+                            .attr('height', 40)
                     }
 
                     svg.append("circle")
@@ -359,26 +375,30 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                         .attr("fill", "red");
 
                     svg.append('text') //Distanza
-                        .attr('id', 'result-value-distance' + graphIndex)
+                        .attr('id', 'result-value-distance'+graphIndex)
                         .attr('class', 'result-value-distance')
-                        .attr('y', yScale(currentActivityMaxDistance) - 2)
-                        .attr('x', xScale(0) + currentChartPosition)
+                        .attr('y', yScale(currentActivityMaxDistance)-2)
+                        .attr('x', xScale(0)+currentChartPosition)
                         .attr('original-y', yScale(currentActivityMaxDistance))
-                        .attr('original-x', xScale(0) + currentChartPosition)
+                        .attr('original-x', xScale(0)+currentChartPosition)
                         .attr('dy', '8px')
-                        .style('fill', 'black')
+                        .style('fill', '#0062cc')
+                        .style('font-size', '17px')
+                        .style('font-weight', '600')
                         .style('text-anchor', 'end')
                         .text(parseInt(currentActivityMaxDistance));
 
                     svg.append('text') //Tempo
-                        .attr('id', 'result-value-time' + graphIndex)
+                        .attr('id', 'result-value-time'+graphIndex)
                         .attr('class', 'result-value-time')
-                        .attr('y', yScale(0) + 5)
-                        .attr('x', xScale(currentActivityMaxTime) + currentChartPosition)
-                        .attr('original-y', yScale(0) + 5)
-                        .attr('original-x', xScale(currentActivityMaxTime) + currentChartPosition)
+                        .attr('y', yScale(0)+5)
+                        .attr('x', xScale(currentActivityMaxTime)+currentChartPosition)
+                        .attr('original-y', yScale(0)+5)
+                        .attr('original-x', xScale(currentActivityMaxTime)+currentChartPosition)
                         .attr('dy', '8px')
-                        .style('fill', 'black')
+                        .style('fill', '#0062cc')
+                        .style('font-size', '17px')
+                        .style('font-weight', '600')
                         .style('text-anchor', 'end')
                         .text(parseInt(currentActivityMaxTime));
 
@@ -389,8 +409,10 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                     .attr('class', 'label')
                     .attr('id', 'label-x')
                     .attr('y', (svgContainerHeight))
-                    .attr('x', (svgContainerWidth + (30 * (chartsNumber))))
+                    .attr('x', (svgContainerWidth+(30*(chartsNumber))))
                     .attr('dy', '12px')
+                    .style('font-size', '17px')
+                    .style('font-weight', '600')
                     .style('fill', 'black')
                     .style('text-anchor', 'end')
                     .text('Secondi');
@@ -400,6 +422,8 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                     .attr('x', 40)
                     .attr('y', 10)
                     .attr('dy', '12px')
+                    .style('font-size', '17px')
+                    .style('font-weight', '600')
                     .style('fill', 'black')
                     .style('text-anchor', 'end')
                     .text('Metri');
