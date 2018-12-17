@@ -30,15 +30,13 @@ var training = {
 var gpsData;
 //Dati del file workout_activity_results
 var WARData;
-//Dati del file workout_activity
-var WAData;
 //Numero di atiività
 var chartsNumber;
 //Dati delle attività risultanti dalle operazioni fatte dopo parsing
 var activities = [];
 
 //Percorsi dei file csv
-var files = ['datasets/gps_300k_coords.csv', 'datasets/workout_activity_result.csv', 'datasets/workout_activity.csv'];
+var files = ['datasets2/point_item.csv', 'datasets2/workout_activity_workout_activity_result.csv'];
 //Dati grezzi del parsing
 var allResults = [];
 
@@ -64,6 +62,8 @@ var paths = [];
 var mouseCircle = [];
 //Linea in corrispondenza del mouse
 var mouseLine = [];
+//Labels per i mouseCircle
+var mouseLabels = [];
 
 //Libreria per la gestione del panning e dello zoom dell'svg
 var panZoomInstance = [];
@@ -96,9 +96,6 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
             //Parse effettuato in parallelo, la sezione grafica verrà calcolata solo dopo il parsing di tutti i file
             if (allResults.length == files.length) {
                 allResults.forEach(function (itemResult) {
-                    if (itemResult.meta.fields[0] == "wactivity_id") {
-                        WAData = itemResult.data;
-                    }
                     if (itemResult.meta.fields[0] == "activity_results_id") {
                         WARData = itemResult.data;
                     }
@@ -110,10 +107,10 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                 allResults = [];
 
                 //Filtro i dati selezionando solo l'allenamento 11
-                gpsData = filterByTraining(gpsData, 11);
-                WARData = filterByTraining(WARData, 11);
+                gpsData = filterByTraining(gpsData, 29203);
+                WARData = filterByTraining(WARData, 29203);
                 //Conto il numero di attività (escludendo l'ultima che è sempre extra)
-                chartsNumber = WARData.length - 1;
+                chartsNumber = WARData.length;
 
                 //Variabili per la computazione del vettore "activities" coi dati per i grafici
                 var currentActivityDataArray = [];
@@ -279,19 +276,19 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
 
 
                         if (svgInstance == 0) {
-                            var range;
+                            var rangeDistance, rangeTime;
                             //Punto dell'obiettivo
                             if (currentActivityObjective == "TIME") {
-                                range = xScale(currentActivityObjectiveTimeValue * 0.05);
+                                rangeTime = xScale(currentActivityObjectiveTimeValue * 0.05);
 
                                 svgArray[svgInstance].append("line")
-                                    .attr('class', 'expected-range')
+                                    .attr('class', 'expected-range-line')
                                     .attr('x1', xScale(currentActivityObjectiveTimeValue) + currentChartPosition)
                                     .attr('y1', yScale(0))
                                     .attr('x2', xScale(currentActivityObjectiveTimeValue) + currentChartPosition)
                                     .attr('y2', yScale(currentActivityMaxXValue))
-                                    .style("stroke", "66ffff")
-                                    .style("stroke-width", range + 'px');
+                                    .style("stroke", "#9effff")
+                                    .style("stroke-width", rangeTime + 'px');
 
                                 svgArray[svgInstance].append("line")
                                     .attr('class', 'expected-line')
@@ -303,16 +300,16 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .style("stroke-width", '2px');
 
                             } else if (currentActivityObjective == "DISTANCE") {
-                                range = svgContainerHeight - (yScale(currentActivityObjectiveDistanceValue * 0.05));
+                                rangeDistance = svgContainerHeight - (yScale(currentActivityObjectiveDistanceValue * 0.05));
 
                                 svgArray[svgInstance].append("line")
-                                    .attr('class', 'expected-range')
+                                    .attr('class', 'expected-range-line')
                                     .attr('x1', xScale(0) + currentChartPosition + 1)
                                     .attr('y1', yScale(currentActivityObjectiveDistanceValue))
                                     .attr('x2', xScale(currentActivityMaxTime) + currentChartPosition)
                                     .attr('y2', yScale(currentActivityObjectiveDistanceValue))
-                                    .style("stroke", "66ffff")
-                                    .style("stroke-width", range + 'px');
+                                    .style("stroke", "#9effff")
+                                    .style("stroke-width", rangeDistance + 'px');
 
                                 svgArray[svgInstance].append("line")
                                     .attr('class', 'expected-line')
@@ -322,6 +319,37 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .attr('y2', yScale(currentActivityObjectiveDistanceValue))
                                     .style("stroke", "blue")
                                     .style("stroke-width", '2px');
+
+                            } else if (currentActivityObjective == "DISTANCE_TIME"){
+                                rangeTime = xScale(currentActivityObjectiveTimeValue * 0.05);
+                                rangeDistance = svgContainerHeight - (yScale(currentActivityObjectiveDistanceValue * 0.05));
+
+                                svgArray[svgInstance].append("rect")
+                                    .attr('class', 'expected-range-rect')
+                                    .attr("x", xScale(currentActivityObjectiveTimeValue) + currentChartPosition -rangeTime)
+                                    .attr("y", yScale(currentActivityObjectiveDistanceValue) - rangeDistance)
+                                    .attr("width", rangeTime*2)
+                                    .attr("height", rangeDistance*2)
+                                    .style("fill", "#9effff");
+
+                                svgArray[svgInstance].append("line")
+                                    .attr('class', 'expected-line')
+                                    .attr('x1', xScale(currentActivityObjectiveTimeValue) + currentChartPosition)
+                                    .attr('y1', yScale(0))
+                                    .attr('x2', xScale(currentActivityObjectiveTimeValue) + currentChartPosition)
+                                    .attr('y2', yScale(currentActivityObjectiveDistanceValue))
+                                    .style("stroke", "blue")
+                                    .style("stroke-width", '2px');
+
+                                svgArray[svgInstance].append("line")
+                                    .attr('class', 'expected-line')
+                                    .attr('x1', xScale(0) + currentChartPosition)
+                                    .attr('y1', yScale(currentActivityObjectiveDistanceValue))
+                                    .attr('x2', xScale(currentActivityObjectiveTimeValue) + currentChartPosition)
+                                    .attr('y2', yScale(currentActivityObjectiveDistanceValue))
+                                    .style("stroke", "blue")
+                                    .style("stroke-width", '2px');
+
                             }
 
                             //Punto del risultato dell'utente
@@ -391,25 +419,36 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                 });
                         }
 
-                        //Aggiungo il nuovo grafico
-                        paths.push(
-                            svgArray[svgInstance].append("path")
-                                .attr("class", "data-line")
-                                .attr("id", "data-line" + graphIndex)
-                                .attr("d", valueline(activities[graphIndex].data))
-                                .style("stroke-width", "3px")
-                                .style("stroke", getLineColor(svgInstance))
-                                .style("fill", "none")
-                        );
 
                         if (svgInstance == 0) {
+                            //Aggiungo il nuovo grafico
+                            paths.push(
+                                svgArray[svgInstance].append("path")
+                                    .attr("class", "data-line-distance")
+                                    .attr("id", "data-line" + graphIndex)
+                                    .attr("d", valueline(activities[graphIndex].data))
+                                    .style("stroke-width", "4px")
+                                    .style("stroke", getLineColor(svgInstance))
+                                    .style("fill", "none")
+                            );
                             svgArray[svgInstance].append("circle")
                                 .attr('id', 'result-point' + graphIndex)
                                 .attr('class', 'result-point')
                                 .attr("cx", xScale(currentActivityMaxTime) + currentChartPosition)
                                 .attr("cy", yScale(currentActivityMaxXValue))
-                                .attr("r", 4)
+                                .attr("r", 6)
                                 .attr("fill", getResultPointColor(currentActivityObjective, currentActivityMaxTime, currentActivityObjectiveTimeValue, currentActivityMaxXValue, currentActivityObjectiveDistanceValue));
+                        }else if (svgInstance ==1){
+                            //Aggiungo il nuovo grafico
+                            paths.push(
+                                svgArray[svgInstance].append("path")
+                                    .attr("class", "data-line-altitude")
+                                    .attr("id", "data-line" + graphIndex)
+                                    .attr("d", valueline(activities[graphIndex].data))
+                                    .style("stroke-width", "2px")
+                                    .style("stroke", getLineColor(svgInstance))
+                                    .style("fill", "none")
+                            );
                         }
 
                         svgArray[svgInstance].append('text') //Variabile in X
@@ -509,12 +548,30 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                         .attr("id", "mouse-circle" + svgInstance)
                         .attr("cx", 100)
                         .attr("cy", 350)
-                        .attr("r", 4)
+                        .attr("r", 6)
                         .attr('stroke', 'black')
                         .attr('stroke-width', 1)
                         .attr("fill", "#ffe724")
-                        .attr("opacity", 0)
                     );
+
+                    mouseLabels.push([
+                        svgArray[svgInstance].append('text')
+                            .attr('id', 'mouse-label-y' + svgInstance)
+                            .attr('dy', '8px')
+                            .style('fill', '#0062cc')
+                            .style('font-size', '14px')
+                            .style('font-weight', '600')
+                            .style('text-anchor', 'end')
+                            .attr("opacity", 0),
+                        svgArray[svgInstance].append('text')
+                            .attr('id', 'mouse-label-x' + svgInstance)
+                            .attr('dy', '8px')
+                            .style('fill', '#0062cc')
+                            .style('font-size', '14px')
+                            .style('font-weight', '600')
+                            .style('text-anchor', 'end')
+                            .attr("opacity", 0)
+                    ]);
 
                     var pathEl, pathLength;
 
