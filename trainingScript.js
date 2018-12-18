@@ -44,6 +44,8 @@ var svgViewports = [];
 var svgArray = [];
 
 for (var i = 0; i < 2; i++) {
+
+    createGraphTitle(i);
     svgArray.push(d3.select('#graphic-container')
         .append("svg")
         .attr("id", 'svg-container' + i)
@@ -51,6 +53,7 @@ for (var i = 0; i < 2; i++) {
         .attr("width", '100%')
         .attr('preserveAspectRatio', 'xMinYMin')
     );
+
 }
 
 svgArray[0].attr("height", document.getElementById('svg-container0').getBoundingClientRect().width / 3);

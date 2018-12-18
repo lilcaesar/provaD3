@@ -98,12 +98,87 @@ function computeMaxObjectiveDistance(activityArray) {
     return currentMaxDistance;
 }
 
+
+
+function createGraphTitle(index){
+
+    // div principale
+    var row_div = document.createElement("div");
+    row_div.className = "row justify-content-center";
+
+    // 1a colonna
+    var col_div1 = document.createElement("div");
+    col_div1.className = "col-md-auto";
+
+    // div contenente la classe del titolo
+    var graph_name_class = document.createElement("div");
+    graph_name_class.className = "graph-name";
+
+    // h5 contenente il titolo
+    var graph_name_text = document.createElement("h6");
+    graph_name_text.innerHTML = getGraphName(index);
+
+    // append degli elementi creati
+    graph_name_class.append(graph_name_text);
+    col_div1.append(graph_name_class);
+    row_div.appendChild(col_div1);
+
+    // 2a colonna
+    var col_div2 = document.createElement("div");
+    col_div2.className = "col-md-auto";
+    row_div.appendChild(col_div2);
+
+    // div contenente la linea del grafico
+    var graph_color_class = document.createElement("div");
+    graph_color_class.className = "graph-line";
+    graph_color_class.style.borderBottom = "3px solid " + getLineColor(index);
+
+    // append degli elementi creati
+    col_div2.append(graph_color_class);
+    row_div.appendChild(col_div2);
+
+    // append del div principale
+    document.getElementById("graphic-container").appendChild(row_div);
+}
+
 function getLineColor(svgInstance) {
-    if (svgInstance == 0) {
-        return "#ffa520"
-    } else {
-        return "#7805ff"
+    var color;
+    switch(svgInstance){
+        case 0:
+            color = "#ffa520";
+            break;
+        case 1:
+            color = "#7805ff";
+            break;
+        case 2:
+            color = "#35B9E0";
+            break;
+        case 3:
+            color = "#FF8B2C";
+            break;
     }
+
+    return color;
+}
+
+function getGraphName(svgInstance) {
+    var name;
+    switch(svgInstance){
+        case 0:
+            name = "Distanza";
+            break;
+        case 1:
+            name = "Altitudine";
+            break;
+        case 2:
+            name = "BPM";
+            break;
+        case 3:
+            name = "Passo";
+            break;
+    }
+
+    return name;
 }
 
 function getResultPointColor(currentActivityObjective, currentActivityMaxTime, currentActivityObjectiveTimeValue, currentActivityMaxXValue, currentActivityObjectiveDistanceValue){

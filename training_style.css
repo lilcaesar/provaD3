@@ -165,6 +165,18 @@ body{
     display: inline-block;
 }
 
+.graph-name{
+    text-align: center;
+}
+
+.graph-line{
+    width: 70px;
+    height: 50%;
+    border-bottom: 3px solid black;
+    position: absolute;
+    margin-left: -20px;
+}
+
 @media (min-width: 1400px) {
     .container{
         max-width: 1350px;
