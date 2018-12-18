@@ -43,9 +43,28 @@ var allResults = [];
 var svgViewports = [];
 var svgArray = [];
 
+function createGraphAxis(index, position){
+    var row_div = document.createElement("div");
+
+    if(position == 'left'){
+        row_div.className = "row justify-content-center float-left graph-labels";
+        row_div.innerHTML = getGraphLabels(index);
+    }
+    else{
+        row_div.className = "row justify-content-center float-right graph-labels";
+        row_div.innerHTML = "Tempo(s)";
+    }
+    document.getElementById("graphic-container").appendChild(row_div);
+}
+
+var position = '';
+
 for (var i = 0; i < 2; i++) {
 
+    position = 'left';
+
     createGraphTitle(i);
+    createGraphAxis(i, position);
     svgArray.push(d3.select('#graphic-container')
         .append("svg")
         .attr("id", 'svg-container' + i)
@@ -53,6 +72,9 @@ for (var i = 0; i < 2; i++) {
         .attr("width", '100%')
         .attr('preserveAspectRatio', 'xMinYMin')
     );
+
+    position = 'right';
+    createGraphAxis(i, position);
 
 }
 

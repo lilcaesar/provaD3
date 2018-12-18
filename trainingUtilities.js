@@ -105,6 +105,7 @@ function createGraphTitle(index){
     // div principale
     var row_div = document.createElement("div");
     row_div.className = "row justify-content-center";
+    row_div.style.marginTop = "20px";
 
     // 1a colonna
     var col_div1 = document.createElement("div");
@@ -171,7 +172,27 @@ function getGraphName(svgInstance) {
             name = "Altitudine";
             break;
         case 2:
-            name = "BPM";
+            name = "Bpm";
+            break;
+        case 3:
+            name = "Passo";
+            break;
+    }
+
+    return name;
+}
+
+function getGraphLabels(svgInstance) {
+    var name;
+    switch(svgInstance){
+        case 0:
+            name = "Metri(m)";
+            break;
+        case 1:
+            name = "Metri(m)";
+            break;
+        case 2:
+            name = "Bpm";
             break;
         case 3:
             name = "Passo";
