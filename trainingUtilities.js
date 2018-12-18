@@ -338,8 +338,7 @@ function createPanZoomData(index, tipo, svgContainerHeight) {
 
 
 
-
-function createOnMouseMove() {
+function createOnMouseMove(activities) {
     var index;
     for (var j = 0; j < 2; j++) {
         if (hasSomeParentTheClass(d3.event.target, "svg-container" + j)) {
@@ -350,6 +349,8 @@ function createOnMouseMove() {
     var pos = [];
     var x = [];
     var ctm = [];
+    var arrayPositions = [];
+    var column;
     for (var i = 0; i < 2; i++) {
         var currentOffset = 0;
         for (var pathIndex = 0; pathIndex < paths.length / 2; pathIndex++) {
@@ -365,6 +366,10 @@ function createOnMouseMove() {
             currentOffset = currentOffset + end;
             var found = false;
             if ((domPoint.x > pathEl.getPointAtLength(0).x) && (domPoint.x < (pathEl.getPointAtLength(pathLength).x))) {
+                //Troviamo l'indice del vettore corrispondente al punto evidenziato col mouse
+                //Calcoliamo il fattore di conversione con (arrayLenght-1)/(graph.end.x - graph.start.x)
+                //che andremo a moltiplicare per il punto in cui si trova il mouse per ricavare l'indice
+                arrayPositions.push(parseInt(((activities[pathIndex].data.length-1)/((pathEl.getPointAtLength(pathLength).x)-(pathEl.getPointAtLength(0).x)))*(domPoint.x - (pathEl.getPointAtLength(0).x))));
                 found = true;
                 while (true) {
                     target = Math.floor((beginning + end) / 2);
@@ -376,10 +381,20 @@ function createOnMouseMove() {
                     else if (pos[i].x < domPoint.x) beginning = target;
                     else break; //position found
                 }
+                column = pathIndex;
                 pathIndex = paths.length / 2;
             }
         }
     }
+
+    function dataType(i){
+        if(i==0){
+            return activities[column].data[arrayPositions[index]].distance
+        }else{
+            return activities[column].data[arrayPositions[index]].altitude
+        }
+    }
+
     if (found) {
         d3.select("#mouse-circle" + index)
             .attr("opacity", 1)
@@ -391,17 +406,17 @@ function createOnMouseMove() {
             .attr("x1", x[index])
             .attr("x2", x[index]);
 
-        d3.select("#mouse-label-y"+ index)
-            .attr("opacity", 1)
-            .attr("x", x[index])
-            .attr("y", pos[index].matrixTransform(ctm[index].inverse()).y-10)
-            .text(parseInt(pos[index].y));
-
         d3.select("#mouse-label-x"+ index)
             .attr("opacity", 1)
-            .attr("x", x[index])
+            .attr("x", x[index]-10)
+            .attr("y", pos[index].matrixTransform(ctm[index].inverse()).y-12)
+            .text("X:"+arrayPositions[index]);
+
+        d3.select("#mouse-label-y"+ index)
+            .attr("opacity", 1)
+            .attr("x", x[index]-10)
             .attr("y", pos[index].matrixTransform(ctm[index].inverse()).y)
-            .text(x[index]);
+            .text("Y:"+parseInt(dataType(index)));
 
         d3.select("#mouse-circle" + ((index + 1) % 2))
             .attr("opacity", 1)
@@ -413,17 +428,17 @@ function createOnMouseMove() {
             .attr("x1", x[((index + 1) % 2)])
             .attr("x2", x[((index + 1) % 2)]);
 
-        d3.select("#mouse-label-y"+ ((index + 1) % 2))
-            .attr("opacity", 1)
-            .attr("x", x[((index + 1) % 2)])
-            .attr("y", pos[((index + 1) % 2)].matrixTransform(ctm[((index + 1) % 2)].inverse()).y-10)
-            .text(parseInt(pos[((index + 1) % 2)].y));
-
         d3.select("#mouse-label-x"+ ((index + 1) % 2))
             .attr("opacity", 1)
-            .attr("x", x[((index + 1) % 2)])
+            .attr("x", x[((index + 1) % 2)]-10)
+            .attr("y", pos[((index + 1) % 2)].matrixTransform(ctm[((index + 1) % 2)].inverse()).y-12)
+            .text("X:"+arrayPositions[((index + 1) % 2)]);
+
+        d3.select("#mouse-label-y"+ ((index + 1) % 2))
+            .attr("opacity", 1)
+            .attr("x", x[((index + 1) % 2)]-10)
             .attr("y", pos[((index + 1) % 2)].matrixTransform(ctm[((index + 1) % 2)].inverse()).y)
-            .text(x[((index + 1) % 2)]);
+            .text("Y:"+parseInt(dataType(((index + 1) % 2))));
 
     } else {
         d3.select("#mouse-circle" + index)

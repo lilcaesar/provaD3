@@ -228,7 +228,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
 
                     var yScale = d3.scaleLinear()
                         .domain([0, overallMaxXValue])
-                        .range([svgContainerHeight - 20, 30]);
+                        .range([svgContainerHeight - 20, 0]);
                     var yAxis = d3.axisLeft(yScale)
                         .ticks(0);
 
@@ -487,45 +487,6 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                     }
                     /** Fine del for per ogni attivià**/
 
-                    svgArray[svgInstance].append('text') // X-axis Label
-                        .attr('class', 'label')
-                        .attr('id', 'label-x')
-                        .attr('y', (svgContainerHeight))
-                        .attr('x', (svgContainerWidth + (30 * (chartsNumber))))
-                        .attr('dy', '12px')
-                        .style('font-size', '17px')
-                        .style('font-weight', '600')
-                        .style('fill', 'black')
-                        .style('text-anchor', 'end')
-                        .text('Tempo(s)');
-
-                    if (svgInstance == 0) {
-                        svgArray[svgInstance].append('text') // Y-axis Label
-                            .attr('class', 'label')
-                            .attr('id', 'label-y' + svgInstance)
-                            .attr('x', 40)
-                            .attr('y', 10)
-                            .attr('dy', '12px')
-                            .style('font-size', '17px')
-                            .style('font-weight', '600')
-                            .style('fill', 'black')
-                            .style('text-anchor', 'end')
-                            .text('Distanza(m)');
-                    } else {
-                        svgArray[svgInstance].append('text') // Y-axis Label
-                            .attr('class', 'label')
-                            .attr('id', 'label-y')
-                            .attr('x', 40)
-                            .attr('y', 10)
-                            .attr('dy', '12px')
-                            .style('font-size', '17px')
-                            .style('font-weight', '600')
-                            .style('fill', 'black')
-                            .style('text-anchor', 'end')
-                            .text('Altitudine(m)');
-                    }
-
-
                     //Dimensioni della viewport dell'svg corrente
                     svgViewports[svgInstance] = [0, 0, (svgContainerWidth + (30 * chartsNumber)), (svgContainerHeight + 20)];
                     d3.select('#svg-container' + svgInstance)
@@ -561,7 +522,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                         svgArray[svgInstance].append('text')
                             .attr('id', 'mouse-label-y' + svgInstance)
                             .attr('dy', '8px')
-                            .style('fill', '#0062cc')
+                            .style('fill', 'black')
                             .style('font-size', '14px')
                             .style('font-weight', '600')
                             .style('text-anchor', 'end')
@@ -569,7 +530,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                         svgArray[svgInstance].append('text')
                             .attr('id', 'mouse-label-x' + svgInstance)
                             .attr('dy', '8px')
-                            .style('fill', '#0062cc')
+                            .style('fill', 'black')
                             .style('font-size', '14px')
                             .style('font-weight', '600')
                             .style('text-anchor', 'end')
@@ -580,7 +541,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
 
                     //Funzione per il traching del mouse all'interno dell'svg e aggiornameno della posizione del punto e della linea corrispondenti
                     svgArray[svgInstance].on("mousemove", function () {
-                            createOnMouseMove();
+                            createOnMouseMove(activities);
                         }
                     );
 
