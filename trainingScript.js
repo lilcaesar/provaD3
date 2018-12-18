@@ -2,28 +2,27 @@
 var training = {
     accuracy: 0.555079895,
     avgaltitude: 0,      //??????????????
-    avgbpm: 164.8582897,
-    avgspeed: 10.42488221,
-    calories: 535,
-    creationdate: "08/04/2018 06:29",
-    distance: 8499.174805,
-    duration: 2935,
+    avgbpm: 135.2672230404189,
+    avgspeed: 8.3760859448288,
+    calories: 884,
+    creationdate: "21/04/2016 15:47",
+    distance: 14881.5126953125,
+    duration: 6396,
     isafitresult: "0",
-    item_user_id: "9520",
-    mark: 5,
-    maxaltitude: 47.34367371,
-    maxbpm: 178,
-    maxspeed: 35.61146545,
-    minaltitude: 44.99152374,
-    minbpm: 112,
-    minspeed: 0.098058484,
-    pausetime: 50,
-    session_id: "191331",
-    user_birthdate: "03/12/1972",
-    user_consent: "1",
+    item_user_id: "3867",
+    mark: 4,
+    maxaltitude: 88,
+    maxbpm: 194,
+    maxspeed: 30.041059494018555,
+    minaltitude: 31,
+    minbpm: 62,
+    minspeed: 0.0007470480632036924,
+    pausetime: 0,
+    session_id: "41376",
+    user_birthdate: "20/11/1971",
     user_gender: "M",
     user_is_tester: "0",
-    user_lastlogin: "20/12/2017 20:00"
+    user_lastlogin: "20/12/2017 20:00"  //Non presente
 };
 
 //Dati del file gps
@@ -43,23 +42,9 @@ var allResults = [];
 var svgViewports = [];
 var svgArray = [];
 
-function createGraphAxis(index, position){
-    var row_div = document.createElement("div");
-
-    if(position == 'left'){
-        row_div.className = "row justify-content-center float-left graph-labels";
-        row_div.innerHTML = getGraphLabels(index);
-    }
-    else{
-        row_div.className = "row justify-content-center float-right graph-labels";
-        row_div.innerHTML = "Tempo(s)";
-    }
-    document.getElementById("graphic-container").appendChild(row_div);
-}
-
 var position = '';
 
-for (var i = 0; i < 2; i++) {
+for (var i = 0; i < 3; i++) {
 
     position = 'left';
 
@@ -80,6 +65,7 @@ for (var i = 0; i < 2; i++) {
 
 svgArray[0].attr("height", document.getElementById('svg-container0').getBoundingClientRect().width / 3);
 svgArray[1].attr("height", document.getElementById('svg-container1').getBoundingClientRect().width / 5);
+svgArray[2].attr("height", document.getElementById('svg-container2').getBoundingClientRect().width / 5);
 
 //Path per i grafici
 var paths = [];
@@ -131,7 +117,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                 //Svuoto l'array che non useremo più per non occupare spazio in memoria
                 allResults = [];
 
-                //Filtro i dati selezionando solo l'allenamento 11
+                //Filtro i dati selezionando solo l'allenamento 29203
                 gpsData = filterByTraining(gpsData, 29203);
                 WARData = filterByTraining(WARData, 29203);
                 //Conto il numero di attività (escludendo l'ultima che è sempre extra)
@@ -142,6 +128,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                 var currentActivityDistance = -1;
                 var currentActivityTime = -1;
                 var currentActivityAltitude = -1.0;
+                var currentActivityPace = -1.0;
                 var currentActivityID = gpsData[0].workout_activity_id;
 
                 for (var i = 0; i < gpsData.length; i++) {
@@ -163,26 +150,31 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                         currentActivityDistance = -1;
                         currentActivityTime = -1;
                         currentActivityAltitude = -1.0;
+                        currentActivityPace = -1.0;
                         currentActivityID = gpsData[i].workout_activity_id;
                     }
                     if (currentActivityDistance == -1) {
                         currentActivityDistance = 0;
                         currentActivityTime = 0;
                         currentActivityAltitude = parseFloat(gpsData[i].altitude);
+                        currentActivityPace = 0.0;
                         currentActivityDataArray.push({
                             distance: currentActivityDistance,
                             time: currentActivityTime,
-                            altitude: currentActivityAltitude
+                            altitude: currentActivityAltitude,
+                            pace: currentActivityPace
                         });
                     } else {
                         var timeStep = ((gpsData[i].time - gpsData[i - 1].time) / 1000);
+                        var distanceStep = compute3DDistance(
+                            computeCartesianPoint([gpsData[i].longitude, gpsData[i].latitude, gpsData[i].altitude]),
+                            computeCartesianPoint([gpsData[i - 1].longitude, gpsData[i - 1].latitude, gpsData[i - 1].altitude])
+                        );
                         //Se passa più di un secondo tra un punto e l'altro calcolo le distanze percorse nei tempi vuoti
                         if (timeStep !== 1) {
-                            var distanceGap = compute3DDistance(
-                                computeCartesianPoint([gpsData[i].longitude, gpsData[i].latitude, gpsData[i].altitude]),
-                                computeCartesianPoint([gpsData[i - 1].longitude, gpsData[i - 1].latitude, gpsData[i - 1].altitude])
-                            ) / timeStep;
+                            var distanceGap = distanceStep / timeStep;
                             var altitudeGap = (gpsData[i].altitude - gpsData[i - 1].altitude) / timeStep;
+                            currentActivityPace = (distanceStep/1000)*(60/(timeStep/60));
                             for (var iterations = 0; iterations < timeStep; iterations++) {
                                 currentActivityDistance = currentActivityDistance + distanceGap;
                                 currentActivityAltitude = parseFloat(currentActivityAltitude) + parseFloat(altitudeGap);
@@ -190,20 +182,21 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                 currentActivityDataArray.push({
                                     distance: currentActivityDistance,
                                     time: currentActivityTime,
-                                    altitude: currentActivityAltitude
+                                    altitude: currentActivityAltitude,
+                                    pace: currentActivityPace
                                 });
                             }
                         } else {
-                            currentActivityDistance = currentActivityDistance + compute3DDistance(
-                                computeCartesianPoint([gpsData[i].longitude, gpsData[i].latitude, gpsData[i].altitude]),
-                                computeCartesianPoint([gpsData[i - 1].longitude, gpsData[i - 1].latitude, gpsData[i - 1].altitude])
-                            );
+
+                            currentActivityDistance = currentActivityDistance + distanceStep;
                             currentActivityTime = currentActivityTime + ((gpsData[i].time - gpsData[i - 1].time) / 1000);
                             currentActivityAltitude = (gpsData[i].altitude);
+                            currentActivityPace = (distanceStep/1000)*(3600);
                             currentActivityDataArray.push({
                                 distance: currentActivityDistance,
                                 time: currentActivityTime,
-                                altitude: currentActivityAltitude
+                                altitude: currentActivityAltitude,
+                                pace: currentActivityPace
                             });
                         }
                     }
@@ -227,12 +220,13 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                 var totalTime = computeTotalTime(activities);
                 var maxDistance = computeMaxDistance(activities);
                 var maxAltitude = computeAllActivitiesMaxAltitude(activities);
+                var maxPace = computeAllActivitiesMaxPace(activities);
                 var maxObjectiveDistance = computeMaxObjectiveDistance(activities);
 
                 //Posizione x in cui iniziare a disegnare il primo grafico
                 var currentChartPosition = 40;
 
-                for (var svgInstance = 0; svgInstance < 2; svgInstance++) {
+                for (var svgInstance = 0; svgInstance < 3; svgInstance++) {
 
                     var svgContainerWidth = document.getElementById("svg-container" + svgInstance).getBoundingClientRect().width;
                     var svgContainerHeight = document.getElementById("svg-container" + svgInstance).getBoundingClientRect().height;
@@ -244,8 +238,10 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                         } else {
                             overallMaxXValue = maxDistance;
                         }
-                    } else {
+                    } else if (svgInstance == 1){
                         overallMaxXValue = maxAltitude;
+                    } else {
+                        overallMaxXValue = maxPace;
                     }
 
                     var yScale = d3.scaleLinear()
@@ -269,9 +265,12 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                         if (svgInstance == 0) {
                             currentActivityMaxXValue = activities[graphIndex].data[activities[graphIndex].data.length - 1].distance;
                             idString = "distance";
-                        } else {
+                        } else if (svgInstance == 1){
                             currentActivityMaxXValue = computeActivityMaxAltitude(activities[graphIndex]);
                             idString = "altitude";
+                        } else {
+                            currentActivityMaxXValue = computeActivityMaxPace(activities[graphIndex]);
+                            idString = "pace";
                         }
 
 
@@ -433,7 +432,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                 .y(function (d) {
                                     return yScale(d.distance);
                                 });
-                        } else {
+                        }else if (svgInstance ==1){
                             //Funzione per disegnare i grafici in base ai punti
                             valueline = d3.line()
                                 .x(function (d) {
@@ -441,6 +440,15 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                 })
                                 .y(function (d) {
                                     return yScale(d.altitude);
+                                });
+                        } else {
+                            //Funzione per disegnare i grafici in base ai punti
+                            valueline = d3.line()
+                                .x(function (d) {
+                                    return xScale(d.time) + currentChartPosition;
+                                })
+                                .y(function (d) {
+                                    return yScale(d.pace);
                                 });
                         }
 
@@ -468,6 +476,17 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                             paths.push(
                                 svgArray[svgInstance].append("path")
                                     .attr("class", "data-line-altitude")
+                                    .attr("id", "data-line" + graphIndex)
+                                    .attr("d", valueline(activities[graphIndex].data))
+                                    .style("stroke-width", "2px")
+                                    .style("stroke", getLineColor(svgInstance))
+                                    .style("fill", "none")
+                            );
+                        }else {
+                            //Aggiungo il nuovo grafico
+                            paths.push(
+                                svgArray[svgInstance].append("path")
+                                    .attr("class", "data-line-pace")
                                     .attr("id", "data-line" + graphIndex)
                                     .attr("d", valueline(activities[graphIndex].data))
                                     .style("stroke-width", "2px")

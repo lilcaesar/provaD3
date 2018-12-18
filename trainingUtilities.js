@@ -76,6 +76,19 @@ function computeAllActivitiesMaxAltitude(activityArray) {
     return currentMaxAltitude;
 }
 
+//Trovo il passo maggiore tra tutte le attività
+function computeAllActivitiesMaxPace(activityArray) {
+    var currentMaxPace = -1000;
+    activityArray.forEach(function (activity) {
+        activity.data.forEach(function (obj) {
+            if (obj.pace > currentMaxPace) {
+                currentMaxPace = obj.pace;
+            }
+        })
+    });
+    return currentMaxPace;
+}
+
 //Trovo l'altitudine più alta raggiunta in questa attività
 function computeActivityMaxAltitude(activity) {
     var currentMaxAltitude = -1000;
@@ -85,6 +98,17 @@ function computeActivityMaxAltitude(activity) {
         }
     });
     return currentMaxAltitude;
+}
+
+//Trovo l'altitudine più alta raggiunta in questa attività
+function computeActivityMaxPace(activity) {
+    var currentMaxPace = -1000;
+    activity.data.forEach(function (obj) {
+        if (obj.pace > currentMaxPace) {
+            currentMaxPace = obj.pace;
+        }
+    });
+    return currentMaxPace;
 }
 
 //Trovo la distanza obiettivo più grande tra gli obiettivi presenti tra le attività
@@ -104,6 +128,7 @@ function createGraphTitle(index){
 
     // div principale
     var row_div = document.createElement("div");
+    row_div.className = "row justify-content-center";
     row_div.className = "row justify-content-center";
     row_div.style.marginTop = "20px";
 
@@ -202,6 +227,20 @@ function getGraphLabels(svgInstance) {
     return name;
 }
 
+function createGraphAxis(index, position){
+    var row_div = document.createElement("div");
+
+    if(position == 'left'){
+        row_div.className = "row justify-content-center float-left graph-labels";
+        row_div.innerHTML = getGraphLabels(index);
+    }
+    else{
+        row_div.className = "row justify-content-center float-right graph-labels";
+        row_div.innerHTML = "Tempo(s)";
+    }
+    document.getElementById("graphic-container").appendChild(row_div);
+}
+
 function getResultPointColor(currentActivityObjective, currentActivityMaxTime, currentActivityObjectiveTimeValue, currentActivityMaxXValue, currentActivityObjectiveDistanceValue){
     var deltaTime, deltaDistance, color, objectiveDistance, objectiveTime, valueDistance, valueTime;
     if(currentActivityObjective == "TIME") {
@@ -281,14 +320,17 @@ function createPanZoomData(index, tipo, svgContainerHeight) {
         center: false,
         refreshRate: 'auto',
         onZoom: function (scale) {
-            panZoomInstance[(index + 1) % 2].zoom(scale);
-            panZoomInstance[(index + 1) % 2].pan(panZoomInstance[index].getPan());
+            panZoomInstance[(index + 1) % 3].zoom(scale);
+            panZoomInstance[(index + 1) % 3].pan(panZoomInstance[index].getPan());
+            panZoomInstance[(index + 2) % 3].zoom(scale);
+            panZoomInstance[(index + 2) % 3].pan(panZoomInstance[index].getPan());
             d3.selectAll(".label").style("font-size", (16 / scale) + 'px');
             d3.select('#label-y' + index).attr('x', 40 / scale).attr('y', 10 / scale);
             d3.selectAll(".result-value-" + tipo).style("font-size", (16 / scale) + 'px');
             d3.selectAll(".result-value-time" + index).style("font-size", (16 / scale) + 'px');
             d3.selectAll(".data-line-distance").style("stroke-width", (4 / scale) + 'px');
             d3.selectAll(".data-line-altitude").style("stroke-width", (2 / scale) + 'px');
+            d3.selectAll(".data-line-pace").style("stroke-width", (2 / scale) + 'px');
             d3.selectAll(".axis" + index).style("stroke-width", (1 / scale) + 'px');
             d3.selectAll(".result-point").attr("r", 6 / scale);
             d3.selectAll(".result-line").style("stroke-width", (2 / scale) + 'px');
@@ -349,9 +391,13 @@ function createPanZoomData(index, tipo, svgContainerHeight) {
                     labelTime.style("visibility", "hidden");
                 }
             }
-            panZoomInstance[(index + 1) % 2].pan({
+            panZoomInstance[(index + 1) % 3].pan({
                 x: pan.x,
-                y: panZoomInstance[(index + 1) % 2].getPan().y
+                y: panZoomInstance[(index + 1) % 3].getPan().y
+            });
+            panZoomInstance[(index + 2) % 3].pan({
+                x: pan.x,
+                y: panZoomInstance[(index + 2) % 3].getPan().y
             });
         }
     }
@@ -361,10 +407,10 @@ function createPanZoomData(index, tipo, svgContainerHeight) {
 
 function createOnMouseMove(activities) {
     var index;
-    for (var j = 0; j < 2; j++) {
+    for (var j = 0; j < 3; j++) {
         if (hasSomeParentTheClass(d3.event.target, "svg-container" + j)) {
             index = j;
-            j = 2;
+            j = 3;
         }
     }
     var pos = [];
@@ -372,10 +418,10 @@ function createOnMouseMove(activities) {
     var ctm = [];
     var arrayPositions = [];
     var column;
-    for (var i = 0; i < 2; i++) {
+    for (var i = 0; i < 3; i++) {
         var currentOffset = 0;
-        for (var pathIndex = 0; pathIndex < paths.length / 2; pathIndex++) {
-            pathEl = paths[pathIndex + ((paths.length / 2) * i)].node();
+        for (var pathIndex = 0; pathIndex < paths.length / 3; pathIndex++) {
+            pathEl = paths[pathIndex + ((paths.length / 3) * i)].node();
             pathLength = pathEl.getTotalLength();
             var offsetLeft = d3.select("#svg-container" + i)._groups[0][0].getBoundingClientRect().x;
             x[i] = d3.event.pageX - offsetLeft;
@@ -403,7 +449,7 @@ function createOnMouseMove(activities) {
                     else break; //position found
                 }
                 column = pathIndex;
-                pathIndex = paths.length / 2;
+                pathIndex = paths.length / 3;
             }
         }
     }
@@ -411,8 +457,10 @@ function createOnMouseMove(activities) {
     function dataType(i){
         if(i==0){
             return activities[column].data[arrayPositions[index]].distance
-        }else{
+        }else if(i==1){
             return activities[column].data[arrayPositions[index]].altitude
+        }else{
+            return activities[column].data[arrayPositions[index]].pace
         }
     }
 
@@ -439,36 +487,63 @@ function createOnMouseMove(activities) {
             .attr("y", pos[index].matrixTransform(ctm[index].inverse()).y)
             .text("Y:"+parseInt(dataType(index)));
 
-        d3.select("#mouse-circle" + ((index + 1) % 2))
+        d3.select("#mouse-circle" + ((index + 1) % 3))
             .attr("opacity", 1)
-            .attr("cx", x[((index + 1) % 2)])
-            .attr("cy", pos[((index + 1) % 2)].matrixTransform(ctm[((index + 1) % 2)].inverse()).y);
+            .attr("cx", x[((index + 1) % 3)])
+            .attr("cy", pos[((index + 1) % 3)].matrixTransform(ctm[((index + 1) % 3)].inverse()).y);
 
-        d3.select("#mouse-line" + ((index + 1) % 2))
+        d3.select("#mouse-line" + ((index + 1) % 3))
             .attr("opacity", 1)
-            .attr("x1", x[((index + 1) % 2)])
-            .attr("x2", x[((index + 1) % 2)]);
+            .attr("x1", x[((index + 1) % 3)])
+            .attr("x2", x[((index + 1) % 3)]);
 
-        d3.select("#mouse-label-x"+ ((index + 1) % 2))
+        d3.select("#mouse-label-x"+ ((index + 1) % 3))
             .attr("opacity", 1)
-            .attr("x", x[((index + 1) % 2)]-10)
-            .attr("y", pos[((index + 1) % 2)].matrixTransform(ctm[((index + 1) % 2)].inverse()).y-12)
-            .text("X:"+arrayPositions[((index + 1) % 2)]);
+            .attr("x", x[((index + 1) % 3)]-10)
+            .attr("y", pos[((index + 1) % 3)].matrixTransform(ctm[((index + 1) % 3)].inverse()).y-12)
+            .text("X:"+arrayPositions[((index + 1) % 3)]);
 
-        d3.select("#mouse-label-y"+ ((index + 1) % 2))
+        d3.select("#mouse-label-y"+ ((index + 1) % 3))
             .attr("opacity", 1)
-            .attr("x", x[((index + 1) % 2)]-10)
-            .attr("y", pos[((index + 1) % 2)].matrixTransform(ctm[((index + 1) % 2)].inverse()).y)
-            .text("Y:"+parseInt(dataType(((index + 1) % 2))));
+            .attr("x", x[((index + 1) % 3)]-10)
+            .attr("y", pos[((index + 1) % 3)].matrixTransform(ctm[((index + 1) % 3)].inverse()).y)
+            .text("Y:"+parseInt(dataType(((index + 1) % 3))));
+
+
+        d3.select("#mouse-circle" + ((index + 2) % 3))
+            .attr("opacity", 1)
+            .attr("cx", x[((index + 2) % 3)])
+            .attr("cy", pos[((index + 2) % 3)].matrixTransform(ctm[((index + 2) % 3)].inverse()).y);
+
+        d3.select("#mouse-line" + ((index + 2) % 3))
+            .attr("opacity", 1)
+            .attr("x1", x[((index + 2) % 3)])
+            .attr("x2", x[((index + 2) % 3)]);
+
+        d3.select("#mouse-label-x"+ ((index + 2) % 3))
+            .attr("opacity", 1)
+            .attr("x", x[((index + 2) % 3)]-10)
+            .attr("y", pos[((index + 2) % 3)].matrixTransform(ctm[((index + 2) % 3)].inverse()).y-12)
+            .text("X:"+arrayPositions[((index + 2) % 3)]);
+
+        d3.select("#mouse-label-y"+ ((index + 2) % 3))
+            .attr("opacity", 1)
+            .attr("x", x[((index + 2) % 3)]-10)
+            .attr("y", pos[((index + 2) % 3)].matrixTransform(ctm[((index + 2) % 3)].inverse()).y)
+            .text("Y:"+parseInt(dataType(((index + 2) % 3))));
 
     } else {
         d3.select("#mouse-circle" + index)
             .attr("opacity", 0);
         d3.select("#mouse-line" + index)
             .attr("opacity", 0);
-        d3.select("#mouse-circle" + ((index + 1) % 2))
+        d3.select("#mouse-circle" + ((index + 1) % 3))
             .attr("opacity", 0);
-        d3.select("#mouse-line" + ((index + 1) % 2))
+        d3.select("#mouse-line" + ((index + 1) % 3))
+            .attr("opacity", 0);
+        d3.select("#mouse-circle" + ((index + 2) % 3))
+            .attr("opacity", 0);
+        d3.select("#mouse-line" + ((index + 2) % 3))
             .attr("opacity", 0);
 
         d3.select("#mouse-line" + index)
@@ -477,10 +552,16 @@ function createOnMouseMove(activities) {
         d3.select("#mouse-label-y"+ index)
             .attr("opacity", 0);
 
-        d3.select("#mouse-line" + ((index + 1) % 2))
+        d3.select("#mouse-line" + ((index + 1) % 3))
             .attr("opacity", 0);
 
-        d3.select("#mouse-label-y"+ ((index + 1) % 2))
+        d3.select("#mouse-label-y"+ ((index + 1) % 3))
+            .attr("opacity", 0);
+
+        d3.select("#mouse-line" + ((index + 2) % 3))
+            .attr("opacity", 0);
+
+        d3.select("#mouse-label-y"+ ((index + 2) % 3))
             .attr("opacity", 0);
     }
 }
