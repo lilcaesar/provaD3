@@ -197,10 +197,10 @@ function getGraphName(svgInstance) {
             name = "Altitudine";
             break;
         case 2:
-            name = "Bpm";
+            name = "Passo";
             break;
         case 3:
-            name = "Passo";
+            name = "Bpm";
             break;
     }
 
@@ -281,8 +281,11 @@ function getResultPointColor(currentActivityObjective, currentActivityMaxTime, c
     return color;
 }
 
+function maxZoomLimit(width, duration){
+    return (duration/width)*4;
+}
 
-function createPanZoomData(index, tipo, svgContainerHeight) {
+function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, duration) {
 //Funzione beforePan per limitare i grafici alla viewbox per svg-pan-zoom
     var customBeforePan = function (oldPan, newPan) {
         var stopHorizontal = false
@@ -314,7 +317,7 @@ function createPanZoomData(index, tipo, svgContainerHeight) {
         preventMouseEventsDefault: true,
         zoomScaleSensitivity: 0.2,
         minZoom: 1,
-        maxZoom: 20,
+        maxZoom: maxZoomLimit(svgContainerWidth, duration),
         fit: false,
         contain: false,
         center: false,

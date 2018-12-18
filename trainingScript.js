@@ -534,7 +534,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                         .attr('viewBox', svgViewports[svgInstance][0] + " " + svgViewports[svgInstance][1] + " " + svgViewports[svgInstance][2] + " " + svgViewports[svgInstance][3]);
 
                     //Istanza pan-zoom per l'svg corrente
-                    panZoomInstance.push(svgPanZoom('#svg-container' + svgInstance, createPanZoomData(svgInstance, idString, svgContainerHeight)));
+                    panZoomInstance.push(svgPanZoom('#svg-container' + svgInstance, createPanZoomData(svgInstance, idString, svgContainerHeight, svgContainerWidth, training.duration)));
 
                     //Linea in corrispondenza del mouse
                     mouseLine.push(svgArray[svgInstance].append("line")
