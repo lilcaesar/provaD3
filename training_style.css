@@ -136,7 +136,7 @@ body{
 }
 
 .slider-img-human img{
-    width: 28px;
+    width: 40px;
 
 }
 
@@ -186,8 +186,13 @@ body{
 
 /* voto predetto*/
 #predicted{
-    margin-right: 10px;
+    margin-right: 25px;
 }
+
+/*
+.slider-tick-label{
+    color: grey;
+}*/
 
 @media (min-width: 1400px) {
     .container{

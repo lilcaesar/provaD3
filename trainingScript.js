@@ -86,9 +86,26 @@ d3.select("#duration").text(Math.trunc(training.duration / 60) + "min " + traini
 d3.select("#rest-time").text(Math.trunc(training.pausetime / 60) + "min " + training.pausetime % 60 + "s");
 d3.select("#calories").text(training.calories + " Kcal");
 
+
+function changeSliderLabelsColor(e){
+    var marks = document.getElementsByClassName("slider-tick-label");
+    console.log(marks[0]);
+
+    for (var i = 0; i < marks.length; i++) {
+        console.log(marks[i].innerHTML,e);
+        if (marks[i].innerHTML == e){
+            console.log('modificato');
+            marks[i].style.color = 'blue'
+        }
+        else
+            marks[i].style.color = '#A9A9A9'
+    }
+}
+
 // quando viene cambiato il valore dello slider, cambia anche quello di testo vicino all'immagine dell'omino
 function changeSlider(e) {
     document.getElementById("robot-mark").innerHTML = e;
+    changeSliderLabelsColor(e);
 }
 
 /****************************************
@@ -597,3 +614,6 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
     })
     ;
 }
+
+// aggiornamento label iniziale
+changeSliderLabelsColor(training.mark);
