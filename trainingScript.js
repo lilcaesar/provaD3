@@ -574,6 +574,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                         .attr('stroke', 'black')
                         .attr('stroke-width', 1)
                         .attr("fill", "#ffe724")
+                        .attr("opacity", 0)
                     );
 
                     mouseLabels.push([

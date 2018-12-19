@@ -2,8 +2,23 @@ d3.dsv(',', 'datasets/workout_item.csv').then(function (data) {
     // Variables
     var body = d3.select('body');
     var margin = {top: 10, right: 50, bottom: 20, left: 50};
-    var h = 600 - margin.top - margin.bottom;
-    var w = 600 - margin.left - margin.right;
+/*    var h = 600 - margin.top - margin.bottom;
+    var w = 600 - margin.left - margin.right;*/
+// SVG
+    var svg = d3.select('#graphic')
+        .append('svg')
+        .attr("id", 'svg-container')
+        .attr('width', "40%")
+        .attr('preserveAspectRatio', 'xMinYMin');
+
+    var h = document.getElementById('svg-container').getBoundingClientRect().width;
+    var w = document.getElementById('svg-container').getBoundingClientRect().width;
+
+    svg.attr('width', w+10)
+        .attr("height", h+100)
+        .style("margin-left","50px")
+        .style("margin-top","50px")
+        .append("g");
 
     //Scale per gli assi
     var xScale = d3.scaleLinear()
@@ -21,19 +36,14 @@ d3.dsv(',', 'datasets/workout_item.csv').then(function (data) {
     var xScaleLabelsINV = d3.scaleOrdinal()
         .domain([0.165, 0.495, 0.825])
         .range(["Bassa", "Media", "Alta"]);
-// SVG
-    var svg = d3.select('#graphic')
-        .append('svg')
-        .attr('height', h + 30 + margin.top + margin.bottom)
-        .attr('width', w + margin.left + margin.right)
-        .append('g')
-        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
 // X-axis
-    var xAxis = d3.axisBottom(xScaleLabels);
+    var xAxis = d3.axisBottom(xScaleLabels)
+        .tickSize(0);
 // Y-axis
     var yAxis = d3.axisLeft(yScale)
-        .ticks(5);
+        .ticks(5)
+        .tickSize(0);
 
     /*** Parser ***/
     var firstDate = getFirstDate(data);
@@ -77,10 +87,28 @@ d3.dsv(',', 'datasets/workout_item.csv').then(function (data) {
         }
     }
 
+    var triangleData = [{x: w/20, y: h/20}, {x: w/20*19, y: h/20*19}, {x: w/20, y: h/20*19},{x: w/20, y: h/20}, {x: w/20*19, y: h/20*19}];
+    var trianglePath = d3.line()
+        .x(function (d) {
+            return d.x;
+        })
+        .y(function (d) {
+            return d.y;
+        });
+
+//Triangolo di sfondo
+    svg.append("path")
+        .attr("id", "background-triangle")
+        .attr("d", trianglePath(triangleData))
+        .style("stroke-width", "8px")
+        .style("stroke", "#ff827b")
+        .style("fill", "white");
+
 // X-axis
     svg.append('g')
+        .attr('id','x-axis')
         .attr('class', 'axis')
-        .attr('transform', 'translate(0,' + h + ')')
+        .attr('transform', 'translate(0,' + h/40*39 + ')')
         .call(xAxis)
         .append('text') // X-axis Label
         .attr('class', 'label')
@@ -92,7 +120,9 @@ d3.dsv(',', 'datasets/workout_item.csv').then(function (data) {
         .text('Affidabilità');
 // Y-axis
     svg.append('g')
+        .attr('id','y-axis')
         .attr('class', 'axis')
+        .attr('transform', 'translate('+ w/40 +',0)')
         .call(yAxis)
         .append('text') // y-axis Label
         .attr('class', 'label')
@@ -102,7 +132,7 @@ d3.dsv(',', 'datasets/workout_item.csv').then(function (data) {
         .attr('dy', '.71em')
         .style('fill', 'black')
         .style('text-anchor', 'end')
-        .text('Punteggio');
+        .text('Voto');
 
     //Funzione per parsare le date da quel formato stringa nel formato interpretabile da d3 (e browser)
     var parseDate = d3.timeParse("%Y-%m-%d %H:%M:%S");
@@ -115,6 +145,9 @@ d3.dsv(',', 'datasets/workout_item.csv').then(function (data) {
     //Trasformazione da data a stringa per utilizzabile da ParseCSV
     var formatTimeParser = d3.timeFormat("%Y-%m-%d %H:%M:%S");
 
+
+    d3.select("#slider-container").style("width", w+"px");
+    d3.select("#button-container").style("width", w+"px");
     //Scale da data a pixel
     var sliderScale = d3.scaleTime()
         .domain([parseDate(firstDate), parseDate(lastDate)])
@@ -197,7 +230,7 @@ d3.dsv(',', 'datasets/workout_item.csv').then(function (data) {
                 return yScale(d.rating)
             })
             .attr('r', function (d) {
-                return Math.sqrt((radiusScale(d.population)) / 3.14)
+                return Math.sqrt((radiusScale(d.population)) / 3.14)*h/700
             })
             .attr('stroke', 'black')
             .attr('stroke-width', 1)
@@ -251,8 +284,8 @@ d3.dsv(',', 'datasets/workout_item.csv').then(function (data) {
                     .attr("font-size", "20px");
             })
             .on('click', function (d) {
-                d3.selectAll('circle').attr('fill-opacity',0.3);
-                d3.select(this).select('circle').attr('fill-opacity',1.0);
+                d3.selectAll('circle').attr('fill-opacity', 0.3);
+                d3.select(this).select('circle').attr('fill-opacity', 1.0);
                 deleteUserList();
                 fillUserList(d.users, d.rating, xScaleLabelsINV(d.accuracy));
                 openNav();
@@ -365,19 +398,19 @@ function deleteUserList() {
 
 //Chiude la barra laterale, reimposta l'opacità dei cerchi a 1 e richiama la funzione per l'eliminazione degli utenti
 function closeNav() {
-    d3.selectAll('circle').attr('fill-opacity',1.0);
+    d3.selectAll('circle').attr('fill-opacity', 1.0);
     document.getElementById("user-list").style.width = "0";
     deleteUserList();
 }
 
 //Riempie la barra laterale con gli utenti presenti nel cerchio selezionato
-function fillUserList(users, mark, accuracy){
+function fillUserList(users, mark, accuracy) {
     var parent = document.getElementById("user-list");
     var notFound = document.createElement("div");
     notFound.innerHTML = "Utente non trovato!";
     notFound.setAttribute("id", "not-found-user-search");
     notFound.setAttribute("class", "alert alert-warning not-found-text");
-    notFound.style.display="none";
+    notFound.style.display = "none";
     parent.appendChild(notFound);
     /*
     var notFound = document.createElement("p");
@@ -388,32 +421,32 @@ function fillUserList(users, mark, accuracy){
     parent.appendChild(notFound);*/
 
     users.forEach(function (element) {
-        var newDiv =document.createElement("div");
+        var newDiv = document.createElement("div");
         newDiv.setAttribute("class", "user-instance");
-        newDiv.onclick=function () {
+        newDiv.onclick = function () {
             window.location = 'training.html';
         };
 
-        var profilePic=document.createElement("img");
+        var profilePic = document.createElement("img");
         profilePic.src = "img/profile-pic.png";
         profilePic.style.height = "90px";
         profilePic.style.width = "90px";
         profilePic.setAttribute("class", "user-profile-pic");
 
-        var info=document.createElement("div");
+        var info = document.createElement("div");
         info.setAttribute("class", "user-info");
-        var name=document.createElement("p");
-        name.innerHTML= "Mario Rossi" + element.key;
+        var name = document.createElement("p");
+        name.innerHTML = "Mario Rossi" + element.key;
         name.setAttribute("class", "user-name");
 
-        var date=document.createElement("p");
-        date.innerHTML=element.value.trainings[0].creationdate;
+        var date = document.createElement("p");
+        date.innerHTML = element.value.trainings[0].creationdate;
         date.setAttribute("class", "user-date");
 
         info.appendChild(name);
         info.appendChild(date);
 
-        var arrow=document.createElement("img");
+        var arrow = document.createElement("img");
         arrow.src = "img/arrow.png";
         arrow.style.height = "90px";
         arrow.style.width = "35px";
@@ -426,7 +459,7 @@ function fillUserList(users, mark, accuracy){
     });
 
     var summary = document.getElementById("summary");
-    summary.innerHTML = "Voto: "+mark+" - Affidabilità: "+accuracy;
+    summary.innerHTML = "Voto: " + mark + " - Affidabilità: " + accuracy;
 }
 
 //Barra di ricerca con aggiornamento in tempo reale della lista
@@ -436,28 +469,28 @@ function searchUser() {
     filter = input.value.toUpperCase();
     list = document.getElementById("user-list");
     el = list.getElementsByClassName('user-instance');
-    var found=false;
+    var found = false;
     for (i = 0; i < el.length; i++) {
         a = el[i].getElementsByClassName('user-name')[0];
         if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
             el[i].style.display = "";
-            found=true;
+            found = true;
         } else {
             el[i].style.display = "none";
         }
     }
     //Se non ci sono risultati mostro la scritta di avviso
     var notFoundText = document.getElementById('not-found-user-search');
-    if(found){
+    if (found) {
         notFoundText.style.display = "none";
-    }else{
+    } else {
         notFoundText.style.display = "";
     }
 }
 
 //Funzione che restituisce true se l'elemento o uno dei suoi padri ha la classe cls
-function hasSomeParentTheClass (el, cls) {
-    if ((el)&&(el.classList.contains(cls))) {
+function hasSomeParentTheClass(el, cls) {
+    if ((el) && (el.classList.contains(cls))) {
         return true;
     }
     return el.parentElement && hasSomeParentTheClass(el.parentElement, cls);
@@ -467,7 +500,7 @@ function hasSomeParentTheClass (el, cls) {
 document.addEventListener('click', function (event) {
     var isOpen = (document.getElementById("user-list").clientWidth > 0);
     var isOnImportantElement = false;
-    if (hasSomeParentTheClass(event.target, "active-element")&&(!(event.target.classList.contains("gr__localhost")))) {
+    if (hasSomeParentTheClass(event.target, "active-element") && (!(event.target.classList.contains("gr__localhost")))) {
         isOnImportantElement = true;
     }
     if ((isOpen) && (!isOnImportantElement)) {

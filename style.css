@@ -7,10 +7,9 @@
 
 .axis text {
     font-family: sans-serif;
-    font-size: 11px;
+    font-size: 13px;
+    font-weight: 600;
 }
-
-
 
 /** css date **/
 #startdate, #enddate {
@@ -25,9 +24,9 @@
 }
 
 /** css date **/
-
 #button-container {
-    margin-left: 3%;
+    margin-left: 50px;
+    justify-content: center;
 }
 
 #button-container input[type="radio"] {
