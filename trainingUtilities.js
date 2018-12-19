@@ -217,10 +217,10 @@ function getGraphLabels(svgInstance) {
             name = "Metri(m)";
             break;
         case 2:
-            name = "Bpm";
+            name = "m/Km";
             break;
         case 3:
-            name = "Passo";
+            name = "Bpm";
             break;
     }
 

@@ -87,17 +87,15 @@ d3.select("#rest-time").text(Math.trunc(training.pausetime / 60) + "min " + trai
 d3.select("#calories").text(training.calories + " Kcal");
 
 
-function changeSliderLabelsColor(e){
+function changeSliderLabelsColor(e) {
     var marks = document.getElementsByClassName("slider-tick-label");
-    console.log(marks[0]);
 
     for (var i = 0; i < marks.length; i++) {
-        console.log(marks[i].innerHTML,e);
-        if (marks[i].innerHTML == e){
+        console.log(marks[i].innerHTML, e);
+        if (marks[i].innerHTML == e) {
             console.log('modificato');
             marks[i].style.color = 'blue'
-        }
-        else
+        } else
             marks[i].style.color = '#A9A9A9'
     }
 }
@@ -188,10 +186,10 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                             computeCartesianPoint([gpsData[i - 1].longitude, gpsData[i - 1].latitude, gpsData[i - 1].altitude])
                         );
                         //Se passa più di un secondo tra un punto e l'altro calcolo le distanze percorse nei tempi vuoti
-                        if (timeStep !== 1) {
+                        if (timeStep > 1) {
                             var distanceGap = distanceStep / timeStep;
                             var altitudeGap = (gpsData[i].altitude - gpsData[i - 1].altitude) / timeStep;
-                            currentActivityPace = (distanceStep/1000)*(60/(timeStep/60));
+                            currentActivityPace = (timeStep / 60) / (distanceStep / 1000);
                             for (var iterations = 0; iterations < timeStep; iterations++) {
                                 currentActivityDistance = currentActivityDistance + distanceGap;
                                 currentActivityAltitude = parseFloat(currentActivityAltitude) + parseFloat(altitudeGap);
@@ -208,7 +206,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                             currentActivityDistance = currentActivityDistance + distanceStep;
                             currentActivityTime = currentActivityTime + ((gpsData[i].time - gpsData[i - 1].time) / 1000);
                             currentActivityAltitude = (gpsData[i].altitude);
-                            currentActivityPace = (distanceStep/1000)*(3600);
+                            currentActivityPace = (60) / (distanceStep / 1000);
                             currentActivityDataArray.push({
                                 distance: currentActivityDistance,
                                 time: currentActivityTime,
@@ -255,15 +253,21 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                         } else {
                             overallMaxXValue = maxDistance;
                         }
-                    } else if (svgInstance == 1){
+                    } else if (svgInstance == 1) {
                         overallMaxXValue = maxAltitude;
                     } else {
                         overallMaxXValue = maxPace;
                     }
 
+                    if(svgInstance==2){
+                        var yScale = d3.scaleLinear()
+                            .domain([0, overallMaxXValue])
+                            .range([10, svgContainerHeight - 20]);
+                    }else{
                     var yScale = d3.scaleLinear()
                         .domain([0, overallMaxXValue])
-                        .range([svgContainerHeight - 20, 0]);
+                        .range([svgContainerHeight - 20, 10]);
+                    }
                     var yAxis = d3.axisLeft(yScale)
                         .ticks(0);
 
@@ -282,7 +286,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                         if (svgInstance == 0) {
                             currentActivityMaxXValue = activities[graphIndex].data[activities[graphIndex].data.length - 1].distance;
                             idString = "distance";
-                        } else if (svgInstance == 1){
+                        } else if (svgInstance == 1) {
                             currentActivityMaxXValue = computeActivityMaxAltitude(activities[graphIndex]);
                             idString = "altitude";
                         } else {
@@ -298,8 +302,8 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                         }
 
                         var xScale = d3.scaleLinear()
-                            .domain([0, overallMaxTimeValue])
-                            .range([0, currentWidth]);
+                                .domain([0, overallMaxTimeValue])
+                                .range([0, currentWidth]);
                         var xAxis = d3.axisBottom(xScale)
                             .ticks(0);
 
@@ -361,16 +365,16 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .style("stroke", "blue")
                                     .style("stroke-width", '2px');
 
-                            } else if (currentActivityObjective == "DISTANCE_TIME"){
+                            } else if (currentActivityObjective == "DISTANCE_TIME") {
                                 rangeTime = xScale(currentActivityObjectiveTimeValue * 0.05);
                                 rangeDistance = svgContainerHeight - (yScale(currentActivityObjectiveDistanceValue * 0.05));
 
                                 svgArray[svgInstance].append("rect")
                                     .attr('class', 'expected-range-rect')
-                                    .attr("x", xScale(currentActivityObjectiveTimeValue) + currentChartPosition -rangeTime)
+                                    .attr("x", xScale(currentActivityObjectiveTimeValue) + currentChartPosition - rangeTime)
                                     .attr("y", yScale(currentActivityObjectiveDistanceValue) - rangeDistance)
-                                    .attr("width", rangeTime*2)
-                                    .attr("height", rangeDistance*2)
+                                    .attr("width", rangeTime * 2)
+                                    .attr("height", rangeDistance * 2)
                                     .style("fill", "#9effff");
 
                                 svgArray[svgInstance].append("line")
@@ -449,7 +453,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                 .y(function (d) {
                                     return yScale(d.distance);
                                 });
-                        }else if (svgInstance ==1){
+                        } else if (svgInstance == 1) {
                             //Funzione per disegnare i grafici in base ai punti
                             valueline = d3.line()
                                 .x(function (d) {
@@ -488,7 +492,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                 .attr("cy", yScale(currentActivityMaxXValue))
                                 .attr("r", 6)
                                 .attr("fill", getResultPointColor(currentActivityObjective, currentActivityMaxTime, currentActivityObjectiveTimeValue, currentActivityMaxXValue, currentActivityObjectiveDistanceValue));
-                        }else if (svgInstance ==1){
+                        } else if (svgInstance == 1) {
                             //Aggiungo il nuovo grafico
                             paths.push(
                                 svgArray[svgInstance].append("path")
@@ -499,7 +503,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .style("stroke", getLineColor(svgInstance))
                                     .style("fill", "none")
                             );
-                        }else {
+                        } else {
                             //Aggiungo il nuovo grafico
                             paths.push(
                                 svgArray[svgInstance].append("path")
