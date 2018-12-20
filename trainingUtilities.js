@@ -89,6 +89,19 @@ function computeAllActivitiesMaxPace(activityArray) {
     return currentMaxPace;
 }
 
+//Trovo il valore di battiti per minuto maggiore tra tutte le attività
+function computeAllActivitiesMaxHbr(activityArray) {
+    var currentMaxHbr = -1000;
+    activityArray.forEach(function (activity) {
+        activity.data.forEach(function (obj) {
+            if (obj.hbr > currentMaxHbr) {
+                currentMaxHbr = obj.hbr;
+            }
+        })
+    });
+    return currentMaxHbr;
+}
+
 //Trovo l'altitudine più alta raggiunta in questa attività
 function computeActivityMaxAltitude(activity) {
     var currentMaxAltitude = -1000;
@@ -323,8 +336,10 @@ function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, d
         onZoom: function (scale) {
             panZoomInstance[(index + 1) % totalGraphs].zoom(scale);
             panZoomInstance[(index + 1) % totalGraphs].pan(panZoomInstance[index].getPan());
-            /*panZoomInstance[(index + 2) % totalGraphs].zoom(scale);
-            panZoomInstance[(index + 2) % totalGraphs].pan(panZoomInstance[index].getPan());*/
+            panZoomInstance[(index + 2) % totalGraphs].zoom(scale);
+            panZoomInstance[(index + 2) % totalGraphs].pan(panZoomInstance[index].getPan());
+            panZoomInstance[(index + 3) % totalGraphs].zoom(scale);
+            panZoomInstance[(index + 3) % totalGraphs].pan(panZoomInstance[index].getPan());
             d3.selectAll(".label").style("font-size", (16 / scale) + 'px');
             d3.select('#label-y' + index).attr('x', 40 / scale).attr('y', 10 / scale);
             d3.selectAll(".result-value-" + tipo).style("font-size", (16 / scale) + 'px');
@@ -460,8 +475,10 @@ function createOnMouseMove(activities, totalGraphs) {
             return activities[column].data[arrayPositions[index]].distance
         }else if(i==1){
             return activities[column].data[arrayPositions[index]].altitude
-        }else{
+        }else if(i==2){
             return activities[column].data[arrayPositions[index]].pace
+        }else if(i==3){
+            return activities[column].data[arrayPositions[index]].hbr
         }
     }
 
