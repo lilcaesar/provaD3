@@ -35,6 +35,18 @@ body{
     right: 0;
     top: 0;
 }
+
+h5{
+    font-size: 1.6vw;
+}
+h6{
+    font-size: 1.3vw;
+}
+
+.btn-group-sm>.btn, .btn-sm{
+    font-size: 1.3vw;
+}
+
 .profile-head h5{
     color: #333;
 }
@@ -76,13 +88,13 @@ body{
     margin-top: -13%;
 }
 .profile-work p {
-    font-size: 15px;
+    font-size: 1.4vw;
     color: #818182;
     font-weight: 600;
     margin-top: 10%;
 }
 .profile-work span {
-    font-size: 14px;
+    font-size: 1.3vw;
     color: #0062cc;
     font-weight: 600;
     /*margin-top: 10%;*/
@@ -92,7 +104,7 @@ body{
     text-decoration: none;
     color: #0062cc;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 1.3vw;
 }
 .profile-work ul{
     list-style: none;
@@ -144,11 +156,11 @@ body{
     text-decoration: none;
     color: #000000;
     font-weight: 600;
-    font-size: 15px;
+    font-size: 1.4vw;
 }
 
 .slider-tick-label{
-    font-size: 15px;
+    font-size: 1.4vw;
     font-weight: 600;
 }
 
@@ -158,7 +170,7 @@ body{
 }
 
 .slider-with-margin{
-    margin-top: 7%;
+    margin-top: -3%;
 }
 
 .make-divs-inline{
@@ -181,7 +193,7 @@ body{
     text-decoration: none;
     color: #000000;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 1.2vw;
 }
 
 /* voto predetto*/
@@ -206,6 +218,6 @@ body{
 }
 @media (min-width: 1800px) {
     .container{
-        max-width: 95%;
+        max-width: 90%;
     }
 }

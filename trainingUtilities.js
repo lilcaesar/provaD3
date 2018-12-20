@@ -122,8 +122,6 @@ function computeMaxObjectiveDistance(activityArray) {
     return currentMaxDistance;
 }
 
-
-
 function createGraphTitle(index){
 
     // div principale
@@ -285,7 +283,7 @@ function maxZoomLimit(width, duration){
     return (duration/width)*4;
 }
 
-function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, duration) {
+function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, duration, totalGraphs) {
 //Funzione beforePan per limitare i grafici alla viewbox per svg-pan-zoom
     var customBeforePan = function (oldPan, newPan) {
         var stopHorizontal = false
@@ -323,10 +321,10 @@ function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, d
         center: false,
         refreshRate: 'auto',
         onZoom: function (scale) {
-            panZoomInstance[(index + 1) % 3].zoom(scale);
-            panZoomInstance[(index + 1) % 3].pan(panZoomInstance[index].getPan());
-            panZoomInstance[(index + 2) % 3].zoom(scale);
-            panZoomInstance[(index + 2) % 3].pan(panZoomInstance[index].getPan());
+            panZoomInstance[(index + 1) % totalGraphs].zoom(scale);
+            panZoomInstance[(index + 1) % totalGraphs].pan(panZoomInstance[index].getPan());
+            /*panZoomInstance[(index + 2) % totalGraphs].zoom(scale);
+            panZoomInstance[(index + 2) % totalGraphs].pan(panZoomInstance[index].getPan());*/
             d3.selectAll(".label").style("font-size", (16 / scale) + 'px');
             d3.select('#label-y' + index).attr('x', 40 / scale).attr('y', 10 / scale);
             d3.selectAll(".result-value-" + tipo).style("font-size", (16 / scale) + 'px');
@@ -394,13 +392,13 @@ function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, d
                     labelTime.style("visibility", "hidden");
                 }
             }
-            panZoomInstance[(index + 1) % 3].pan({
+            panZoomInstance[(index + 1) % totalGraphs].pan({
                 x: pan.x,
                 y: panZoomInstance[(index + 1) % 3].getPan().y
             });
-            panZoomInstance[(index + 2) % 3].pan({
+            panZoomInstance[(index + 2) % totalGraphs].pan({
                 x: pan.x,
-                y: panZoomInstance[(index + 2) % 3].getPan().y
+                y: panZoomInstance[(index + 2) % totalGraphs].getPan().y
             });
         }
     }
@@ -408,12 +406,12 @@ function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, d
 
 
 
-function createOnMouseMove(activities) {
+function createOnMouseMove(activities, totalGraphs) {
     var index;
-    for (var j = 0; j < 3; j++) {
+    for (var j = 0; j < totalGraphs; j++) {
         if (hasSomeParentTheClass(d3.event.target, "svg-container" + j)) {
             index = j;
-            j = 3;
+            j = totalGraphs;
         }
     }
     var pos = [];
@@ -421,10 +419,10 @@ function createOnMouseMove(activities) {
     var ctm = [];
     var arrayPositions = [];
     var column;
-    for (var i = 0; i < 3; i++) {
+    for (var i = 0; i < totalGraphs; i++) {
         var currentOffset = 0;
-        for (var pathIndex = 0; pathIndex < paths.length / 3; pathIndex++) {
-            pathEl = paths[pathIndex + ((paths.length / 3) * i)].node();
+        for (var pathIndex = 0; pathIndex < paths.length / totalGraphs; pathIndex++) {
+            pathEl = paths[pathIndex + ((paths.length / totalGraphs) * i)].node();
             pathLength = pathEl.getTotalLength();
             var offsetLeft = d3.select("#svg-container" + i)._groups[0][0].getBoundingClientRect().x;
             x[i] = d3.event.pageX - offsetLeft;
@@ -452,7 +450,7 @@ function createOnMouseMove(activities) {
                     else break; //position found
                 }
                 column = pathIndex;
-                pathIndex = paths.length / 3;
+                pathIndex = paths.length / totalGraphs;
             }
         }
     }
@@ -490,63 +488,63 @@ function createOnMouseMove(activities) {
             .attr("y", pos[index].matrixTransform(ctm[index].inverse()).y)
             .text("Y:"+parseInt(dataType(index)));
 
-        d3.select("#mouse-circle" + ((index + 1) % 3))
+        d3.select("#mouse-circle" + ((index + 1) % totalGraphs))
             .attr("opacity", 1)
-            .attr("cx", x[((index + 1) % 3)])
-            .attr("cy", pos[((index + 1) % 3)].matrixTransform(ctm[((index + 1) % 3)].inverse()).y);
+            .attr("cx", x[((index + 1) % totalGraphs)])
+            .attr("cy", pos[((index + 1) % totalGraphs)].matrixTransform(ctm[((index + 1) % totalGraphs)].inverse()).y);
 
-        d3.select("#mouse-line" + ((index + 1) % 3))
+        d3.select("#mouse-line" + ((index + 1) % totalGraphs))
             .attr("opacity", 1)
-            .attr("x1", x[((index + 1) % 3)])
-            .attr("x2", x[((index + 1) % 3)]);
+            .attr("x1", x[((index + 1) % totalGraphs)])
+            .attr("x2", x[((index + 1) % totalGraphs)]);
 
-        d3.select("#mouse-label-x"+ ((index + 1) % 3))
+        d3.select("#mouse-label-x"+ ((index + 1) % totalGraphs))
             .attr("opacity", 1)
-            .attr("x", x[((index + 1) % 3)]-10)
-            .attr("y", pos[((index + 1) % 3)].matrixTransform(ctm[((index + 1) % 3)].inverse()).y-12)
-            .text("X:"+arrayPositions[((index + 1) % 3)]);
+            .attr("x", x[((index + 1) % totalGraphs)]-10)
+            .attr("y", pos[((index + 1) % totalGraphs)].matrixTransform(ctm[((index + 1) % totalGraphs)].inverse()).y-12)
+            .text("X:"+arrayPositions[((index + 1) % totalGraphs)]);
 
-        d3.select("#mouse-label-y"+ ((index + 1) % 3))
+        d3.select("#mouse-label-y"+ ((index + 1) % totalGraphs))
             .attr("opacity", 1)
-            .attr("x", x[((index + 1) % 3)]-10)
-            .attr("y", pos[((index + 1) % 3)].matrixTransform(ctm[((index + 1) % 3)].inverse()).y)
-            .text("Y:"+parseInt(dataType(((index + 1) % 3))));
+            .attr("x", x[((index + 1) % totalGraphs)]-10)
+            .attr("y", pos[((index + 1) % totalGraphs)].matrixTransform(ctm[((index + 1) % totalGraphs)].inverse()).y)
+            .text("Y:"+parseInt(dataType(((index + 1) % totalGraphs))));
 
 
-        d3.select("#mouse-circle" + ((index + 2) % 3))
+        d3.select("#mouse-circle" + ((index + 2) % totalGraphs))
             .attr("opacity", 1)
-            .attr("cx", x[((index + 2) % 3)])
-            .attr("cy", pos[((index + 2) % 3)].matrixTransform(ctm[((index + 2) % 3)].inverse()).y);
+            .attr("cx", x[((index + 2) % totalGraphs)])
+            .attr("cy", pos[((index + 2) % totalGraphs)].matrixTransform(ctm[((index + 2) % totalGraphs)].inverse()).y);
 
-        d3.select("#mouse-line" + ((index + 2) % 3))
+        d3.select("#mouse-line" + ((index + 2) % totalGraphs))
             .attr("opacity", 1)
-            .attr("x1", x[((index + 2) % 3)])
-            .attr("x2", x[((index + 2) % 3)]);
+            .attr("x1", x[((index + 2) % totalGraphs)])
+            .attr("x2", x[((index + 2) % totalGraphs)]);
 
-        d3.select("#mouse-label-x"+ ((index + 2) % 3))
+        d3.select("#mouse-label-x"+ ((index + 2) % totalGraphs))
             .attr("opacity", 1)
-            .attr("x", x[((index + 2) % 3)]-10)
-            .attr("y", pos[((index + 2) % 3)].matrixTransform(ctm[((index + 2) % 3)].inverse()).y-12)
-            .text("X:"+arrayPositions[((index + 2) % 3)]);
+            .attr("x", x[((index + 2) % totalGraphs)]-10)
+            .attr("y", pos[((index + 2) % totalGraphs)].matrixTransform(ctm[((index + 2) % totalGraphs)].inverse()).y-12)
+            .text("X:"+arrayPositions[((index + 2) % totalGraphs)]);
 
-        d3.select("#mouse-label-y"+ ((index + 2) % 3))
+        d3.select("#mouse-label-y"+ ((index + 2) % totalGraphs))
             .attr("opacity", 1)
-            .attr("x", x[((index + 2) % 3)]-10)
-            .attr("y", pos[((index + 2) % 3)].matrixTransform(ctm[((index + 2) % 3)].inverse()).y)
-            .text("Y:"+parseInt(dataType(((index + 2) % 3))));
+            .attr("x", x[((index + 2) % totalGraphs)]-10)
+            .attr("y", pos[((index + 2) % totalGraphs)].matrixTransform(ctm[((index + 2) % totalGraphs)].inverse()).y)
+            .text("Y:"+parseInt(dataType(((index + 2) % totalGraphs))));
 
     } else {
         d3.select("#mouse-circle" + index)
             .attr("opacity", 0);
         d3.select("#mouse-line" + index)
             .attr("opacity", 0);
-        d3.select("#mouse-circle" + ((index + 1) % 3))
+        d3.select("#mouse-circle" + ((index + 1) % totalGraphs))
             .attr("opacity", 0);
-        d3.select("#mouse-line" + ((index + 1) % 3))
+        d3.select("#mouse-line" + ((index + 1) % totalGraphs))
             .attr("opacity", 0);
-        d3.select("#mouse-circle" + ((index + 2) % 3))
+        d3.select("#mouse-circle" + ((index + 2) % totalGraphs))
             .attr("opacity", 0);
-        d3.select("#mouse-line" + ((index + 2) % 3))
+        d3.select("#mouse-line" + ((index + 2) % totalGraphs))
             .attr("opacity", 0);
 
         d3.select("#mouse-line" + index)
@@ -555,16 +553,16 @@ function createOnMouseMove(activities) {
         d3.select("#mouse-label-y"+ index)
             .attr("opacity", 0);
 
-        d3.select("#mouse-line" + ((index + 1) % 3))
+        d3.select("#mouse-line" + ((index + 1) % totalGraphs))
             .attr("opacity", 0);
 
-        d3.select("#mouse-label-y"+ ((index + 1) % 3))
+        d3.select("#mouse-label-y"+ ((index + 1) % totalGraphs))
             .attr("opacity", 0);
 
-        d3.select("#mouse-line" + ((index + 2) % 3))
+        d3.select("#mouse-line" + ((index + 2) % totalGraphs))
             .attr("opacity", 0);
 
-        d3.select("#mouse-label-y"+ ((index + 2) % 3))
+        d3.select("#mouse-label-y"+ ((index + 2) % totalGraphs))
             .attr("opacity", 0);
     }
 }

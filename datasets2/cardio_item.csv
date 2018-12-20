@@ -1,4 +1,4 @@
-hr_item_id,w_item_id,w_activity_result_id,rate,time,deleted
+hr_item_id,workout_item_id,w_activity_result_id,rate,time,deleted
 53869,21718,118542,74,1456153540991,0
 53870,21718,118542,74,1456153541965,0
 53871,21718,118542,74,1456153542988,0
