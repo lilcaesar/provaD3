@@ -76,6 +76,19 @@ function computeAllActivitiesMaxAltitude(activityArray) {
     return currentMaxAltitude;
 }
 
+//Trovo l'altitudine dell'attività in cui è presente la più bassa raggiunta
+function computeAllActivitiesMinAltitude(activityArray) {
+    var currentMinAltitude = 10000;
+    activityArray.forEach(function (activity) {
+        activity.data.forEach(function (obj) {
+            if (obj.altitude < currentMinAltitude) {
+                currentMinAltitude = obj.altitude;
+            }
+        })
+    });
+    return currentMinAltitude;
+}
+
 //Trovo il passo maggiore tra tutte le attività
 function computeAllActivitiesMaxPace(activityArray) {
     var currentMaxPace = -1000;
@@ -87,6 +100,19 @@ function computeAllActivitiesMaxPace(activityArray) {
         })
     });
     return currentMaxPace;
+}
+
+//Trovo il passo minore tra tutte le attività
+function computeAllActivitiesMinPace(activityArray) {
+    var currentMinPace = 10000000;
+    activityArray.forEach(function (activity) {
+        activity.data.forEach(function (obj) {
+            if (obj.pace < currentMinPace) {
+                currentMinPace = obj.pace;
+            }
+        })
+    });
+    return currentMinPace;
 }
 
 //Trovo il valore di battiti per minuto maggiore tra tutte le attività
@@ -102,6 +128,19 @@ function computeAllActivitiesMaxHbr(activityArray) {
     return currentMaxHbr;
 }
 
+//Trovo il valore di battiti per minuto minore tra tutte le attività
+function computeAllActivitiesMinHbr(activityArray) {
+    var currentMinHbr = 1000;
+    activityArray.forEach(function (activity) {
+        activity.data.forEach(function (obj) {
+            if (obj.hbr < currentMinHbr) {
+                currentMinHbr = obj.hbr;
+            }
+        })
+    });
+    return currentMinHbr;
+}
+
 //Trovo l'altitudine più alta raggiunta in questa attività
 function computeActivityMaxAltitude(activity) {
     var currentMaxAltitude = -1000;
@@ -112,8 +151,18 @@ function computeActivityMaxAltitude(activity) {
     });
     return currentMaxAltitude;
 }
+//Trovo l'altitudine più bassa raggiunta in questa attività
+function computeActivityMinAltitude(activity) {
+    var currentMinAltitude = 10000000;
+    activity.data.forEach(function (obj) {
+        if (obj.altitude < currentMinAltitude) {
+            currentMinAltitude = obj.altitude;
+        }
+    });
+    return currentMinAltitude;
+}
 
-//Trovo l'altitudine più alta raggiunta in questa attività
+//Trovo il passo più lento raggiunto in questa attività
 function computeActivityMaxPace(activity) {
     var currentMaxPace = -1000;
     activity.data.forEach(function (obj) {
@@ -122,6 +171,36 @@ function computeActivityMaxPace(activity) {
         }
     });
     return currentMaxPace;
+}
+//Trovo il passo più veloce raggiunto in questa attività
+function computeActivityMinPace(activity) {
+    var currentMinPace = 10000000;
+    activity.data.forEach(function (obj) {
+        if (obj.pace < currentMinPace) {
+            currentMinPace = obj.pace;
+        }
+    });
+    return currentMinPace;
+}
+//Trovo i battiti per minuto più alti raggiunti in questa attività
+function computeActivityMaxHbr(activity) {
+    var currentMaxHbr = -1000;
+    activity.data.forEach(function (obj) {
+        if (obj.hbr > currentMaxHbr) {
+            currentMaxHbr = obj.hbr;
+        }
+    });
+    return currentMaxHbr;
+}
+//Trovo i battiti per minuto più bassi raggiunti in questa attività
+function computeActivityMinHbr(activity) {
+    var currentMinHbr = 1000;
+    activity.data.forEach(function (obj) {
+        if (obj.hbr < currentMinHbr) {
+            currentMinHbr = obj.hbr;
+        }
+    });
+    return currentMinHbr;
 }
 
 //Trovo la distanza obiettivo più grande tra gli obiettivi presenti tra le attività
@@ -354,19 +433,19 @@ function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, d
 
             var points = d3.selectAll(".result-point")._groups[0];
             for (var i = 0; i < points.length; i++) {
-                var labelDistance = d3.select("#result-value-" + tipo + i);
+                var labelX = d3.select("#max-result-value-" + tipo + i);
                 var labelTime = d3.select("#result-value-time" + index + i);
                 var xp = points[i].cx.animVal.value * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().x;
                 var yp = points[i].cy.animVal.value * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().y;
                 if ((xp >= 0) && (yp >= 0)) {
-                    labelDistance.style("visibility", "visible");
+                    labelX.style("visibility", "visible");
                     labelTime.style("visibility", "visible");
-                    if (labelDistance.attr("original-x") * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().x < 25) {
-                        labelDistance.attr("x", (25 - panZoomInstance[index].getPan().x) / (panZoomInstance[index].getSizes().realZoom));
+                    if (labelX.attr("original-x") * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().x < 25) {
+                        labelX.attr("x", (25 - panZoomInstance[index].getPan().x) / (panZoomInstance[index].getSizes().realZoom));
                     } else {
-                        labelDistance.attr("x", labelDistance.attr("original-x"));
+                        labelX.attr("x", labelX.attr("original-x"));
                     }
-                    labelDistance.attr("y", labelDistance.attr("original-y") - 7);
+                    labelX.attr("y", labelX.attr("original-y") - 7);
                     if (labelTime.attr("original-y") * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().y > (svgContainerHeight - 15)) {
                         labelTime.attr("y", ((svgContainerHeight - 15 - panZoomInstance[index].getPan().y) / (panZoomInstance[index].getSizes().realZoom)) - (panZoomInstance[index].getSizes().realZoom));
                     } else {
@@ -374,7 +453,7 @@ function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, d
                     }
                     labelTime.attr("x", (1 * labelTime.attr("original-x")));
                 } else {
-                    labelDistance.style("visibility", "hidden");
+                    labelX.style("visibility", "hidden");
                     labelTime.style("visibility", "hidden");
                 }
             }
@@ -383,19 +462,19 @@ function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, d
         onPan: function (pan) {
             var points = d3.selectAll(".result-point")._groups[0];
             for (var i = 0; i < points.length; i++) {
-                var labelDistance = d3.select("#result-value-" + tipo + i);
+                var labelX = d3.select("#max-result-value-" + tipo + i);
                 var labelTime = d3.select("#result-value-time" + index + i);
                 var xp = points[i].cx.animVal.value * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().x;
                 var yp = points[i].cy.animVal.value * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().y;
                 if ((xp >= 0) && (yp >= 0)) {
-                    labelDistance.style("visibility", "visible");
+                    labelX.style("visibility", "visible");
                     labelTime.style("visibility", "visible");
-                    if (labelDistance.attr("original-x") * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().x < 25) {
-                        labelDistance.attr("x", (25 - panZoomInstance[index].getPan().x) / (panZoomInstance[index].getSizes().realZoom));
+                    if (labelX.attr("original-x") * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().x < 25) {
+                        labelX.attr("x", (25 - panZoomInstance[index].getPan().x) / (panZoomInstance[index].getSizes().realZoom));
                     } else {
-                        labelDistance.attr("x", labelDistance.attr("original-x"));
+                        labelX.attr("x", labelX.attr("original-x"));
                     }
-                    labelDistance.attr("y", labelDistance.attr("original-y") - 7);
+                    labelX.attr("y", labelX.attr("original-y") - 7);
                     if (labelTime.attr("original-y") * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().y > (svgContainerHeight - 15)) {
                         labelTime.attr("y", ((svgContainerHeight - 15 - panZoomInstance[index].getPan().y) / (panZoomInstance[index].getSizes().realZoom)) - (panZoomInstance[index].getSizes().realZoom));
                     } else {
@@ -403,7 +482,7 @@ function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, d
                     }
                     labelTime.attr("x", (1 * labelTime.attr("original-x")));
                 } else {
-                    labelDistance.style("visibility", "hidden");
+                    labelX.style("visibility", "hidden");
                     labelTime.style("visibility", "hidden");
                 }
             }
@@ -414,6 +493,10 @@ function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, d
             panZoomInstance[(index + 2) % totalGraphs].pan({
                 x: pan.x,
                 y: panZoomInstance[(index + 2) % totalGraphs].getPan().y
+            });
+            panZoomInstance[(index + 3) % totalGraphs].pan({
+                x: pan.x,
+                y: panZoomInstance[(index + 3) % totalGraphs].getPan().y
             });
         }
     }
@@ -429,6 +512,7 @@ function createOnMouseMove(activities, totalGraphs) {
             j = totalGraphs;
         }
     }
+
     var pos = [];
     var x = [];
     var ctm = [];
@@ -472,13 +556,13 @@ function createOnMouseMove(activities, totalGraphs) {
 
     function dataType(i){
         if(i==0){
-            return activities[column].data[arrayPositions[index]].distance
+            return "m:"+parseInt(activities[column].data[arrayPositions[index]].distance);
         }else if(i==1){
-            return activities[column].data[arrayPositions[index]].altitude
+            return "m:"+parseInt(activities[column].data[arrayPositions[index]].altitude);
         }else if(i==2){
-            return activities[column].data[arrayPositions[index]].pace
+            return "m/km:"+parseInt(activities[column].data[arrayPositions[index]].pace);
         }else if(i==3){
-            return activities[column].data[arrayPositions[index]].hbr
+            return "bpm:"+parseInt(activities[column].data[arrayPositions[index]].hbr);
         }
     }
 
@@ -497,13 +581,13 @@ function createOnMouseMove(activities, totalGraphs) {
             .attr("opacity", 1)
             .attr("x", x[index]-10)
             .attr("y", pos[index].matrixTransform(ctm[index].inverse()).y-12)
-            .text("X:"+arrayPositions[index]);
+            .text("s:"+arrayPositions[index]);
 
         d3.select("#mouse-label-y"+ index)
             .attr("opacity", 1)
             .attr("x", x[index]-10)
             .attr("y", pos[index].matrixTransform(ctm[index].inverse()).y)
-            .text("Y:"+parseInt(dataType(index)));
+            .text(dataType(index));
 
         d3.select("#mouse-circle" + ((index + 1) % totalGraphs))
             .attr("opacity", 1)
@@ -519,13 +603,13 @@ function createOnMouseMove(activities, totalGraphs) {
             .attr("opacity", 1)
             .attr("x", x[((index + 1) % totalGraphs)]-10)
             .attr("y", pos[((index + 1) % totalGraphs)].matrixTransform(ctm[((index + 1) % totalGraphs)].inverse()).y-12)
-            .text("X:"+arrayPositions[((index + 1) % totalGraphs)]);
+            .text("s:"+arrayPositions[((index + 1) % totalGraphs)]);
 
         d3.select("#mouse-label-y"+ ((index + 1) % totalGraphs))
             .attr("opacity", 1)
             .attr("x", x[((index + 1) % totalGraphs)]-10)
             .attr("y", pos[((index + 1) % totalGraphs)].matrixTransform(ctm[((index + 1) % totalGraphs)].inverse()).y)
-            .text("Y:"+parseInt(dataType(((index + 1) % totalGraphs))));
+            .text(dataType(((index + 1) % totalGraphs)));
 
 
         d3.select("#mouse-circle" + ((index + 2) % totalGraphs))
@@ -542,13 +626,36 @@ function createOnMouseMove(activities, totalGraphs) {
             .attr("opacity", 1)
             .attr("x", x[((index + 2) % totalGraphs)]-10)
             .attr("y", pos[((index + 2) % totalGraphs)].matrixTransform(ctm[((index + 2) % totalGraphs)].inverse()).y-12)
-            .text("X:"+arrayPositions[((index + 2) % totalGraphs)]);
+            .text("s:"+arrayPositions[((index + 2) % totalGraphs)]);
 
         d3.select("#mouse-label-y"+ ((index + 2) % totalGraphs))
             .attr("opacity", 1)
             .attr("x", x[((index + 2) % totalGraphs)]-10)
             .attr("y", pos[((index + 2) % totalGraphs)].matrixTransform(ctm[((index + 2) % totalGraphs)].inverse()).y)
-            .text("Y:"+parseInt(dataType(((index + 2) % totalGraphs))));
+            .text(dataType(((index + 2) % totalGraphs)));
+
+
+        d3.select("#mouse-circle" + ((index + 3) % totalGraphs))
+            .attr("opacity", 1)
+            .attr("cx", x[((index + 3) % totalGraphs)])
+            .attr("cy", pos[((index + 3) % totalGraphs)].matrixTransform(ctm[((index + 2) % totalGraphs)].inverse()).y);
+
+        d3.select("#mouse-line" + ((index + 3) % totalGraphs))
+            .attr("opacity", 1)
+            .attr("x1", x[((index + 3) % totalGraphs)])
+            .attr("x2", x[((index + 3) % totalGraphs)]);
+
+        d3.select("#mouse-label-x"+ ((index + 3) % totalGraphs))
+            .attr("opacity", 1)
+            .attr("x", x[((index + 3) % totalGraphs)]-10)
+            .attr("y", pos[((index + 3) % totalGraphs)].matrixTransform(ctm[((index + 3) % totalGraphs)].inverse()).y-12)
+            .text("s:"+arrayPositions[((index + 3) % totalGraphs)]);
+
+        d3.select("#mouse-label-y"+ ((index + 3) % totalGraphs))
+            .attr("opacity", 1)
+            .attr("x", x[((index + 3) % totalGraphs)]-10)
+            .attr("y", pos[((index + 3) % totalGraphs)].matrixTransform(ctm[((index + 3) % totalGraphs)].inverse()).y)
+            .text(dataType(((index + 3) % totalGraphs)));
 
     } else {
         d3.select("#mouse-circle" + index)
@@ -562,6 +669,10 @@ function createOnMouseMove(activities, totalGraphs) {
         d3.select("#mouse-circle" + ((index + 2) % totalGraphs))
             .attr("opacity", 0);
         d3.select("#mouse-line" + ((index + 2) % totalGraphs))
+            .attr("opacity", 0);
+        d3.select("#mouse-circle" + ((index + 3) % totalGraphs))
+            .attr("opacity", 0);
+        d3.select("#mouse-line" + ((index + 3) % totalGraphs))
             .attr("opacity", 0);
 
         d3.select("#mouse-line" + index)
@@ -580,6 +691,12 @@ function createOnMouseMove(activities, totalGraphs) {
             .attr("opacity", 0);
 
         d3.select("#mouse-label-y"+ ((index + 2) % totalGraphs))
+            .attr("opacity", 0);
+
+        d3.select("#mouse-line" + ((index + 3) % totalGraphs))
+            .attr("opacity", 0);
+
+        d3.select("#mouse-label-y"+ ((index + 3) % totalGraphs))
             .attr("opacity", 0);
     }
 }

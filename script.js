@@ -152,6 +152,7 @@ d3.dsv(',', 'datasets/workout_item.csv').then(function (data) {
     var sliderScale = d3.scaleTime()
         .domain([parseDate(firstDate), parseDate(lastDate)])
         .range([0, w]);
+
     //Scale da pixel a data
     var sliderScaleINV = d3.scaleTime()
         .domain([0, w])
