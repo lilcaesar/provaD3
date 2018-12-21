@@ -25,8 +25,10 @@
 
 /** css date **/
 #button-container {
-    margin-left: 50px;
-    justify-content: center;
+    /*width: 50%;*/
+    margin-left: 70px;
+    margin-top: 0px;
+    /*justify-content: center;*/
 }
 
 #button-container input[type="radio"] {
@@ -37,12 +39,13 @@
 
 }
 
-/* Clear floats (clearfix hack) */
+
+/* Clear floats (clearfix hack)
 #button-container:after {
     content: "";
     clear: both;
     display: table;
-}
+}*/
 
 #button-container .radioTimeRange:not(:last-child) {
     border-right: none; /* Prevent double borders */
@@ -64,7 +67,7 @@
     z-index: 1; /* Stay on top */
     top: 0;
     right: 0;
-    background-color: rgb(171, 204, 223); /* Black*/
+    background-color: #d6f0ff;
     overflow-x: hidden;
     /*overflow-y: scroll;*/
     padding-top: 60px; /* Place content 60px from the top -> occhio qua!!! */
@@ -90,6 +93,13 @@
     align-items: center;
     font-size: 15px;
     font-weight: 600;
+    height: 105px;
+    cursor: pointer;
+}
+
+.user-instance:hover{
+    background: #8ac1ef;
+    border: 1px solid #007bff;
 }
 
 #search-bar-container{
@@ -106,6 +116,7 @@
     padding: 12px 20px 12px 40px;
     border: 1px solid #ddd;
     margin-bottom: 12px;
+    border-radius: 10px;
 }
 
 .bubble-summary{
@@ -114,7 +125,6 @@
     font-weight: 600;
 }
 
-/*
-.make-divs-inline{
-    display: inline-block;
+/*.user-arrow:hover{
+    background: red;
 }*/

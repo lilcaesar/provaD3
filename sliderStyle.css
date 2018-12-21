@@ -1,8 +1,6 @@
 #container{
     position: relative;
     height: 50px;
-    /*border: 1px solid red;*/
-
 }
 .container {
     margin:150px auto;
@@ -28,4 +26,23 @@
 
 .slider{
     left: 0px;
+}
+
+/* colori slider e indicatori slider */
+.slider{
+    background: #8ac1ef;
+    border: 1px solid #000000;
+}
+
+.slider .handle{
+    background: #8ac1ef; /*#3072ab;*/
+    border: 1px solid #000000;
+}
+
+.slider .EE, .slider .WW {
+    top: 50%;
+    margin-top: -10px;
+    height: 20px;
+    width: 20px;
+    border-radius: 25px;
 }

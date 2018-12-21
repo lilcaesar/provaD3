@@ -2,8 +2,8 @@ d3.dsv(',', 'datasets/workout_item.csv').then(function (data) {
     // Variables
     var body = d3.select('body');
     var margin = {top: 10, right: 50, bottom: 20, left: 50};
-/*    var h = 600 - margin.top - margin.bottom;
-    var w = 600 - margin.left - margin.right;*/
+    /*    var h = 600 - margin.top - margin.bottom;
+        var w = 600 - margin.left - margin.right;*/
 // SVG
     var svg = d3.select('#graphic')
         .append('svg')
@@ -15,9 +15,9 @@ d3.dsv(',', 'datasets/workout_item.csv').then(function (data) {
     var w = document.getElementById('svg-container').getBoundingClientRect().width;
 
     svg.attr('width', w+10)
-        .attr("height", h+100)
+        .attr("height", h+38)
         .style("margin-left","50px")
-        .style("margin-top","50px")
+        .style("margin-top","5px")
         .append("g");
 
     //Scale per gli assi
@@ -152,19 +152,19 @@ d3.dsv(',', 'datasets/workout_item.csv').then(function (data) {
     var sliderScale = d3.scaleTime()
         .domain([parseDate(firstDate), parseDate(lastDate)])
         .range([0, w]);
-
     //Scale da pixel a data
     var sliderScaleINV = d3.scaleTime()
         .domain([0, w])
         .range([parseDate(firstDate), parseDate(lastDate)]);
 
     //Asse con le label dello slider
-    var sliderAxis = d3.axisBottom(sliderScale)
+    var sliderAxis = d3.axisTop(sliderScale)
         .tickFormat(formatTimeReadableAxis)
+        .tickSizeOuter(0)
         .ticks(d3.timeMonth.every(6));
 
     //Altezza dell'asse dello slider
-    var hSlider = h + 30;
+    var hSlider = h + 39;
 
     //Append dell'asse nell'SVG
     svg.append('g')
@@ -421,7 +421,10 @@ function fillUserList(users, mark, accuracy) {
     notFound.style.display="none";
     parent.appendChild(notFound);*/
 
+    var img_number = 0;
+
     users.forEach(function (element) {
+        console.log(element);
         var newDiv = document.createElement("div");
         newDiv.setAttribute("class", "user-instance");
         newDiv.onclick = function () {
@@ -429,13 +432,15 @@ function fillUserList(users, mark, accuracy) {
         };
 
         var profilePic = document.createElement("img");
-        profilePic.src = "img/profile-pic.png";
+        profilePic.src = "img/profile-pic"+(img_number%5)+".png";
         profilePic.style.height = "90px";
         profilePic.style.width = "90px";
         profilePic.setAttribute("class", "user-profile-pic");
 
+        img_number++;
+
         var info = document.createElement("div");
-        info.setAttribute("class", "user-info");
+        info.setAttribute("class", "user-info text-center");
         var name = document.createElement("p");
         name.innerHTML = "Mario Rossi" + element.key;
         name.setAttribute("class", "user-name");
@@ -449,7 +454,7 @@ function fillUserList(users, mark, accuracy) {
 
         var arrow = document.createElement("img");
         arrow.src = "img/arrow.png";
-        arrow.style.height = "90px";
+        arrow.style.height = "50px";
         arrow.style.width = "35px";
         arrow.setAttribute("class", "user-arrow");
 
@@ -507,4 +512,6 @@ document.addEventListener('click', function (event) {
     if ((isOpen) && (!isOnImportantElement)) {
         closeNav();
     }
+
 });
+
