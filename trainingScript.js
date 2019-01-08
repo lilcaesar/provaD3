@@ -700,6 +700,26 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                         .attr("opacity", 0)
                     );
 
+                    svgArray[svgInstance].append("rect")
+                        .attr('class', 'mouse-label-x-rect')
+                        .attr('id', 'mouse-label-x-rect'+svgInstance)
+                        .attr("x", 0)
+                        .attr("y", 0)
+                        .attr("width", 1)
+                        .attr("height", 1)
+                        .style("fill", "#ffffff")
+                        .attr("opacity", 0);
+
+                    svgArray[svgInstance].append("rect")
+                        .attr('class', 'mouse-label-y-rect')
+                        .attr('id', 'mouse-label-y-rect'+svgInstance)
+                        .attr("x", 0)
+                        .attr("y", 0)
+                        .attr("width", 1)
+                        .attr("height", 1)
+                        .style("fill", "#ffffff")
+                        .attr("opacity", 0);
+
                     mouseLabels.push([
                         svgArray[svgInstance].append('text')
                             .attr('id', 'mouse-label-y' + svgInstance)

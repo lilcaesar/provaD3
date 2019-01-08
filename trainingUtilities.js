@@ -426,6 +426,7 @@ function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, d
             d3.selectAll(".data-line-distance").style("stroke-width", (4 / scale) + 'px');
             d3.selectAll(".data-line-altitude").style("stroke-width", (2 / scale) + 'px');
             d3.selectAll(".data-line-pace").style("stroke-width", (2 / scale) + 'px');
+            d3.selectAll(".data-line-hbr").style("stroke-width", (2 / scale) + 'px');
             d3.selectAll(".axis" + index).style("stroke-width", (1 / scale) + 'px');
             d3.selectAll(".result-point").attr("r", 6 / scale);
             d3.selectAll(".result-line").style("stroke-width", (2 / scale) + 'px');
@@ -567,6 +568,8 @@ function createOnMouseMove(activities, totalGraphs) {
     }
 
     if (found) {
+        var currentBbox;
+
         d3.select("#mouse-circle" + index)
             .attr("opacity", 1)
             .attr("cx", x[index])
@@ -578,7 +581,7 @@ function createOnMouseMove(activities, totalGraphs) {
             .attr("x2", x[index]);
 
         d3.select("#mouse-label-x"+ index)
-            .attr("opacity", 1)
+            .attr("opacity",1)
             .attr("x", x[index]-10)
             .attr("y", pos[index].matrixTransform(ctm[index].inverse()).y-12)
             .text("s:"+arrayPositions[index]);
@@ -588,6 +591,22 @@ function createOnMouseMove(activities, totalGraphs) {
             .attr("x", x[index]-10)
             .attr("y", pos[index].matrixTransform(ctm[index].inverse()).y)
             .text(dataType(index));
+
+        currentBbox = d3.select("#mouse-label-x"+index)._groups[0][0].getBBox();
+        d3.select("#mouse-label-x-rect"+index)
+            .attr("opacity", 0.8)
+            .attr("x", currentBbox.x)
+            .attr("y", currentBbox.y)
+            .attr("width", currentBbox.width)
+            .attr("height", currentBbox.height);
+
+        currentBbox = d3.select("#mouse-label-y"+index)._groups[0][0].getBBox();
+        d3.select("#mouse-label-y-rect"+index)
+            .attr("opacity", 0.8)
+            .attr("x", currentBbox.x)
+            .attr("y", currentBbox.y)
+            .attr("width", currentBbox.width)
+            .attr("height", currentBbox.height);
 
         d3.select("#mouse-circle" + ((index + 1) % totalGraphs))
             .attr("opacity", 1)
@@ -610,6 +629,22 @@ function createOnMouseMove(activities, totalGraphs) {
             .attr("x", x[((index + 1) % totalGraphs)]-10)
             .attr("y", pos[((index + 1) % totalGraphs)].matrixTransform(ctm[((index + 1) % totalGraphs)].inverse()).y)
             .text(dataType(((index + 1) % totalGraphs)));
+
+        currentBbox = d3.select("#mouse-label-x"+((index + 1) % totalGraphs))._groups[0][0].getBBox();
+        d3.select("#mouse-label-x-rect"+((index + 1) % totalGraphs))
+            .attr("opacity", 0.8)
+            .attr("x", currentBbox.x)
+            .attr("y", currentBbox.y)
+            .attr("width", currentBbox.width)
+            .attr("height", currentBbox.height);
+
+        currentBbox = d3.select("#mouse-label-y"+((index + 1) % totalGraphs))._groups[0][0].getBBox();
+        d3.select("#mouse-label-y-rect"+((index + 1) % totalGraphs))
+            .attr("opacity", 0.8)
+            .attr("x", currentBbox.x)
+            .attr("y", currentBbox.y)
+            .attr("width", currentBbox.width)
+            .attr("height", currentBbox.height);
 
 
         d3.select("#mouse-circle" + ((index + 2) % totalGraphs))
@@ -634,6 +669,22 @@ function createOnMouseMove(activities, totalGraphs) {
             .attr("y", pos[((index + 2) % totalGraphs)].matrixTransform(ctm[((index + 2) % totalGraphs)].inverse()).y)
             .text(dataType(((index + 2) % totalGraphs)));
 
+        currentBbox = d3.select("#mouse-label-x"+((index + 2) % totalGraphs))._groups[0][0].getBBox();
+        d3.select("#mouse-label-x-rect"+((index + 2) % totalGraphs))
+            .attr("opacity", 0.8)
+            .attr("x", currentBbox.x)
+            .attr("y", currentBbox.y)
+            .attr("width", currentBbox.width)
+            .attr("height", currentBbox.height);
+
+        currentBbox = d3.select("#mouse-label-y"+((index + 2) % totalGraphs))._groups[0][0].getBBox();
+        d3.select("#mouse-label-y-rect"+((index + 2) % totalGraphs))
+            .attr("opacity", 0.8)
+            .attr("x", currentBbox.x)
+            .attr("y", currentBbox.y)
+            .attr("width", currentBbox.width)
+            .attr("height", currentBbox.height);
+
 
         d3.select("#mouse-circle" + ((index + 3) % totalGraphs))
             .attr("opacity", 1)
@@ -657,22 +708,54 @@ function createOnMouseMove(activities, totalGraphs) {
             .attr("y", pos[((index + 3) % totalGraphs)].matrixTransform(ctm[((index + 3) % totalGraphs)].inverse()).y)
             .text(dataType(((index + 3) % totalGraphs)));
 
+        currentBbox = d3.select("#mouse-label-x"+((index + 3) % totalGraphs))._groups[0][0].getBBox();
+        d3.select("#mouse-label-x-rect"+((index + 3) % totalGraphs))
+            .attr("opacity", 0.8)
+            .attr("x", currentBbox.x)
+            .attr("y", currentBbox.y)
+            .attr("width", currentBbox.width)
+            .attr("height", currentBbox.height);
+
+        currentBbox = d3.select("#mouse-label-y"+((index + 3) % totalGraphs))._groups[0][0].getBBox();
+        d3.select("#mouse-label-y-rect"+((index + 3) % totalGraphs))
+            .attr("opacity", 0.8)
+            .attr("x", currentBbox.x)
+            .attr("y", currentBbox.y)
+            .attr("width", currentBbox.width)
+            .attr("height", currentBbox.height);
+
     } else {
         d3.select("#mouse-circle" + index)
             .attr("opacity", 0);
         d3.select("#mouse-line" + index)
             .attr("opacity", 0);
+        d3.select("#mouse-label-x-rect"+ index)
+            .attr("opacity", 0);
+        d3.select("#mouse-label-y-rect"+ index)
+            .attr("opacity", 0);
         d3.select("#mouse-circle" + ((index + 1) % totalGraphs))
             .attr("opacity", 0);
         d3.select("#mouse-line" + ((index + 1) % totalGraphs))
+            .attr("opacity", 0);
+        d3.select("#mouse-label-x-rect"+ ((index + 1) % totalGraphs))
+            .attr("opacity", 0);
+        d3.select("#mouse-label-y-rect"+ ((index + 1) % totalGraphs))
             .attr("opacity", 0);
         d3.select("#mouse-circle" + ((index + 2) % totalGraphs))
             .attr("opacity", 0);
         d3.select("#mouse-line" + ((index + 2) % totalGraphs))
             .attr("opacity", 0);
+        d3.select("#mouse-label-x-rect"+ ((index + 2) % totalGraphs))
+            .attr("opacity", 0);
+        d3.select("#mouse-label-y-rect"+ ((index + 2) % totalGraphs))
+            .attr("opacity", 0);
         d3.select("#mouse-circle" + ((index + 3) % totalGraphs))
             .attr("opacity", 0);
         d3.select("#mouse-line" + ((index + 3) % totalGraphs))
+            .attr("opacity", 0);
+        d3.select("#mouse-label-x-rect"+ ((index + 3) % totalGraphs))
+            .attr("opacity", 0);
+        d3.select("#mouse-label-y-rect"+ ((index + 3) % totalGraphs))
             .attr("opacity", 0);
 
         d3.select("#mouse-line" + index)
