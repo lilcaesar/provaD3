@@ -37,14 +37,14 @@ body{
 }
 
 h5{
-    font-size: 1.6vw;
+    font-size: 20px;
 }
 h6{
-    font-size: 1.3vw;
+    font-size: 17px;
 }
 
 .btn-group-sm>.btn, .btn-sm{
-    font-size: 1.3vw;
+    font-size: 15px;
 }
 
 .profile-head h5{
@@ -62,12 +62,12 @@ h6{
     color: #6c757d;
     cursor: pointer;
 }
-.proile-rating{
-    font-size: 12px;
+.profile-rating{
+    font-size: 15px;
     color: #818182;
     margin-top: 5%;
 }
-.proile-rating span{
+.profile-rating span{
     color: #495057;
     font-size: 15px;
     font-weight: 600;
@@ -88,13 +88,13 @@ h6{
     margin-top: -13%;
 }
 .profile-work p {
-    font-size: 1.4vw;
+    font-size: 15px;
     color: #818182;
     font-weight: 600;
     margin-top: 10%;
 }
 .profile-work span {
-    font-size: 1.3vw;
+    font-size: 14px;
     color: #0062cc;
     font-weight: 600;
     /*margin-top: 10%;*/
@@ -104,7 +104,7 @@ h6{
     text-decoration: none;
     color: #0062cc;
     font-weight: 600;
-    font-size: 1.3vw;
+    font-size: 14px;
 }
 .profile-work ul{
     list-style: none;
@@ -130,6 +130,7 @@ h6{
 
 .divider-line {
     border: 0;
+    width: 100%;
     height: 1px;
     background-image: -webkit-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
     background-image: -moz-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
@@ -156,11 +157,11 @@ h6{
     text-decoration: none;
     color: #000000;
     font-weight: 600;
-    font-size: 1.4vw;
+    font-size: 14px;
 }
 
 .slider-tick-label{
-    font-size: 1.4vw;
+    font-size: 14px;
     font-weight: 600;
 }
 
@@ -193,7 +194,7 @@ h6{
     text-decoration: none;
     color: #000000;
     font-weight: 600;
-    font-size: 1.2vw;
+    font-size: 14px;
 }
 
 /* voto predetto*/

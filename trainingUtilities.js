@@ -217,27 +217,41 @@ function computeMaxObjectiveDistance(activityArray) {
 function createGraphTitle(index){
 
     // div principale
+    var container = document.createElement("div");
+    container.className = "container";
+    container.style.marginTop = "20px";
+
+    // niente linea per il primo grafico
+    if(index != 0) {
+        // 0a colonna
+        var row_div0 = document.createElement("div");
+        row_div0.className = "row";
+        // linea per separare i grafici
+        var divider_line = document.createElement("hr");
+        divider_line.className = "divider-line";
+        row_div0.append(divider_line);
+        container.appendChild(row_div0);
+    }
+
+    // 1a riga
     var row_div = document.createElement("div");
     row_div.className = "row justify-content-center";
-    row_div.className = "row justify-content-center";
-    row_div.style.marginTop = "20px";
 
     // 1a colonna
     var col_div1 = document.createElement("div");
     col_div1.className = "col-md-auto";
-
     // div contenente la classe del titolo
     var graph_name_class = document.createElement("div");
     graph_name_class.className = "graph-name";
-
     // h5 contenente il titolo
     var graph_name_text = document.createElement("h6");
     graph_name_text.innerHTML = getGraphName(index);
 
+
     // append degli elementi creati
     graph_name_class.append(graph_name_text);
     col_div1.append(graph_name_class);
-    row_div.appendChild(col_div1);
+    row_div.append(col_div1);
 
     // 2a colonna
     var col_div2 = document.createElement("div");
@@ -249,14 +263,15 @@ function createGraphTitle(index){
     graph_color_class.className = "graph-line";
     graph_color_class.style.borderBottom = "3px solid " + getLineColor(index);
 
+
     // append degli elementi creati
     col_div2.append(graph_color_class);
     row_div.appendChild(col_div2);
+    container.appendChild(row_div)
 
     // append del div principale
-    document.getElementById("graphic-container").appendChild(row_div);
+    document.getElementById("graphic-container").appendChild(container);
 }
-
 function getLineColor(svgInstance) {
     var color;
     switch(svgInstance){
