@@ -67,10 +67,10 @@ for (var i = 0; i < totalGraphs; i++) {
 
 }
 
-svgArray[0].attr("height", document.getElementById('svg-container0').getBoundingClientRect().width / 3);
-svgArray[1].attr("height", document.getElementById('svg-container1').getBoundingClientRect().width / 5);
-svgArray[2].attr("height", document.getElementById('svg-container2').getBoundingClientRect().width / 5);
-svgArray[3].attr("height", document.getElementById('svg-container3').getBoundingClientRect().width / 5);
+svgArray[0].attr("height", document.getElementById('svg-container0').getBoundingClientRect().width / 4);
+svgArray[1].attr("height", document.getElementById('svg-container1').getBoundingClientRect().width / 4);
+svgArray[2].attr("height", document.getElementById('svg-container2').getBoundingClientRect().width / 4);
+svgArray[3].attr("height", document.getElementById('svg-container3').getBoundingClientRect().width / 4);
 
 //Path per i grafici
 var paths = [];
@@ -490,42 +490,42 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .attr('id', 'time-img')
                                     .attr('xlink:href', 'img/time.png')
                                     .attr('x', xScale(currentActivityObjectiveTimeValue) + currentChartPosition - xScale(currentActivityObjectiveTimeValue) / 2 - 20)
-                                    .attr('y', yScale(overallMaxXValue) - 70)
-                                    .attr('width', 40)
-                                    .attr('height', 40);
+                                    .attr('y', yScale(overallMaxXValue) - 50)
+                                    .attr('width', 35)
+                                    .attr('height', 35);
 
                             } else if (currentActivityObjective == "DISTANCE") {
                                 svgArray[svgInstance].append("svg:image")
                                     .attr('id', 'distance-img')
                                     .attr('xlink:href', 'img/road.png')
                                     .attr('x', xScale(currentActivityMaxTime) + currentChartPosition - xScale(currentActivityMaxTime) / 2 - 20)
-                                    .attr('y', yScale(overallMaxXValue) - 70)
-                                    .attr('width', 40)
-                                    .attr('height', 40);
+                                    .attr('y', yScale(overallMaxXValue) - 50)
+                                    .attr('width', 35)
+                                    .attr('height', 35);
                             } else if (currentActivityObjective == "DISTANCE_TIME") {
                                 svgArray[svgInstance].append("svg:image")
                                     .attr('id', 'distance-img')
                                     .attr('xlink:href', 'img/road.png')
                                     .attr('x', xScale(currentActivityMaxTime) + currentChartPosition - xScale(currentActivityMaxTime) / 2 - 30)
-                                    .attr('y', yScale(overallMaxXValue) - 70)
-                                    .attr('width', 40)
-                                    .attr('height', 40);
+                                    .attr('y', yScale(overallMaxXValue) - 50)
+                                    .attr('width', 35)
+                                    .attr('height', 35);
 
                                 svgArray[svgInstance].append("svg:image")
                                     .attr('id', 'time-img')
                                     .attr('xlink:href', 'img/time.png')
                                     .attr('x', xScale(currentActivityMaxTime) + currentChartPosition - xScale(currentActivityMaxTime) / 2 + 30)
-                                    .attr('y', yScale(overallMaxXValue) - 70)
-                                    .attr('width', 40)
-                                    .attr('height', 40);
+                                    .attr('y', yScale(overallMaxXValue) - 50)
+                                    .attr('width', 35)
+                                    .attr('height', 35);
 
                                 svgArray[svgInstance].append("svg:image")
                                     .attr('id', 'time-img')
                                     .attr('xlink:href', 'img/plus.png')
                                     .attr('x', xScale(currentActivityMaxTime) + currentChartPosition - xScale(currentActivityMaxTime) / 2)
-                                    .attr('y', yScale(overallMaxXValue) - 70)
-                                    .attr('width', 40)
-                                    .attr('height', 40);
+                                    .attr('y', yScale(overallMaxXValue) - 50)
+                                    .attr('width', 35)
+                                    .attr('height', 35);
                             }
 
                             //Funzione per disegnare i grafici in base ai punti
