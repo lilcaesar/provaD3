@@ -575,8 +575,7 @@ function createOnMouseMove(activities, totalGraphs) {
 
         for(var svgIndex = 0; svgIndex < totalGraphs; svgIndex++){
 
-            var graph_state = document.getElementById("graphic" + svgIndex).style.display;
-            if(graph_state != 'none') {
+            if(isGraphicDisplayed(svgIndex)) {
                 d3.select("#mouse-circle" + svgIndex)
                     .attr("opacity", 1)
                     .attr("cx", x[svgIndex])
@@ -620,9 +619,7 @@ function createOnMouseMove(activities, totalGraphs) {
     } else {
         for(var svgIndex = 0; svgIndex < totalGraphs; svgIndex++) {
 
-            var graph_state = document.getElementById("graphic" + svgIndex).style.display;
-
-            if(graph_state != 'none') {
+            if(isGraphicDisplayed(svgIndex)) {
                 d3.select("#mouse-circle" + svgIndex)
                     .attr("opacity", 0);
                 d3.select("#mouse-line" + svgIndex)
@@ -641,4 +638,10 @@ function createOnMouseMove(activities, totalGraphs) {
             }
         }
     }
+}
+
+// funzione per verificare se il grafico è nascosto o meno
+function isGraphicDisplayed(index){
+    var graph_state = document.getElementById("graphic" + index).style.display;
+    return graph_state != 'none';
 }

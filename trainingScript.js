@@ -73,15 +73,11 @@ for (var i = 0; i < totalGraphs; i++) {
     createGraphAxis(i, position);
 
     if(i < totalGraphs - 1) {
-        // nuovo div
-        var row_div = document.createElement("div");
-        row_div.className = "row";
         // linea per separare i grafici
         var divider_line = document.createElement("hr");
         divider_line.className = "divider-line";
         divider_line.style.marginTop = '30px';
-        row_div.append(divider_line);
-        document.getElementById("graphic" + i).append(row_div);
+        document.getElementById("graphic" + i).append(divider_line);
     }
 
 }
