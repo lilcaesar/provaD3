@@ -52,9 +52,16 @@ for (var i = 0; i < totalGraphs; i++) {
 
     position = 'left';
 
+    // creo il div per l'nesimo grafico
+    var graphic = document.createElement("div");
+    graphic.id = "graphic" + i;
+    var container = document.getElementById('graphic-container');
+    container.append(graphic);
+
     createGraphTitle(i);
     createGraphAxis(i, position);
-    svgArray.push(d3.select('#graphic-container')
+    var graph_name = '#graphic' + i;
+    svgArray.push(d3.select(graph_name)
         .append("svg")
         .attr("id", 'svg-container' + i)
         .attr("class", 'svg-container' + i)
@@ -65,7 +72,21 @@ for (var i = 0; i < totalGraphs; i++) {
     position = 'right';
     createGraphAxis(i, position);
 
+    if(i < totalGraphs - 1) {
+        // nuovo div
+        var row_div = document.createElement("div");
+        row_div.className = "row";
+        // linea per separare i grafici
+        var divider_line = document.createElement("hr");
+        divider_line.className = "divider-line";
+        divider_line.style.marginTop = '30px';
+        row_div.append(divider_line);
+        document.getElementById("graphic" + i).append(row_div);
+    }
+
 }
+
+//document.getElementById("graphic0").style.display = "none";
 
 svgArray[0].attr("height", document.getElementById('svg-container0').getBoundingClientRect().width / 4);
 svgArray[1].attr("height", document.getElementById('svg-container1').getBoundingClientRect().width / 4);
@@ -489,7 +510,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                 svgArray[svgInstance].append("svg:image")
                                     .attr('id', 'time-img')
                                     .attr('xlink:href', 'img/time.png')
-                                    .attr('x', xScale(currentActivityObjectiveTimeValue) + currentChartPosition - xScale(currentActivityObjectiveTimeValue) / 2 - 20)
+                                    .attr('x', xScale(currentActivityObjectiveTimeValue) + currentChartPosition - xScale(currentActivityObjectiveTimeValue) / 2 - 10)
                                     .attr('y', yScale(overallMaxXValue) - 50)
                                     .attr('width', 35)
                                     .attr('height', 35);
@@ -506,7 +527,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                 svgArray[svgInstance].append("svg:image")
                                     .attr('id', 'distance-img')
                                     .attr('xlink:href', 'img/road.png')
-                                    .attr('x', xScale(currentActivityMaxTime) + currentChartPosition - xScale(currentActivityMaxTime) / 2 - 30)
+                                    .attr('x', xScale(currentActivityMaxTime) + currentChartPosition - xScale(currentActivityMaxTime) / 2 - 40)
                                     .attr('y', yScale(overallMaxXValue) - 50)
                                     .attr('width', 35)
                                     .attr('height', 35);
@@ -514,7 +535,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                 svgArray[svgInstance].append("svg:image")
                                     .attr('id', 'time-img')
                                     .attr('xlink:href', 'img/time.png')
-                                    .attr('x', xScale(currentActivityMaxTime) + currentChartPosition - xScale(currentActivityMaxTime) / 2 + 30)
+                                    .attr('x', xScale(currentActivityMaxTime) + currentChartPosition - xScale(currentActivityMaxTime) / 2 + 20)
                                     .attr('y', yScale(overallMaxXValue) - 50)
                                     .attr('width', 35)
                                     .attr('height', 35);
@@ -522,7 +543,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                 svgArray[svgInstance].append("svg:image")
                                     .attr('id', 'time-img')
                                     .attr('xlink:href', 'img/plus.png')
-                                    .attr('x', xScale(currentActivityMaxTime) + currentChartPosition - xScale(currentActivityMaxTime) / 2)
+                                    .attr('x', xScale(currentActivityMaxTime) + currentChartPosition - xScale(currentActivityMaxTime) / 2 - 10)
                                     .attr('y', yScale(overallMaxXValue) - 50)
                                     .attr('width', 35)
                                     .attr('height', 35);

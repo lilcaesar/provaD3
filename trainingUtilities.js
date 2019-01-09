@@ -221,18 +221,6 @@ function createGraphTitle(index){
     container.className = "container";
     container.style.marginTop = "20px";
 
-    // niente linea per il primo grafico
-    if(index != 0) {
-        // 0a colonna
-        var row_div0 = document.createElement("div");
-        row_div0.className = "row";
-        // linea per separare i grafici
-        var divider_line = document.createElement("hr");
-        divider_line.className = "divider-line";
-        row_div0.append(divider_line);
-        container.appendChild(row_div0);
-    }
-
     // 1a riga
     var row_div = document.createElement("div");
     row_div.className = "row justify-content-center";
@@ -270,7 +258,7 @@ function createGraphTitle(index){
     container.appendChild(row_div)
 
     // append del div principale
-    document.getElementById("graphic-container").appendChild(container);
+    document.getElementById("graphic" + index).appendChild(container);
 }
 function getLineColor(svgInstance) {
     var color;
@@ -343,7 +331,7 @@ function createGraphAxis(index, position){
         row_div.className = "row justify-content-center float-right graph-labels";
         row_div.innerHTML = "Tempo(s)";
     }
-    document.getElementById("graphic-container").appendChild(row_div);
+    document.getElementById("graphic" + index).appendChild(row_div);
 }
 
 function getResultPointColor(currentActivityObjective, currentActivityMaxTime, currentActivityObjectiveTimeValue, currentActivityMaxXValue, currentActivityObjectiveDistanceValue){
@@ -586,62 +574,71 @@ function createOnMouseMove(activities, totalGraphs) {
         var currentBbox;
 
         for(var svgIndex = 0; svgIndex < totalGraphs; svgIndex++){
-            d3.select("#mouse-circle" + svgIndex)
-                .attr("opacity", 1)
-                .attr("cx", x[svgIndex])
-                .attr("cy", pos[svgIndex].matrixTransform(ctm[index].inverse()).y);
 
-            d3.select("#mouse-line" + svgIndex)
-                .attr("opacity", 1)
-                .attr("x1", x[svgIndex])
-                .attr("x2", x[svgIndex]);
+            var graph_state = document.getElementById("graphic" + svgIndex).style.display;
+            if(graph_state != 'none') {
+                d3.select("#mouse-circle" + svgIndex)
+                    .attr("opacity", 1)
+                    .attr("cx", x[svgIndex])
+                    .attr("cy", pos[svgIndex].matrixTransform(ctm[index].inverse()).y);
 
-            d3.select("#mouse-label-x"+ svgIndex)
-                .attr("opacity",1)
-                .attr("x", x[svgIndex]-10)
-                .attr("y", pos[svgIndex].matrixTransform(ctm[svgIndex].inverse()).y-12)
-                .text("s:"+arrayPositions[svgIndex]);
+                d3.select("#mouse-line" + svgIndex)
+                    .attr("opacity", 1)
+                    .attr("x1", x[svgIndex])
+                    .attr("x2", x[svgIndex]);
 
-            d3.select("#mouse-label-y"+ svgIndex)
-                .attr("opacity", 1)
-                .attr("x", x[svgIndex]-10)
-                .attr("y", pos[svgIndex].matrixTransform(ctm[svgIndex].inverse()).y)
-                .text(dataType(svgIndex));
+                d3.select("#mouse-label-x" + svgIndex)
+                    .attr("opacity", 1)
+                    .attr("x", x[svgIndex] - 10)
+                    .attr("y", pos[svgIndex].matrixTransform(ctm[svgIndex].inverse()).y - 12)
+                    .text("s:" + arrayPositions[svgIndex]);
 
-            currentBbox = d3.select("#mouse-label-x"+svgIndex)._groups[0][0].getBBox();
-            d3.select("#mouse-label-x-rect"+svgIndex)
-                .attr("opacity", 0.8)
-                .attr("x", currentBbox.x)
-                .attr("y", currentBbox.y)
-                .attr("width", currentBbox.width)
-                .attr("height", currentBbox.height);
+                d3.select("#mouse-label-y" + svgIndex)
+                    .attr("opacity", 1)
+                    .attr("x", x[svgIndex] - 10)
+                    .attr("y", pos[svgIndex].matrixTransform(ctm[svgIndex].inverse()).y)
+                    .text(dataType(svgIndex));
 
-            currentBbox = d3.select("#mouse-label-y"+svgIndex)._groups[0][0].getBBox();
-            d3.select("#mouse-label-y-rect"+svgIndex)
-                .attr("opacity", 0.8)
-                .attr("x", currentBbox.x)
-                .attr("y", currentBbox.y)
-                .attr("width", currentBbox.width)
-                .attr("height", currentBbox.height);
+                currentBbox = d3.select("#mouse-label-x" + svgIndex)._groups[0][0].getBBox();
+                d3.select("#mouse-label-x-rect" + svgIndex)
+                    .attr("opacity", 0.8)
+                    .attr("x", currentBbox.x)
+                    .attr("y", currentBbox.y)
+                    .attr("width", currentBbox.width)
+                    .attr("height", currentBbox.height);
+
+                currentBbox = d3.select("#mouse-label-y" + svgIndex)._groups[0][0].getBBox();
+                d3.select("#mouse-label-y-rect" + svgIndex)
+                    .attr("opacity", 0.8)
+                    .attr("x", currentBbox.x)
+                    .attr("y", currentBbox.y)
+                    .attr("width", currentBbox.width)
+                    .attr("height", currentBbox.height);
+            }
         }
 
     } else {
         for(var svgIndex = 0; svgIndex < totalGraphs; svgIndex++) {
-            d3.select("#mouse-circle" + svgIndex)
-                .attr("opacity", 0);
-            d3.select("#mouse-line" + svgIndex)
-                .attr("opacity", 0);
-            d3.select("#mouse-label-x-rect"+ svgIndex)
-                .attr("opacity", 0);
-            d3.select("#mouse-label-y-rect"+ svgIndex)
-                .attr("opacity", 0);
-            d3.select("#mouse-line" + svgIndex)
-                .attr("opacity", 0);
 
-            d3.select("#mouse-label-y"+ svgIndex)
-                .attr("opacity", 0);
-            d3.select("#mouse-label-x"+ svgIndex)
-                .attr("opacity", 0);
+            var graph_state = document.getElementById("graphic" + svgIndex).style.display;
+
+            if(graph_state != 'none') {
+                d3.select("#mouse-circle" + svgIndex)
+                    .attr("opacity", 0);
+                d3.select("#mouse-line" + svgIndex)
+                    .attr("opacity", 0);
+                d3.select("#mouse-label-x-rect" + svgIndex)
+                    .attr("opacity", 0);
+                d3.select("#mouse-label-y-rect" + svgIndex)
+                    .attr("opacity", 0);
+                d3.select("#mouse-line" + svgIndex)
+                    .attr("opacity", 0);
+
+                d3.select("#mouse-label-y" + svgIndex)
+                    .attr("opacity", 0);
+                d3.select("#mouse-label-x" + svgIndex)
+                    .attr("opacity", 0);
+            }
         }
     }
 }
