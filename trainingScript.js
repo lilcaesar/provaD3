@@ -58,6 +58,14 @@ for (var i = 0; i < totalGraphs; i++) {
     var container = document.getElementById('graphic-container');
     container.append(graphic);
 
+    if(i > 0) {
+        // linea per separare i grafici
+        var divider_line = document.createElement("hr");
+        divider_line.className = "divider-line";
+        divider_line.style.marginTop = '30px';
+        document.getElementById("graphic" + i).append(divider_line);
+    }
+
     createGraphTitle(i);
     createGraphAxis(i, position);
     var graph_name = '#graphic' + i;
@@ -72,13 +80,7 @@ for (var i = 0; i < totalGraphs; i++) {
     position = 'right';
     createGraphAxis(i, position);
 
-    if(i < totalGraphs - 1) {
-        // linea per separare i grafici
-        var divider_line = document.createElement("hr");
-        divider_line.className = "divider-line";
-        divider_line.style.marginTop = '30px';
-        document.getElementById("graphic" + i).append(divider_line);
-    }
+
 
 }
 

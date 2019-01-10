@@ -579,7 +579,7 @@ function createOnMouseMove(activities, totalGraphs) {
                 d3.select("#mouse-circle" + svgIndex)
                     .attr("opacity", 1)
                     .attr("cx", x[svgIndex])
-                    .attr("cy", pos[svgIndex].matrixTransform(ctm[index].inverse()).y);
+                    .attr("cy", pos[svgIndex].matrixTransform(ctm[svgIndex].inverse()).y);
 
                 d3.select("#mouse-line" + svgIndex)
                     .attr("opacity", 1)
