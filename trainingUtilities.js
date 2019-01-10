@@ -223,7 +223,7 @@ function createGraphTitle(index) {
     // div principale
     var container = document.createElement("div");
     container.className = "container";
-    container.style.marginTop = "20px";
+    container.style.marginTop = "5px";
 
     // 1a riga
     var row_div = document.createElement("div");

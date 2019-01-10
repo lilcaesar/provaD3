@@ -50,7 +50,7 @@ var totalGraphs = 4;
 
 for (var i = 0; i < totalGraphs; i++) {
 
-    position = 'left';
+    //position = 'left';
 
     // creo il div per l'nesimo grafico
     var graphic = document.createElement("div");
@@ -58,16 +58,16 @@ for (var i = 0; i < totalGraphs; i++) {
     var container = document.getElementById('graphic-container');
     container.append(graphic);
 
-    if(i > 0) {
+    /*if(i > 0) {
         // linea per separare i grafici
         var divider_line = document.createElement("hr");
         divider_line.className = "divider-line";
         divider_line.style.marginTop = '30px';
         document.getElementById("graphic" + i).append(divider_line);
-    }
+    }*/
 
     createGraphTitle(i);
-    createGraphAxis(i, position);
+    //createGraphAxis(i, position);
     var graph_name = '#graphic' + i;
     svgArray.push(d3.select(graph_name)
         .append("svg")
@@ -77,8 +77,8 @@ for (var i = 0; i < totalGraphs; i++) {
         .attr('preserveAspectRatio', 'xMinYMin')
     );
 
-    position = 'right';
-    createGraphAxis(i, position);
+    //position = 'right';
+    //createGraphAxis(i, position);
 
 
 
@@ -86,10 +86,10 @@ for (var i = 0; i < totalGraphs; i++) {
 
 //document.getElementById("graphic0").style.display = "none";
 
-svgArray[0].attr("height", document.getElementById('svg-container0').getBoundingClientRect().width / 4);
-svgArray[1].attr("height", document.getElementById('svg-container1').getBoundingClientRect().width / 4);
-svgArray[2].attr("height", document.getElementById('svg-container2').getBoundingClientRect().width / 4);
-svgArray[3].attr("height", document.getElementById('svg-container3').getBoundingClientRect().width / 4);
+svgArray[0].attr("height", document.getElementById('svg-container0').getBoundingClientRect().width / 7);
+svgArray[1].attr("height", document.getElementById('svg-container1').getBoundingClientRect().width / 7);
+svgArray[2].attr("height", document.getElementById('svg-container2').getBoundingClientRect().width / 7);
+svgArray[3].attr("height", document.getElementById('svg-container3').getBoundingClientRect().width / 7);
 
 //Path per i grafici
 var paths = [];
@@ -625,42 +625,42 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .attr('id', 'time-img')
                                     .attr('xlink:href', 'img/time.png')
                                     .attr('x', xScale(currentActivityObjectiveTimeValue) + currentChartPosition - xScale(currentActivityObjectiveTimeValue) / 2 - 10)
-                                    .attr('y', yScale(overallMaxYValue) - 50)
-                                    .attr('width', 35)
-                                    .attr('height', 35);
+                                    .attr('y', yScale(overallMaxYValue) - 35)
+                                    .attr('width', 30)
+                                    .attr('height', 30);
 
                             } else if (currentActivityObjective == "DISTANCE") {
                                 svgArray[svgInstance].append("svg:image")
                                     .attr('id', 'distance-img')
                                     .attr('xlink:href', 'img/road.png')
                                     .attr('x', xScale(currentActivityMaxTime) + currentChartPosition - xScale(currentActivityMaxTime) / 2 - 20)
-                                    .attr('y', yScale(overallMaxYValue) - 50)
-                                    .attr('width', 35)
-                                    .attr('height', 35);
+                                    .attr('y', yScale(overallMaxYValue) - 35)
+                                    .attr('width', 30)
+                                    .attr('height', 30);
                             } else if (currentActivityObjective == "DISTANCE_TIME") {
                                 svgArray[svgInstance].append("svg:image")
                                     .attr('id', 'distance-img')
                                     .attr('xlink:href', 'img/road.png')
                                     .attr('x', xScale(currentActivityMaxTime) + currentChartPosition - xScale(currentActivityMaxTime) / 2 - 40)
-                                    .attr('y', yScale(overallMaxYValue) - 50)
-                                    .attr('width', 35)
-                                    .attr('height', 35);
+                                    .attr('y', yScale(overallMaxYValue) - 35)
+                                    .attr('width', 30)
+                                    .attr('height', 30);
 
                                 svgArray[svgInstance].append("svg:image")
                                     .attr('id', 'time-img')
                                     .attr('xlink:href', 'img/time.png')
                                     .attr('x', xScale(currentActivityMaxTime) + currentChartPosition - xScale(currentActivityMaxTime) / 2 + 20)
-                                    .attr('y', yScale(overallMaxYValue) - 50)
-                                    .attr('width', 35)
-                                    .attr('height', 35);
+                                    .attr('y', yScale(overallMaxYValue) - 35)
+                                    .attr('width', 30)
+                                    .attr('height', 30);
 
                                 svgArray[svgInstance].append("svg:image")
                                     .attr('id', 'time-img')
                                     .attr('xlink:href', 'img/plus.png')
                                     .attr('x', xScale(currentActivityMaxTime) + currentChartPosition - xScale(currentActivityMaxTime) / 2 - 10)
-                                    .attr('y', yScale(overallMaxYValue) - 50)
-                                    .attr('width', 35)
-                                    .attr('height', 35);
+                                    .attr('y', yScale(overallMaxYValue) - 35)
+                                    .attr('width', 30)
+                                    .attr('height', 30);
                             }
                         }
 
