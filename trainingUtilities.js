@@ -144,66 +144,66 @@ function computeAllActivitiesMinHbr(activityArray) {
 //Trovo l'altitudine più alta raggiunta in questa attività
 function computeActivityMaxAltitude(activity) {
     var currentMaxAltitude = -1000;
-    activity.data.forEach(function (obj) {
-        if (obj.altitude > currentMaxAltitude) {
-            currentMaxAltitude = obj.altitude;
+    for(var i=1; i<activity.data.length-2; i++){
+        if (activity.data[i].altitude > currentMaxAltitude) {
+            currentMaxAltitude = activity.data[i].altitude;
         }
-    });
+    }
     return currentMaxAltitude;
 }
 
 //Trovo l'altitudine più bassa raggiunta in questa attività
 function computeActivityMinAltitude(activity) {
     var currentMinAltitude = 10000000;
-    activity.data.forEach(function (obj) {
-        if (obj.altitude < currentMinAltitude) {
-            currentMinAltitude = obj.altitude;
+    for(var i=1; i<activity.data.length-2; i++){
+        if (activity.data[i].altitude < currentMinAltitude) {
+            currentMinAltitude = activity.data[i].altitude;
         }
-    });
+    }
     return currentMinAltitude;
 }
 
 //Trovo il passo più lento raggiunto in questa attività
 function computeActivityMaxPace(activity) {
     var currentMaxPace = -1000;
-    activity.data.forEach(function (obj) {
-        if (obj.pace > currentMaxPace) {
-            currentMaxPace = obj.pace;
+    for(var i=1; i<activity.data.length-2; i++){
+        if (activity.data[i].pace > currentMaxPace) {
+            currentMaxPace = activity.data[i].pace;
         }
-    });
+    }
     return currentMaxPace;
 }
 
 //Trovo il passo più veloce raggiunto in questa attività
 function computeActivityMinPace(activity) {
     var currentMinPace = 10000000;
-    activity.data.forEach(function (obj) {
-        if (obj.pace < currentMinPace) {
-            currentMinPace = obj.pace;
+    for(var i=1; i<activity.data.length-2; i++){
+        if (activity.data[i].pace < currentMinPace) {
+            currentMinPace = activity.data[i].pace;
         }
-    });
+    }
     return currentMinPace;
 }
 
 //Trovo i battiti per minuto più alti raggiunti in questa attività
 function computeActivityMaxHbr(activity) {
     var currentMaxHbr = -1000;
-    activity.data.forEach(function (obj) {
-        if (obj.hbr > currentMaxHbr) {
-            currentMaxHbr = obj.hbr;
+    for(var i=1; i<activity.data.length-2; i++){
+        if (activity.data[i].hbr > currentMaxHbr) {
+            currentMaxHbr = activity.data[i].hbr;
         }
-    });
+    }
     return currentMaxHbr;
 }
 
 //Trovo i battiti per minuto più bassi raggiunti in questa attività
 function computeActivityMinHbr(activity) {
     var currentMinHbr = 1000;
-    activity.data.forEach(function (obj) {
-        if (obj.hbr < currentMinHbr) {
-            currentMinHbr = obj.hbr;
+    for(var i=1; i<activity.data.length-2; i++){
+        if (activity.data[i].hbr < currentMinHbr) {
+            currentMinHbr = activity.data[i].hbr;
         }
-    });
+    }
     return currentMinHbr;
 }
 
@@ -292,13 +292,13 @@ function getGraphName(svgInstance) {
             name = "Distanza";
             break;
         case 1:
-            name = "Altitudine";
-            break;
-        case 2:
             name = "Passo";
             break;
-        case 3:
+        case 2:
             name = "Bpm";
+            break;
+        case 3:
+            name = "Altitudine";
             break;
     }
 
@@ -312,13 +312,13 @@ function getGraphLabels(svgInstance) {
             name = "Metri(m)";
             break;
         case 1:
-            name = "Metri(m)";
+            name = "mm:ss/Km";
             break;
         case 2:
-            name = "m/Km";
+            name = "Bpm";
             break;
         case 3:
-            name = "Bpm";
+            name = "Metri(m)";
             break;
     }
 
@@ -566,11 +566,11 @@ function createOnMouseMove(activities, totalGraphs) {
         if (i == 0) {
             return "m:" + parseInt(activities[column].data[arrayPositions[index]].distance);
         } else if (i == 1) {
-            return "m:" + parseInt(activities[column].data[arrayPositions[index]].altitude);
+            return "mm:ss/km:" + parseInt(activities[column].data[arrayPositions[index]].pace);
         } else if (i == 2) {
-            return "m/km:" + parseInt(activities[column].data[arrayPositions[index]].pace);
-        } else if (i == 3) {
             return "bpm:" + parseInt(activities[column].data[arrayPositions[index]].hbr);
+        } else if (i == 3) {
+            return "m:" + parseInt(activities[column].data[arrayPositions[index]].altitude);
         }
     }
 

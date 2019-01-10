@@ -316,6 +316,12 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                 var minHbr = computeAllActivitiesMinHbr(activities);
                 var maxObjectiveDistance = computeMaxObjectiveDistance(activities);
 
+                for (var nActivities = 0; nActivities < chartsNumber; nActivities++) {
+                    var activityMaxTime = activities[nActivities].data[activities[nActivities].data.length - 1].time;
+                    activities[nActivities].data.unshift({distance: 0, time: 0, altitude: minAltitude, pace: maxPace, hbr: minHbr});
+                    activities[nActivities].data.push({distance: 0, time: activityMaxTime, altitude: minAltitude, pace: maxPace, hbr: minHbr});
+                }
+
                 //Posizione x in cui iniziare a disegnare il primo grafico
                 var currentChartPosition = 40;
 
@@ -324,27 +330,38 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                     var svgContainerWidth = document.getElementById("svg-container" + svgInstance).getBoundingClientRect().width;
                     var svgContainerHeight = document.getElementById("svg-container" + svgInstance).getBoundingClientRect().height;
 
-                    var overallMaxXValue, overallMinXValue, overallMaxTimeValue;
+                    var overallMaxYValue, overallMinYValue, overallMaxTimeValue;
                     if (svgInstance == 0) {
-                        overallMinXValue = 0;
+                        overallMinYValue = 0;
                         if (maxObjectiveDistance > maxDistance) {
-                            overallMaxXValue = maxObjectiveDistance;
+                            overallMaxYValue = maxObjectiveDistance;
                         } else {
-                            overallMaxXValue = maxDistance;
+                            overallMaxYValue = maxDistance;
                         }
                     } else if (svgInstance == 1) {
-                        overallMinXValue = minAltitude;
-                        overallMaxXValue = maxAltitude;
+                        overallMinYValue = minPace;
+                        overallMaxYValue = maxPace;
                     } else if (svgInstance == 2) {
-                        overallMinXValue = minPace;
-                        overallMaxXValue = maxPace;
+                        overallMinYValue = minHbr;
+                        overallMaxYValue = maxHbr;
                     } else if (svgInstance == 3) {
-                        overallMinXValue = minHbr;
-                        overallMaxXValue = maxHbr;
+                        overallMinYValue = minAltitude;
+                        overallMaxYValue = maxAltitude;
                     }
 
-                    var yScale = d3.scaleLinear()
-                        .domain([overallMinXValue, overallMaxXValue])
+
+                    if(svgInstance ==1){
+                        var yScale = d3.scaleLinear()
+                            .domain([overallMinYValue, overallMaxYValue])
+                            .range([10, svgContainerHeight - 20]);
+                    }else {
+                        var yScale = d3.scaleLinear()
+                            .domain([overallMinYValue, overallMaxYValue])
+                            .range([svgContainerHeight - 20, 10]);
+                    }
+
+                    var yScaleLabel = d3.scaleLinear()
+                        .domain([overallMinYValue, overallMaxYValue])
                         .range([svgContainerHeight - 20, 10]);
 
                     var yAxis = d3.axisLeft(yScale)
@@ -364,20 +381,20 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                         var idString;
 
                         if (svgInstance == 0) {
-                            currentActivityMaxXValue = activities[graphIndex].data[activities[graphIndex].data.length - 1].distance;
+                            currentActivityMaxXValue = activities[graphIndex].data[activities[graphIndex].data.length - 2].distance;
                             idString = "distance";
                         } else if (svgInstance == 1) {
-                            currentActivityMaxXValue = computeActivityMaxAltitude(activities[graphIndex]);
-                            currentActivityMinXValue = computeActivityMinAltitude(activities[graphIndex]);
-                            idString = "altitude";
-                        } else if (svgInstance == 2) {
                             currentActivityMaxXValue = computeActivityMaxPace(activities[graphIndex]);
                             currentActivityMinXValue = computeActivityMinPace(activities[graphIndex]);
-                            idString = "pace";
-                        } else {
+                            idString = "pace"
+                        } else if (svgInstance == 2) {
                             currentActivityMaxXValue = computeActivityMaxHbr(activities[graphIndex]);
                             currentActivityMinXValue = computeActivityMinHbr(activities[graphIndex]);
                             idString = "hbr";
+                        } else {;
+                            currentActivityMaxXValue = computeActivityMaxAltitude(activities[graphIndex]);
+                            currentActivityMinXValue = computeActivityMinAltitude(activities[graphIndex]);
+                            idString = "altitude";
                         }
 
 
@@ -405,12 +422,97 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                             .call(xAxis)
                             .style({'stroke-width': '1px'});
 
+                        if(svgInstance==0){
+                            //Funzione per disegnare i grafici in base ai punti
+                            valueline = d3.line()
+                                .x(function (d) {
+                                    return xScale(d.time) + currentChartPosition;
+                                })
+                                .y(function (d) {
+                                    return yScale(d.distance);
+                                });
+                        } else if (svgInstance == 1) {
+                            //Funzione per disegnare i grafici in base ai punti
+                            valueline = d3.line()
+                                .x(function (d) {
+                                    return xScale(d.time) + currentChartPosition;
+                                })
+                                .y(function (d) {
+                                    return yScale(d.pace);
+                                });
+                        } else if (svgInstance == 2) {
+                            //Funzione per disegnare i grafici in base ai punti
+                            valueline = d3.line()
+                                .x(function (d) {
+                                    return xScale(d.time) + currentChartPosition;
+                                })
+                                .y(function (d) {
+                                    return yScale(d.hbr);
+                                });
+                        } else if (svgInstance == 3) {
+                            //Funzione per disegnare i grafici in base ai punti
+                            valueline = d3.line()
+                                .x(function (d) {
+                                    return xScale(d.time) + currentChartPosition;
+                                })
+                                .y(function (d) {
+                                    return yScale(d.altitude);
+                                });
+                        }
 
+                        //Grafici dei dati
+                        if (svgInstance == 0) {
+                            //Aggiungo il nuovo grafico
+                            paths.push(
+                                svgArray[svgInstance].append("path")
+                                    .attr("class", "data-line-distance")
+                                    .attr("id", "data-line" + graphIndex)
+                                    .attr("d", valueline(activities[graphIndex].data))
+                                    .style("stroke-width", "4px")
+                                    .style("stroke", getLineColor(svgInstance))
+                                    .style("fill", getLineColor(svgInstance))
+                            );
+                        } else if (svgInstance == 1) {
+                            //Aggiungo il nuovo grafico
+                            paths.push(
+                                svgArray[svgInstance].append("path")
+                                    .attr("class", "data-line-pace")
+                                    .attr("id", "data-line" + graphIndex)
+                                    .attr("d", valueline(activities[graphIndex].data))
+                                    .style("stroke-width", "2px")
+                                    .style("stroke", getLineColor(svgInstance))
+                                    .style("fill", getLineColor(svgInstance))
+                            );
+                        } else if (svgInstance == 2) {
+                            //Aggiungo il nuovo grafico
+                            paths.push(
+                                svgArray[svgInstance].append("path")
+                                    .attr("class", "data-line-hbr")
+                                    .attr("id", "data-line" + graphIndex)
+                                    .attr("d", valueline(activities[graphIndex].data))
+                                    .style("stroke-width", "2px")
+                                    .style("stroke", getLineColor(svgInstance))
+                                    .style("fill", getLineColor(svgInstance))
+                            );
+                        } else if (svgInstance == 3) {
+                            //Aggiungo il nuovo grafico
+                            paths.push(
+                                svgArray[svgInstance].append("path")
+                                    .attr("class", "data-line-altitude")
+                                    .attr("id", "data-line" + graphIndex)
+                                    .attr("d", valueline(activities[graphIndex].data))
+                                    .style("stroke-width", "2px")
+                                    .style("stroke", getLineColor(svgInstance))
+                                    .style("fill", getLineColor(svgInstance))
+                            );
+                        }
+
+                        //Grafici legati agli obiettivi
                         if (svgInstance == 0) {
                             var rangeDistance, rangeTime;
                             //Punto dell'obiettivo
                             if (currentActivityObjective == "TIME") {
-                                rangeTime = xScale(currentActivityObjectiveTimeValue * 0.05);
+                                rangeTime = xScale(currentActivityObjectiveTimeValue*1.05)-xScale(currentActivityObjectiveTimeValue*0.95);
 
                                 svgArray[svgInstance].append("line")
                                     .attr('class', 'expected-range-line')
@@ -419,7 +521,8 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .attr('x2', xScale(currentActivityObjectiveTimeValue) + currentChartPosition)
                                     .attr('y2', yScale(currentActivityMaxXValue))
                                     .style("stroke", "#9effff")
-                                    .style("stroke-width", rangeTime + 'px');
+                                    .style("stroke-width", rangeTime + 'px')
+                                    .attr("opacity", 0.7);
 
                                 svgArray[svgInstance].append("line")
                                     .attr('class', 'expected-line')
@@ -431,7 +534,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .style("stroke-width", '2px');
 
                             } else if (currentActivityObjective == "DISTANCE") {
-                                rangeDistance = svgContainerHeight - (yScale(currentActivityObjectiveDistanceValue * 0.05));
+                                rangeDistance = yScale(currentActivityObjectiveDistanceValue*0.95)-yScale(currentActivityObjectiveDistanceValue*1.05);
 
                                 svgArray[svgInstance].append("line")
                                     .attr('class', 'expected-range-line')
@@ -440,7 +543,8 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .attr('x2', xScale(currentActivityMaxTime) + currentChartPosition)
                                     .attr('y2', yScale(currentActivityObjectiveDistanceValue))
                                     .style("stroke", "#9effff")
-                                    .style("stroke-width", rangeDistance + 'px');
+                                    .style("stroke-width", rangeDistance + 'px')
+                                    .attr("opacity", 0.7);
 
                                 svgArray[svgInstance].append("line")
                                     .attr('class', 'expected-line')
@@ -452,16 +556,17 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .style("stroke-width", '2px');
 
                             } else if (currentActivityObjective == "DISTANCE_TIME") {
-                                rangeTime = xScale(currentActivityObjectiveTimeValue * 0.05);
-                                rangeDistance = svgContainerHeight - (yScale(currentActivityObjectiveDistanceValue * 0.05));
+                                rangeTime = xScale(currentActivityObjectiveTimeValue*1.05)-xScale(currentActivityObjectiveTimeValue*0.95);
+                                rangeDistance = yScale(currentActivityObjectiveDistanceValue*0.95)-yScale(currentActivityObjectiveDistanceValue*1.05);
 
                                 svgArray[svgInstance].append("rect")
                                     .attr('class', 'expected-range-rect')
-                                    .attr("x", xScale(currentActivityObjectiveTimeValue) + currentChartPosition - rangeTime)
-                                    .attr("y", yScale(currentActivityObjectiveDistanceValue) - rangeDistance)
-                                    .attr("width", rangeTime * 2)
-                                    .attr("height", rangeDistance * 2)
-                                    .style("fill", "#9effff");
+                                    .attr("x", xScale(currentActivityObjectiveTimeValue) + currentChartPosition - rangeTime/2)
+                                    .attr("y", yScale(currentActivityObjectiveDistanceValue) - rangeDistance/2)
+                                    .attr("width", rangeTime)
+                                    .attr("height", rangeDistance)
+                                    .style("fill", "#9effff")
+                                    .attr("opacity", 0.7);
 
                                 svgArray[svgInstance].append("line")
                                     .attr('class', 'expected-line')
@@ -484,6 +589,17 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                             }
 
                             //Punto del risultato dell'utente
+                            if (svgInstance == 0) {
+                                svgArray[svgInstance].append("circle")
+                                    .attr('id', 'result-point' + graphIndex)
+                                    .attr('class', 'result-point')
+                                    .attr("cx", xScale(currentActivityMaxTime) + currentChartPosition)
+                                    .attr("cy", yScale(currentActivityMaxXValue))
+                                    .attr("r", 6)
+                                    .attr("fill", getResultPointColor(currentActivityObjective, currentActivityMaxTime, currentActivityObjectiveTimeValue, currentActivityMaxXValue, currentActivityObjectiveDistanceValue));
+                            }
+
+                            //Punto dell'obiettivo dell'utente
                             svgArray[svgInstance].append("line")
                                 .attr('class', 'result-line')
                                 .attr('x1', xScale(0) + currentChartPosition)
@@ -509,7 +625,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .attr('id', 'time-img')
                                     .attr('xlink:href', 'img/time.png')
                                     .attr('x', xScale(currentActivityObjectiveTimeValue) + currentChartPosition - xScale(currentActivityObjectiveTimeValue) / 2 - 10)
-                                    .attr('y', yScale(overallMaxXValue) - 50)
+                                    .attr('y', yScale(overallMaxYValue) - 50)
                                     .attr('width', 35)
                                     .attr('height', 35);
 
@@ -518,7 +634,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .attr('id', 'distance-img')
                                     .attr('xlink:href', 'img/road.png')
                                     .attr('x', xScale(currentActivityMaxTime) + currentChartPosition - xScale(currentActivityMaxTime) / 2 - 20)
-                                    .attr('y', yScale(overallMaxXValue) - 50)
+                                    .attr('y', yScale(overallMaxYValue) - 50)
                                     .attr('width', 35)
                                     .attr('height', 35);
                             } else if (currentActivityObjective == "DISTANCE_TIME") {
@@ -526,7 +642,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .attr('id', 'distance-img')
                                     .attr('xlink:href', 'img/road.png')
                                     .attr('x', xScale(currentActivityMaxTime) + currentChartPosition - xScale(currentActivityMaxTime) / 2 - 40)
-                                    .attr('y', yScale(overallMaxXValue) - 50)
+                                    .attr('y', yScale(overallMaxYValue) - 50)
                                     .attr('width', 35)
                                     .attr('height', 35);
 
@@ -534,7 +650,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .attr('id', 'time-img')
                                     .attr('xlink:href', 'img/time.png')
                                     .attr('x', xScale(currentActivityMaxTime) + currentChartPosition - xScale(currentActivityMaxTime) / 2 + 20)
-                                    .attr('y', yScale(overallMaxXValue) - 50)
+                                    .attr('y', yScale(overallMaxYValue) - 50)
                                     .attr('width', 35)
                                     .attr('height', 35);
 
@@ -542,101 +658,12 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .attr('id', 'time-img')
                                     .attr('xlink:href', 'img/plus.png')
                                     .attr('x', xScale(currentActivityMaxTime) + currentChartPosition - xScale(currentActivityMaxTime) / 2 - 10)
-                                    .attr('y', yScale(overallMaxXValue) - 50)
+                                    .attr('y', yScale(overallMaxYValue) - 50)
                                     .attr('width', 35)
                                     .attr('height', 35);
                             }
-
-                            //Funzione per disegnare i grafici in base ai punti
-                            valueline = d3.line()
-                                .x(function (d) {
-                                    return xScale(d.time) + currentChartPosition;
-                                })
-                                .y(function (d) {
-                                    return yScale(d.distance);
-                                });
-                        } else if (svgInstance == 1) {
-                            //Funzione per disegnare i grafici in base ai punti
-                            valueline = d3.line()
-                                .x(function (d) {
-                                    return xScale(d.time) + currentChartPosition;
-                                })
-                                .y(function (d) {
-                                    return yScale(d.altitude);
-                                });
-                        } else if (svgInstance == 2) {
-                            //Funzione per disegnare i grafici in base ai punti
-                            valueline = d3.line()
-                                .x(function (d) {
-                                    return xScale(d.time) + currentChartPosition;
-                                })
-                                .y(function (d) {
-                                    return yScale(d.pace);
-                                });
-                        } else if (svgInstance == 3) {
-                            //Funzione per disegnare i grafici in base ai punti
-                            valueline = d3.line()
-                                .x(function (d) {
-                                    return xScale(d.time) + currentChartPosition;
-                                })
-                                .y(function (d) {
-                                    return yScale(d.hbr);
-                                });
                         }
 
-
-                        if (svgInstance == 0) {
-                            //Aggiungo il nuovo grafico
-                            paths.push(
-                                svgArray[svgInstance].append("path")
-                                    .attr("class", "data-line-distance")
-                                    .attr("id", "data-line" + graphIndex)
-                                    .attr("d", valueline(activities[graphIndex].data))
-                                    .style("stroke-width", "4px")
-                                    .style("stroke", getLineColor(svgInstance))
-                                    .style("fill", "none")
-                            );
-                            svgArray[svgInstance].append("circle")
-                                .attr('id', 'result-point' + graphIndex)
-                                .attr('class', 'result-point')
-                                .attr("cx", xScale(currentActivityMaxTime) + currentChartPosition)
-                                .attr("cy", yScale(currentActivityMaxXValue))
-                                .attr("r", 6)
-                                .attr("fill", getResultPointColor(currentActivityObjective, currentActivityMaxTime, currentActivityObjectiveTimeValue, currentActivityMaxXValue, currentActivityObjectiveDistanceValue));
-                        } else if (svgInstance == 1) {
-                            //Aggiungo il nuovo grafico
-                            paths.push(
-                                svgArray[svgInstance].append("path")
-                                    .attr("class", "data-line-altitude")
-                                    .attr("id", "data-line" + graphIndex)
-                                    .attr("d", valueline(activities[graphIndex].data))
-                                    .style("stroke-width", "2px")
-                                    .style("stroke", getLineColor(svgInstance))
-                                    .style("fill", "none")
-                            );
-                        } else if (svgInstance == 2) {
-                            //Aggiungo il nuovo grafico
-                            paths.push(
-                                svgArray[svgInstance].append("path")
-                                    .attr("class", "data-line-pace")
-                                    .attr("id", "data-line" + graphIndex)
-                                    .attr("d", valueline(activities[graphIndex].data))
-                                    .style("stroke-width", "2px")
-                                    .style("stroke", getLineColor(svgInstance))
-                                    .style("fill", "none")
-                            );
-                        } else if (svgInstance == 3) {
-                            //Aggiungo il nuovo grafico
-                            paths.push(
-                                svgArray[svgInstance].append("path")
-                                    .attr("class", "data-line-hbr")
-                                    .attr("id", "data-line" + graphIndex)
-                                    .attr("d", valueline(activities[graphIndex].data))
-                                    .style("stroke-width", "2px")
-                                    .style("stroke", getLineColor(svgInstance))
-                                    .style("fill", "none")
-                            );
-                        }
 
                         svgArray[svgInstance].append('text') //Variabile max in Y
                             .attr('id', 'max-result-value-' + idString + graphIndex)
@@ -671,9 +698,9 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                         svgArray[svgInstance].append('text') //Tempo
                             .attr('id', 'result-value-time' + svgInstance + graphIndex)
                             .attr('class', 'result-value-time' + svgInstance)
-                            .attr('y', yScale(0) + 10)
+                            .attr('y', yScaleLabel(overallMinYValue) + 10)
                             .attr('x', xScale(currentActivityMaxTime) + currentChartPosition)
-                            .attr('original-y', yScale(0) + 10)
+                            .attr('original-y', yScaleLabel(overallMinYValue) + 10)
                             .attr('original-x', xScale(currentActivityMaxTime) + currentChartPosition)
                             .attr('dy', '8px')
                             .style('fill', '#0062cc')
