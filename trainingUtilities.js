@@ -223,15 +223,44 @@ function createGraphTitle(index) {
     // div principale
     var container = document.createElement("div");
     container.className = "container";
-    container.style.marginTop = "5px";
+
+    // controllo per il margin-top del 2 grafico
+    if(index == 1) {
+        console.log('0')
+        container.style.marginTop = "0.1%";
+        container.style.marginBottom = "0.5%";
+    }
+    else {
+        container.style.marginTop = "1%";
+        container.style.marginBottom = "0.5%";
+    }
 
     // 1a riga
     var row_div = document.createElement("div");
-    row_div.className = "row justify-content-center";
+    row_div.className = "row justify-content-left";
 
     // 1a colonna
     var col_div1 = document.createElement("div");
-    col_div1.className = "col-md-auto";
+    col_div1.className = "col-md-auto align-middle";
+    row_div.appendChild(col_div1);
+
+    // div contenente la linea del grafico
+    /*var graph_color_class = document.createElement("div");
+    graph_color_class.className = "graph-line";
+    graph_color_class.style.borderBottom = "3px solid " + getLineColor(index);*/
+
+    var graph_color_class = document.createElement("div");
+    graph_color_class.className = "graph-circle";
+    graph_color_class.style.background = getLineColor(index);
+
+    // append degli elementi creati
+    col_div1.append(graph_color_class);
+    row_div.appendChild(col_div1);
+    container.appendChild(row_div)
+
+    // 2a colonna
+    var col_div2 = document.createElement("div");
+    col_div2.className = "col-md-2";
     // div contenente la classe del titolo
     var graph_name_class = document.createElement("div");
     graph_name_class.className = "graph-name";
@@ -242,24 +271,8 @@ function createGraphTitle(index) {
 
     // append degli elementi creati
     graph_name_class.append(graph_name_text);
-    col_div1.append(graph_name_class);
-    row_div.append(col_div1);
-
-    // 2a colonna
-    var col_div2 = document.createElement("div");
-    col_div2.className = "col-md-auto";
-    row_div.appendChild(col_div2);
-
-    // div contenente la linea del grafico
-    var graph_color_class = document.createElement("div");
-    graph_color_class.className = "graph-line";
-    graph_color_class.style.borderBottom = "3px solid " + getLineColor(index);
-
-
-    // append degli elementi creati
-    col_div2.append(graph_color_class);
-    row_div.appendChild(col_div2);
-    container.appendChild(row_div)
+    col_div2.append(graph_name_class);
+    row_div.append(col_div2);
 
     // append del div principale
     document.getElementById("graphic" + index).appendChild(container);

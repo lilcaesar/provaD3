@@ -179,7 +179,8 @@ h6{
 }
 
 .graph-name{
-    text-align: center;
+    text-align: left;
+    margin-left: -10%;
 }
 
 .graph-line{
@@ -195,6 +196,13 @@ h6{
     color: #000000;
     font-weight: 600;
     font-size: 12px;
+}
+
+.graph-circle{
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    margin-top: 12%;
 }
 
 /* voto predetto*/

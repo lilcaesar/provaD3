@@ -69,13 +69,27 @@ for (var i = 0; i < totalGraphs; i++) {
     createGraphTitle(i);
     //createGraphAxis(i, position);
     var graph_name = '#graphic' + i;
-    svgArray.push(d3.select(graph_name)
-        .append("svg")
-        .attr("id", 'svg-container' + i)
-        .attr("class", 'svg-container' + i)
-        .attr("width", '100%')
-        .attr('preserveAspectRatio', 'xMinYMin')
-    );
+
+    if(i>0){
+        svgArray.push(d3.select(graph_name)
+            .append("svg")
+            .attr("id", 'svg-container' + i)
+            .attr("class", 'svg-container' + i)
+            .attr("width", '100%')
+            .attr('preserveAspectRatio', 'xMinYMin')
+            .style('margin-top', '-1%')
+            .style('margin-bottom', '-1%')
+        );
+    }
+    else {
+        svgArray.push(d3.select(graph_name)
+            .append("svg")
+            .attr("id", 'svg-container' + i)
+            .attr("class", 'svg-container' + i)
+            .attr("width", '100%')
+            .attr('preserveAspectRatio', 'xMinYMin')
+        );
+    }
 
     //position = 'right';
     //createGraphAxis(i, position);
@@ -350,11 +364,12 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                     }
 
 
-                    if(svgInstance ==1){
+                    if(svgInstance ==1) {
                         var yScale = d3.scaleLinear()
                             .domain([overallMinYValue, overallMaxYValue])
                             .range([10, svgContainerHeight - 20]);
-                    }else {
+                    }
+                    else{
                         var yScale = d3.scaleLinear()
                             .domain([overallMinYValue, overallMaxYValue])
                             .range([svgContainerHeight - 20, 10]);
@@ -807,3 +822,20 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
 
 // aggiornamento label iniziale
 changeSliderLabelsColor(training.mark);
+
+
+
+//document.addEventListener("DOMContentLoaded", function(){
+
+/*
+    for(var i = 1; i < totalGraphs; i++){
+        //var svg_height = svgArray[i]._groups[0][0].height.baseVal.value;
+        //console.log(svg_height);
+        var svg_container = document.getElementById('svg-container'+i);
+        var svg_height = svg_container.style.height;
+        svg_height  *= 100/109;
+        console.log(svg_height);
+        svg_container.style.height = svg_height;
+    }*/
+//});
+
