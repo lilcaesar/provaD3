@@ -151,6 +151,7 @@ function computeActivityMaxAltitude(activity) {
     });
     return currentMaxAltitude;
 }
+
 //Trovo l'altitudine più bassa raggiunta in questa attività
 function computeActivityMinAltitude(activity) {
     var currentMinAltitude = 10000000;
@@ -172,6 +173,7 @@ function computeActivityMaxPace(activity) {
     });
     return currentMaxPace;
 }
+
 //Trovo il passo più veloce raggiunto in questa attività
 function computeActivityMinPace(activity) {
     var currentMinPace = 10000000;
@@ -182,6 +184,7 @@ function computeActivityMinPace(activity) {
     });
     return currentMinPace;
 }
+
 //Trovo i battiti per minuto più alti raggiunti in questa attività
 function computeActivityMaxHbr(activity) {
     var currentMaxHbr = -1000;
@@ -192,6 +195,7 @@ function computeActivityMaxHbr(activity) {
     });
     return currentMaxHbr;
 }
+
 //Trovo i battiti per minuto più bassi raggiunti in questa attività
 function computeActivityMinHbr(activity) {
     var currentMinHbr = 1000;
@@ -214,7 +218,7 @@ function computeMaxObjectiveDistance(activityArray) {
     return currentMaxDistance;
 }
 
-function createGraphTitle(index){
+function createGraphTitle(index) {
 
     // div principale
     var container = document.createElement("div");
@@ -260,9 +264,10 @@ function createGraphTitle(index){
     // append del div principale
     document.getElementById("graphic" + index).appendChild(container);
 }
+
 function getLineColor(svgInstance) {
     var color;
-    switch(svgInstance){
+    switch (svgInstance) {
         case 0:
             color = "#ffa520";
             break;
@@ -282,7 +287,7 @@ function getLineColor(svgInstance) {
 
 function getGraphName(svgInstance) {
     var name;
-    switch(svgInstance){
+    switch (svgInstance) {
         case 0:
             name = "Distanza";
             break;
@@ -302,7 +307,7 @@ function getGraphName(svgInstance) {
 
 function getGraphLabels(svgInstance) {
     var name;
-    switch(svgInstance){
+    switch (svgInstance) {
         case 0:
             name = "Metri(m)";
             break;
@@ -320,62 +325,61 @@ function getGraphLabels(svgInstance) {
     return name;
 }
 
-function createGraphAxis(index, position){
+function createGraphAxis(index, position) {
     var row_div = document.createElement("div");
 
-    if(position == 'left'){
+    if (position == 'left') {
         row_div.className = "row justify-content-center float-left graph-labels";
         row_div.innerHTML = getGraphLabels(index);
-    }
-    else{
+    } else {
         row_div.className = "row justify-content-center float-right graph-labels";
         row_div.innerHTML = "Tempo(s)";
     }
     document.getElementById("graphic" + index).appendChild(row_div);
 }
 
-function getResultPointColor(currentActivityObjective, currentActivityMaxTime, currentActivityObjectiveTimeValue, currentActivityMaxXValue, currentActivityObjectiveDistanceValue){
+function getResultPointColor(currentActivityObjective, currentActivityMaxTime, currentActivityObjectiveTimeValue, currentActivityMaxXValue, currentActivityObjectiveDistanceValue) {
     var deltaTime, deltaDistance, color, objectiveDistance, objectiveTime, valueDistance, valueTime;
-    if(currentActivityObjective == "TIME") {
+    if (currentActivityObjective == "TIME") {
         valueTime = currentActivityMaxTime;
         objectiveTime = parseInt(currentActivityObjectiveTimeValue);
         deltaTime = currentActivityObjectiveTimeValue * 0.05;
-        if((valueTime < (objectiveTime+deltaTime)) && (valueTime > (objectiveTime-deltaTime))){
+        if ((valueTime < (objectiveTime + deltaTime)) && (valueTime > (objectiveTime - deltaTime))) {
             color = "green";
-        }else{
+        } else {
             color = "red";
         }
-    }else if(currentActivityObjective == "DISTANCE"){
+    } else if (currentActivityObjective == "DISTANCE") {
         valueDistance = currentActivityMaxXValue;
         objectiveDistance = parseInt(currentActivityObjectiveDistanceValue);
         deltaDistance = currentActivityObjectiveDistanceValue * 0.05;
-        if((valueDistance < (objectiveDistance+deltaDistance)) && (valueDistance > (objectiveDistance-deltaDistance))){
+        if ((valueDistance < (objectiveDistance + deltaDistance)) && (valueDistance > (objectiveDistance - deltaDistance))) {
             color = "green";
-        }else{
+        } else {
             color = "red";
         }
-    }else{
+    } else {
         valueDistance = currentActivityMaxXValue;
         objectiveDistance = parseInt(currentActivityObjectiveDistanceValue);
         valueTime = currentActivityMaxTime;
         objectiveTime = parseInt(currentActivityObjectiveTimeValue);
         deltaDistance = currentActivityObjectiveDistanceValue * 0.05;
         deltaTime = currentActivityObjectiveTimeValue * 0.05;
-        if((valueDistance < (objectiveDistance+deltaDistance)) && (valueDistance > (objectiveDistance-deltaDistance))){
-            if((valueTime < (objectiveTime+deltaTime)) && (valueTime > (objectiveTime-deltaTime))){
+        if ((valueDistance < (objectiveDistance + deltaDistance)) && (valueDistance > (objectiveDistance - deltaDistance))) {
+            if ((valueTime < (objectiveTime + deltaTime)) && (valueTime > (objectiveTime - deltaTime))) {
                 color = "green";
-            }else{
+            } else {
                 color = "red";
             }
-        }else{
+        } else {
             color = "red";
         }
     }
     return color;
 }
 
-function maxZoomLimit(width, duration){
-    return (duration/width)*4;
+function maxZoomLimit(width, duration) {
+    return (duration / width) * 4;
 }
 
 function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, duration, totalGraphs) {
@@ -440,7 +444,7 @@ function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, d
                 var labelX = d3.select("#max-result-value-" + tipo + i);
                 var labelTime = d3.select("#result-value-time" + index + i);
                 var xp = points[i].cx.animVal.value * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().x;
-                var yp = points[i].cy.animVal.value * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().y;
+                var yp = points[i].cy.animVal.value * panZoomInstance[index].getSizes().realZoom - panZoomInstance[index].getPan().y;
                 if ((xp >= 0) && (yp >= 0)) {
                     labelX.style("visibility", "visible");
                     labelTime.style("visibility", "visible");
@@ -469,7 +473,7 @@ function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, d
                 var labelX = d3.select("#max-result-value-" + tipo + i);
                 var labelTime = d3.select("#result-value-time" + index + i);
                 var xp = points[i].cx.animVal.value * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().x;
-                var yp = points[i].cy.animVal.value * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().y;
+                var yp = points[i].cy.animVal.value * panZoomInstance[index].getSizes().realZoom - panZoomInstance[index].getPan().y;
                 if ((xp >= 0) && (yp >= 0)) {
                     labelX.style("visibility", "visible");
                     labelTime.style("visibility", "visible");
@@ -490,6 +494,7 @@ function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, d
                     labelTime.style("visibility", "hidden");
                 }
             }
+
             panZoomInstance[(index + 1) % totalGraphs].pan({
                 x: pan.x,
                 y: panZoomInstance[(index + 1) % totalGraphs].getPan().y
@@ -505,7 +510,6 @@ function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, d
         }
     }
 }
-
 
 
 function createOnMouseMove(activities, totalGraphs) {
@@ -540,7 +544,7 @@ function createOnMouseMove(activities, totalGraphs) {
                 //Troviamo l'indice del vettore corrispondente al punto evidenziato col mouse
                 //Calcoliamo il fattore di conversione con (arrayLenght-1)/(graph.end.x - graph.start.x)
                 //che andremo a moltiplicare per il punto in cui si trova il mouse per ricavare l'indice
-                arrayPositions.push(parseInt(((activities[pathIndex].data.length-1)/((pathEl.getPointAtLength(pathLength).x)-(pathEl.getPointAtLength(0).x)))*(domPoint.x - (pathEl.getPointAtLength(0).x))));
+                arrayPositions.push(parseInt(((activities[pathIndex].data.length - 1) / ((pathEl.getPointAtLength(pathLength).x) - (pathEl.getPointAtLength(0).x))) * (domPoint.x - (pathEl.getPointAtLength(0).x))));
                 found = true;
                 while (true) {
                     target = Math.floor((beginning + end) / 2);
@@ -558,90 +562,79 @@ function createOnMouseMove(activities, totalGraphs) {
         }
     }
 
-    function dataType(i){
-        if(i==0){
-            return "m:"+parseInt(activities[column].data[arrayPositions[index]].distance);
-        }else if(i==1){
-            return "m:"+parseInt(activities[column].data[arrayPositions[index]].altitude);
-        }else if(i==2){
-            return "m/km:"+parseInt(activities[column].data[arrayPositions[index]].pace);
-        }else if(i==3){
-            return "bpm:"+parseInt(activities[column].data[arrayPositions[index]].hbr);
+    function dataType(i) {
+        if (i == 0) {
+            return "m:" + parseInt(activities[column].data[arrayPositions[index]].distance);
+        } else if (i == 1) {
+            return "m:" + parseInt(activities[column].data[arrayPositions[index]].altitude);
+        } else if (i == 2) {
+            return "m/km:" + parseInt(activities[column].data[arrayPositions[index]].pace);
+        } else if (i == 3) {
+            return "bpm:" + parseInt(activities[column].data[arrayPositions[index]].hbr);
         }
     }
 
     if (found) {
         var currentBbox;
 
-        for(var svgIndex = 0; svgIndex < totalGraphs; svgIndex++){
+        for (var svgIndex = 0; svgIndex < totalGraphs; svgIndex++) {
+            d3.select("#mouse-circle" + svgIndex)
+                .attr("opacity", 1)
+                .attr("cx", x[svgIndex])
+                .attr("cy", pos[svgIndex].matrixTransform(ctm[svgIndex].inverse()).y);
 
-            if(isGraphicDisplayed(svgIndex)) {
-                d3.select("#mouse-circle" + svgIndex)
-                    .attr("opacity", 1)
-                    .attr("cx", x[svgIndex])
-                    .attr("cy", pos[svgIndex].matrixTransform(ctm[svgIndex].inverse()).y);
+            d3.select("#mouse-line" + svgIndex)
+                .attr("opacity", 1)
+                .attr("x1", x[svgIndex])
+                .attr("x2", x[svgIndex]);
 
-                d3.select("#mouse-line" + svgIndex)
-                    .attr("opacity", 1)
-                    .attr("x1", x[svgIndex])
-                    .attr("x2", x[svgIndex]);
+            d3.select("#mouse-label-x" + svgIndex)
+                .attr("opacity", 1)
+                .attr("x", x[svgIndex] - 10)
+                .attr("y", pos[svgIndex].matrixTransform(ctm[svgIndex].inverse()).y - 12)
+                .text("s:" + arrayPositions[svgIndex]);
 
-                d3.select("#mouse-label-x" + svgIndex)
-                    .attr("opacity", 1)
-                    .attr("x", x[svgIndex] - 10)
-                    .attr("y", pos[svgIndex].matrixTransform(ctm[svgIndex].inverse()).y - 12)
-                    .text("s:" + arrayPositions[svgIndex]);
+            d3.select("#mouse-label-y" + svgIndex)
+                .attr("opacity", 1)
+                .attr("x", x[svgIndex] - 10)
+                .attr("y", pos[svgIndex].matrixTransform(ctm[svgIndex].inverse()).y)
+                .text(dataType(svgIndex));
 
-                d3.select("#mouse-label-y" + svgIndex)
-                    .attr("opacity", 1)
-                    .attr("x", x[svgIndex] - 10)
-                    .attr("y", pos[svgIndex].matrixTransform(ctm[svgIndex].inverse()).y)
-                    .text(dataType(svgIndex));
+            currentBbox = d3.select("#mouse-label-x" + svgIndex)._groups[0][0].getBBox();
+            d3.select("#mouse-label-x-rect" + svgIndex)
+                .attr("opacity", 0.8)
+                .attr("x", currentBbox.x)
+                .attr("y", currentBbox.y)
+                .attr("width", currentBbox.width)
+                .attr("height", currentBbox.height);
 
-                currentBbox = d3.select("#mouse-label-x" + svgIndex)._groups[0][0].getBBox();
-                d3.select("#mouse-label-x-rect" + svgIndex)
-                    .attr("opacity", 0.8)
-                    .attr("x", currentBbox.x)
-                    .attr("y", currentBbox.y)
-                    .attr("width", currentBbox.width)
-                    .attr("height", currentBbox.height);
+            currentBbox = d3.select("#mouse-label-y" + svgIndex)._groups[0][0].getBBox();
+            d3.select("#mouse-label-y-rect" + svgIndex)
+                .attr("opacity", 0.8)
+                .attr("x", currentBbox.x)
+                .attr("y", currentBbox.y)
+                .attr("width", currentBbox.width)
+                .attr("height", currentBbox.height);
 
-                currentBbox = d3.select("#mouse-label-y" + svgIndex)._groups[0][0].getBBox();
-                d3.select("#mouse-label-y-rect" + svgIndex)
-                    .attr("opacity", 0.8)
-                    .attr("x", currentBbox.x)
-                    .attr("y", currentBbox.y)
-                    .attr("width", currentBbox.width)
-                    .attr("height", currentBbox.height);
-            }
         }
 
     } else {
-        for(var svgIndex = 0; svgIndex < totalGraphs; svgIndex++) {
+        for (var svgIndex = 0; svgIndex < totalGraphs; svgIndex++) {
+            d3.select("#mouse-circle" + svgIndex)
+                .attr("opacity", 0);
+            d3.select("#mouse-line" + svgIndex)
+                .attr("opacity", 0);
+            d3.select("#mouse-label-x-rect" + svgIndex)
+                .attr("opacity", 0);
+            d3.select("#mouse-label-y-rect" + svgIndex)
+                .attr("opacity", 0);
+            d3.select("#mouse-line" + svgIndex)
+                .attr("opacity", 0);
 
-            if(isGraphicDisplayed(svgIndex)) {
-                d3.select("#mouse-circle" + svgIndex)
-                    .attr("opacity", 0);
-                d3.select("#mouse-line" + svgIndex)
-                    .attr("opacity", 0);
-                d3.select("#mouse-label-x-rect" + svgIndex)
-                    .attr("opacity", 0);
-                d3.select("#mouse-label-y-rect" + svgIndex)
-                    .attr("opacity", 0);
-                d3.select("#mouse-line" + svgIndex)
-                    .attr("opacity", 0);
-
-                d3.select("#mouse-label-y" + svgIndex)
-                    .attr("opacity", 0);
-                d3.select("#mouse-label-x" + svgIndex)
-                    .attr("opacity", 0);
-            }
+            d3.select("#mouse-label-y" + svgIndex)
+                .attr("opacity", 0);
+            d3.select("#mouse-label-x" + svgIndex)
+                .attr("opacity", 0);
         }
     }
-}
-
-// funzione per verificare se il grafico è nascosto o meno
-function isGraphicDisplayed(index){
-    var graph_state = document.getElementById("graphic" + index).style.display;
-    return graph_state != 'none';
 }
