@@ -367,17 +367,17 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                     if(svgInstance ==1) {
                         var yScale = d3.scaleLinear()
                             .domain([overallMinYValue, overallMaxYValue])
-                            .range([10, svgContainerHeight - 20]);
+                            .range([10, svgContainerHeight - 15]);
                     }
                     else{
                         var yScale = d3.scaleLinear()
                             .domain([overallMinYValue, overallMaxYValue])
-                            .range([svgContainerHeight - 20, 10]);
+                            .range([svgContainerHeight - 15, 10]);
                     }
 
                     var yScaleLabel = d3.scaleLinear()
                         .domain([overallMinYValue, overallMaxYValue])
-                        .range([svgContainerHeight - 20, 10]);
+                        .range([svgContainerHeight - 15, 10]);
 
                     var yAxis = d3.axisLeft(yScale)
                         .ticks(0);
@@ -433,7 +433,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
 
                         svgArray[svgInstance].append('g')
                             .attr('class', 'axis' + svgInstance)
-                            .attr('transform', 'translate(' + (currentChartPosition).toString() + ',' + (svgContainerHeight - 20) + ')')
+                            .attr('transform', 'translate(' + (currentChartPosition).toString() + ',' + (svgContainerHeight-15) + ')')
                             .call(xAxis)
                             .style({'stroke-width': '1px'});
 
@@ -640,7 +640,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .attr('id', 'time-img')
                                     .attr('xlink:href', 'img/time.png')
                                     .attr('x', xScale(currentActivityObjectiveTimeValue) + currentChartPosition - xScale(currentActivityObjectiveTimeValue) / 2 - 10)
-                                    .attr('y', yScale(overallMaxYValue) - 35)
+                                    .attr('y', yScale(overallMaxYValue) - 32)
                                     .attr('width', 30)
                                     .attr('height', 30);
 
@@ -649,7 +649,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .attr('id', 'distance-img')
                                     .attr('xlink:href', 'img/road.png')
                                     .attr('x', xScale(currentActivityMaxTime) + currentChartPosition - xScale(currentActivityMaxTime) / 2 - 20)
-                                    .attr('y', yScale(overallMaxYValue) - 35)
+                                    .attr('y', yScale(overallMaxYValue) - 32)
                                     .attr('width', 30)
                                     .attr('height', 30);
                             } else if (currentActivityObjective == "DISTANCE_TIME") {
@@ -657,7 +657,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .attr('id', 'distance-img')
                                     .attr('xlink:href', 'img/road.png')
                                     .attr('x', xScale(currentActivityMaxTime) + currentChartPosition - xScale(currentActivityMaxTime) / 2 - 40)
-                                    .attr('y', yScale(overallMaxYValue) - 35)
+                                    .attr('y', yScale(overallMaxYValue) - 32)
                                     .attr('width', 30)
                                     .attr('height', 30);
 
@@ -665,7 +665,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .attr('id', 'time-img')
                                     .attr('xlink:href', 'img/time.png')
                                     .attr('x', xScale(currentActivityMaxTime) + currentChartPosition - xScale(currentActivityMaxTime) / 2 + 20)
-                                    .attr('y', yScale(overallMaxYValue) - 35)
+                                    .attr('y', yScale(overallMaxYValue) - 32)
                                     .attr('width', 30)
                                     .attr('height', 30);
 
@@ -673,7 +673,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .attr('id', 'time-img')
                                     .attr('xlink:href', 'img/plus.png')
                                     .attr('x', xScale(currentActivityMaxTime) + currentChartPosition - xScale(currentActivityMaxTime) / 2 - 10)
-                                    .attr('y', yScale(overallMaxYValue) - 35)
+                                    .attr('y', yScale(overallMaxYValue) - 32)
                                     .attr('width', 30)
                                     .attr('height', 30);
                             }
@@ -838,4 +838,24 @@ changeSliderLabelsColor(training.mark);
         svg_container.style.height = svg_height;
     }*/
 //});
+
+
+function cutMarginBottomOfGraphics() {
+    setTimeout(
+        function() {
+
+            for(var i = 0; i < totalGraphs; i++){
+                var b = document.getElementById('svg-container'+i);
+                var height = b.height.baseVal.value;
+                //height = height.substring(0, height.indexOf('p'));
+                console.log(height);
+                height  *= 100/105;
+                b.style.height = height;
+                console.log()
+            }
+
+        }, 1000);
+}
+
+cutMarginBottomOfGraphics()
 
