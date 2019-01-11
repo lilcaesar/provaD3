@@ -280,17 +280,30 @@ function createGraphTitle(index) {
 function getLineColor(svgInstance) {
     var color;
     switch (svgInstance) {
+        /*
         case 0:
-            color = "#ffa520";
+            color = "#c4bdac";
             break;
         case 1:
-            color = "#7805ff";
+            color = "#f0b99a";
             break;
         case 2:
-            color = "#35B9E0";
+            color = "#98d3e1";
             break;
         case 3:
-            color = "#FF8B2C";
+            color = "#ecd2a2";
+            break;*/
+        case 0:
+            color = "#f8a055";
+            break;
+        case 1:
+            color = "#fbcb7b";
+            break;
+        case 2:
+            color = "#4d648d";
+            break;
+        case 3:
+            color = "#b9d9c3";
             break;
     }
 

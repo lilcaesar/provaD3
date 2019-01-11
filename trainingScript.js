@@ -88,6 +88,7 @@ for (var i = 0; i < totalGraphs; i++) {
             .attr("class", 'svg-container' + i)
             .attr("width", '100%')
             .attr('preserveAspectRatio', 'xMinYMin')
+            .style('margin-top', '-1%')
         );
     }
 
@@ -100,10 +101,10 @@ for (var i = 0; i < totalGraphs; i++) {
 
 //document.getElementById("graphic0").style.display = "none";
 
-svgArray[0].attr("height", document.getElementById('svg-container0').getBoundingClientRect().width / 7);
-svgArray[1].attr("height", document.getElementById('svg-container1').getBoundingClientRect().width / 7);
-svgArray[2].attr("height", document.getElementById('svg-container2').getBoundingClientRect().width / 7);
-svgArray[3].attr("height", document.getElementById('svg-container3').getBoundingClientRect().width / 7);
+svgArray[0].attr("height", document.getElementById('svg-container0').getBoundingClientRect().width / 7.5);
+svgArray[1].attr("height", document.getElementById('svg-container1').getBoundingClientRect().width / 7.5);
+svgArray[2].attr("height", document.getElementById('svg-container2').getBoundingClientRect().width / 7.5);
+svgArray[3].attr("height", document.getElementById('svg-container3').getBoundingClientRect().width / 7.5);
 
 //Path per i grafici
 var paths = [];
@@ -129,11 +130,9 @@ function changeSliderLabelsColor(e) {
     var marks = document.getElementsByClassName("slider-tick-label");
 
     for (var i = 0; i < marks.length; i++) {
-        console.log(marks[i].innerHTML, e);
-        if (marks[i].innerHTML == e) {
-            console.log('modificato');
+        if (marks[i].innerHTML == e)
             marks[i].style.color = 'blue'
-        } else
+        else
             marks[i].style.color = '#A9A9A9'
     }
 }
@@ -429,12 +428,14 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                             .attr('class', 'axis' + svgInstance)
                             .attr('transform', 'translate(' + (currentChartPosition).toString() + ',0)')
                             .call(yAxis)
+                            .style('color', 'grey')
                             .style({'stroke-width': '1px'});
 
                         svgArray[svgInstance].append('g')
                             .attr('class', 'axis' + svgInstance)
                             .attr('transform', 'translate(' + (currentChartPosition).toString() + ',' + (svgContainerHeight-15) + ')')
                             .call(xAxis)
+                            .style('color', 'grey')
                             .style({'stroke-width': '1px'});
 
                         if(svgInstance==0){
@@ -640,7 +641,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .attr('id', 'time-img')
                                     .attr('xlink:href', 'img/time.png')
                                     .attr('x', xScale(currentActivityObjectiveTimeValue) + currentChartPosition - xScale(currentActivityObjectiveTimeValue) / 2 - 10)
-                                    .attr('y', yScale(overallMaxYValue) - 32)
+                                    .attr('y', yScale(overallMaxYValue) - 34)
                                     .attr('width', 30)
                                     .attr('height', 30);
 
@@ -665,7 +666,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .attr('id', 'time-img')
                                     .attr('xlink:href', 'img/time.png')
                                     .attr('x', xScale(currentActivityMaxTime) + currentChartPosition - xScale(currentActivityMaxTime) / 2 + 20)
-                                    .attr('y', yScale(overallMaxYValue) - 32)
+                                    .attr('y', yScale(overallMaxYValue) - 34)
                                     .attr('width', 30)
                                     .attr('height', 30);
 
@@ -821,7 +822,6 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
 }
 
 // aggiornamento label iniziale
-changeSliderLabelsColor(training.mark);
 
 
 
@@ -848,13 +848,14 @@ function cutMarginBottomOfGraphics() {
                 var b = document.getElementById('svg-container'+i);
                 var height = b.height.baseVal.value;
                 //height = height.substring(0, height.indexOf('p'));
-                console.log(height);
                 height  *= 100/105;
                 b.style.height = height;
                 console.log()
             }
+            changeSliderLabelsColor(training.mark);
 
-        }, 1000);
+        }, 100);
+
 }
 
 cutMarginBottomOfGraphics()
