@@ -693,7 +693,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                             .style('font-size', '17px')
                             .style('font-weight', '600')
                             .style('text-anchor', 'end')
-                            .text(parseInt(currentActivityMaxXValue));
+                            .text(customeDistanceFormat(parseInt(currentActivityMaxXValue), svgInstance));
 
                         if (svgInstance != 0) {
                             svgArray[svgInstance].append('text') //Variabile min in Y
@@ -708,7 +708,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                 .style('font-size', '17px')
                                 .style('font-weight', '600')
                                 .style('text-anchor', 'end')
-                                .text(parseInt(currentActivityMinXValue));
+                                .text(customeDistanceFormat(parseInt(currentActivityMinXValue), svgInstance));
                         }
 
                         svgArray[svgInstance].append('text') //Tempo
@@ -723,7 +723,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                             .style('font-size', '17px')
                             .style('font-weight', '600')
                             .style('text-anchor', 'end')
-                            .text(parseInt(currentActivityMaxTime));
+                            .text(customTimeFormat(parseInt(currentActivityMaxTime), svgInstance));
 
                         //Aggiorno la posizione corrente in cui iniziare a disegnare il prossimo grafico
                         currentChartPosition = currentChartPosition + currentWidth + 30;

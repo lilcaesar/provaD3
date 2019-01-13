@@ -407,6 +407,36 @@ function maxZoomLimit(width, duration) {
     return (duration / width) * 4;
 }
 
+function customTimeFormat(num) {
+    var h = Math.floor( num / 3600 );
+    var m = Math.floor((num - h * 3600) / 60 );
+    var s = num - (h * 3600 + m * 60);
+    var result;
+    if(num<60){
+        result = ( s < 10 ? "0" + s : s ) + "s";
+    }else if(num<3600){
+        result = ( m < 10 ? "0" + m : m ) + "m:" + ( s < 10 ? "0" + s : s ) + "s";
+    }else{
+        result = ( h < 10 ? "0" + h : h ) + "h:" + ( m < 10 ? "0" + m : m ) + "m:" + ( s < 10 ? "0" + s : s ) + "s";
+    }
+    return result;
+}
+function customeDistanceFormat(num, graphIndex) {
+    var result;
+    if(graphIndex == 0 || graphIndex == 3) {
+        var km = Math.floor( num / 1000 );
+        var m = num - (km * 1000);
+        if (num < 1000) {
+            result = m + "m";
+        } else {
+            result = km + "km" + (m < 100 ? (m < 10 ? "00" + m : "0" + m) : m) + "m";
+        }
+    }else{
+        result = num;
+    }
+    return result;
+}
+
 function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, duration, totalGraphs) {
 //Funzione beforePan per limitare i grafici alla viewbox per svg-pan-zoom
     var customBeforePan = function (oldPan, newPan) {
@@ -468,6 +498,7 @@ function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, d
             for (var i = 0; i < points.length; i++) {
                 var labelX = d3.select("#max-result-value-" + tipo + i);
                 var labelTime = d3.select("#result-value-time" + index + i);
+                console.log(labelTime.attr("original-y")-5, svgContainerHeight-5);
                 var xp = points[i].cx.animVal.value * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().x;
                 var yp = -(points[i].cy.animVal.value * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().y - svgContainerHeight);
                 if ((xp >= 0) && (yp >= 0)) {
@@ -480,8 +511,7 @@ function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, d
                     }
                     labelX.attr("y", labelX.attr("original-y") - 7);
                     if (labelTime.attr("original-y") * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().y > (svgContainerHeight - 15)) {
-                        labelTime.attr("y", ((svgContainerHeight - 15 - panZoomInstance[index].getPan().y) / (panZoomInstance[index].getSizes().realZoom)) - (panZoomInstance[index].getSizes().realZoom));
-                        //labelTime.attr("y", ((svgContainerHeight-30)/(panZoomInstance[index].getSizes().realZoom))- panZoomInstance[index].getPan().y);
+                        labelTime.attr("y", ((labelTime.attr("original-y")-(8*(panZoomInstance[index].getSizes().realZoom)) - panZoomInstance[index].getPan().y)/(panZoomInstance[index].getSizes().realZoom)));
                     } else {
                         labelTime.attr("y", labelTime.attr("original-y"));
                     }
@@ -510,8 +540,7 @@ function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, d
                     }
                     labelX.attr("y", labelX.attr("original-y") - 7);
                     if (labelTime.attr("original-y") * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().y > (svgContainerHeight - 15)) {
-                        labelTime.attr("y", ((svgContainerHeight - 15 - panZoomInstance[index].getPan().y) / (panZoomInstance[index].getSizes().realZoom)) - (panZoomInstance[index].getSizes().realZoom));
-                        //labelTime.attr("y", ((svgContainerHeight-30)/(panZoomInstance[index].getSizes().realZoom))- panZoomInstance[index].getPan().y);
+                        labelTime.attr("y", ((labelTime.attr("original-y")-(8*(panZoomInstance[index].getSizes().realZoom)) - panZoomInstance[index].getPan().y)/(panZoomInstance[index].getSizes().realZoom)));
                     } else {
                         labelTime.attr("y", labelTime.attr("original-y"));
                     }
@@ -591,13 +620,13 @@ function createOnMouseMove(activities, totalGraphs) {
 
     function dataType(i) {
         if (i == 0) {
-            return "m:" + parseInt(activities[column].data[arrayPositions[index]].distance);
+            return parseInt(activities[column].data[arrayPositions[index]].distance);
         } else if (i == 1) {
             return "mm:ss/km:" + parseInt(activities[column].data[arrayPositions[index]].pace);
         } else if (i == 2) {
             return "bpm:" + parseInt(activities[column].data[arrayPositions[index]].hbr);
         } else if (i == 3) {
-            return "m:" + parseInt(activities[column].data[arrayPositions[index]].altitude);
+            return parseInt(activities[column].data[arrayPositions[index]].altitude);
         }
     }
 
@@ -619,13 +648,13 @@ function createOnMouseMove(activities, totalGraphs) {
                 .attr("opacity", 1)
                 .attr("x", x[svgIndex] - 10)
                 .attr("y", pos[svgIndex].matrixTransform(ctm[svgIndex].inverse()).y - 12)
-                .text("s:" + arrayPositions[svgIndex]);
+                .text(customTimeFormat(arrayPositions[svgIndex]));
 
             d3.select("#mouse-label-y" + svgIndex)
                 .attr("opacity", 1)
                 .attr("x", x[svgIndex] - 10)
                 .attr("y", pos[svgIndex].matrixTransform(ctm[svgIndex].inverse()).y)
-                .text(dataType(svgIndex));
+                .text(customeDistanceFormat(dataType(svgIndex), svgIndex));
 
             currentBbox = d3.select("#mouse-label-x" + svgIndex)._groups[0][0].getBBox();
             d3.select("#mouse-label-x-rect" + svgIndex)
