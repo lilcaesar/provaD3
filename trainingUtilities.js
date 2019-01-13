@@ -413,11 +413,11 @@ function customTimeFormat(num) {
     var s = num - (h * 3600 + m * 60);
     var result;
     if(num<60){
-        result = ( s < 10 ? "0" + s : s ) + "s";
+        result = s + "s";
     }else if(num<3600){
-        result = ( m < 10 ? "0" + m : m ) + "m:" + ( s < 10 ? "0" + s : s ) + "s";
+        result = m + "m" + (s>0?(":" + s + "s"):"");
     }else{
-        result = ( h < 10 ? "0" + h : h ) + "h:" + ( m < 10 ? "0" + m : m ) + "m:" + ( s < 10 ? "0" + s : s ) + "s";
+        result =  h + "h:" + m + "m" + s + (s>0?(":" + s + "s"):"");
     }
     return result;
 }
@@ -429,7 +429,8 @@ function customeDistanceFormat(num, graphIndex) {
         if (num < 1000) {
             result = m + "m";
         } else {
-            result = km + "km" + (m < 100 ? (m < 10 ? "00" + m : "0" + m) : m) + "m";
+            m = Math.round(m/10);
+            result = km + "," + (m < 10 ? "0" +m : m) + "km";
         }
     }else{
         result = num;
