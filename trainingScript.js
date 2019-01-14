@@ -677,17 +677,32 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .attr('y', yScale(overallMaxYValue) - 32)
                                     .attr('width', 30)
                                     .attr('height', 30);
+                            } else if (currentActivityObjective == "PACE"){
+                                svgArray[svgInstance].append("svg:image")
+                                    .attr('id', 'pace-img')
+                                    .attr('xlink:href', 'img/pace.png')
+                                    .attr('x', xScale(currentActivityMaxTime) + currentChartPosition - xScale(currentActivityMaxTime) / 2 - 20)
+                                    .attr('y', yScale(overallMaxYValue) - 32)
+                                    .attr('width', 30)
+                                    .attr('height', 30);
                             }
                         }
 
+                        function xLabelOffset(){
+                            if(svgInstance==0){
+                                return 0;
+                            }else{
+                                return 0;
+                            }
+                        }
 
                         svgArray[svgInstance].append('text') //Variabile max in Y
                             .attr('id', 'max-result-value-' + idString + graphIndex)
                             .attr('class', 'result-value-' + idString)
                             .attr('y', yScale(currentActivityMaxXValue))
-                            .attr('x', xScale(0) + currentChartPosition)
+                            .attr('x', xScale(0) + currentChartPosition+xLabelOffset())
                             .attr('original-y', yScale(currentActivityMaxXValue))
-                            .attr('original-x', xScale(0) + currentChartPosition)
+                            .attr('original-x', xScale(0) + currentChartPosition+xLabelOffset())
                             .attr('dy', '8px')
                             .style('fill', '#0062cc')
                             .style('font-size', '17px')
@@ -726,12 +741,12 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                             .text(customTimeFormat(parseInt(currentActivityMaxTime), svgInstance));
 
                         //Aggiorno la posizione corrente in cui iniziare a disegnare il prossimo grafico
-                        currentChartPosition = currentChartPosition + currentWidth + 30;
+                        currentChartPosition = currentChartPosition + currentWidth + 40;
                     }
                     /** Fine del for per ogni attivià**/
 
                     //Dimensioni della viewport dell'svg corrente
-                    svgViewports[svgInstance] = [0, 0, (svgContainerWidth + (30 * chartsNumber)), (svgContainerHeight + 20)];
+                    svgViewports[svgInstance] = [0, 0, (svgContainerWidth + (40 * chartsNumber)), (svgContainerHeight + 20)];
                     d3.select('#svg-container' + svgInstance)
                         .attr('viewBox', svgViewports[svgInstance][0] + " " + svgViewports[svgInstance][1] + " " + svgViewports[svgInstance][2] + " " + svgViewports[svgInstance][3]);
 

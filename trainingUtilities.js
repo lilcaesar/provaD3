@@ -294,16 +294,16 @@ function getLineColor(svgInstance) {
             color = "#ecd2a2";
             break;*/
         case 0:
-            color = "#f8a055";
-            break;
-        case 1:
             color = "#fbcb7b";
             break;
+        case 1:
+            color = "#dc8580";
+            break;
         case 2:
-            color = "#4d648d";
+            color = "#7f87b2";
             break;
         case 3:
-            color = "#b9d9c3";
+            color = "#95dab6";
             break;
     }
 
