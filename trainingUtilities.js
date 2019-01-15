@@ -211,7 +211,7 @@ function computeActivityMinHbr(activity) {
 function computeMaxObjectiveDistance(activityArray) {
     var currentMaxDistance = -1;
     activityArray.forEach(function (activity) {
-        if (activity.info.objectiveDistanceValue > currentMaxDistance) {
+        if ((activity.info.objectiveDistanceValue > currentMaxDistance)&&(activity.info.objective!="PACE")) {
             currentMaxDistance = activity.info.objectiveDistanceValue;
         }
     });
@@ -489,6 +489,7 @@ function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, d
             d3.selectAll(".data-line-distance").style("stroke-width", (4 / scale) + 'px');
             d3.selectAll(".data-line-altitude").style("stroke-width", (2 / scale) + 'px');
             d3.selectAll(".data-line-pace").style("stroke-width", (2 / scale) + 'px');
+            d3.selectAll(".background-pace-line").style("stroke-width", (1 / scale) + 'px');
             d3.selectAll(".data-line-hbr").style("stroke-width", (2 / scale) + 'px');
             d3.selectAll(".axis" + index).style("stroke-width", (1 / scale) + 'px');
             d3.selectAll(".result-point").attr("r", 6 / scale);
@@ -499,7 +500,6 @@ function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, d
             for (var i = 0; i < points.length; i++) {
                 var labelX = d3.select("#max-result-value-" + tipo + i);
                 var labelTime = d3.select("#result-value-time" + index + i);
-                console.log(labelTime.attr("original-y")-5, svgContainerHeight-5);
                 var xp = points[i].cx.animVal.value * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().x;
                 var yp = -(points[i].cy.animVal.value * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().y - svgContainerHeight);
                 if ((xp >= 0) && (yp >= 0)) {
