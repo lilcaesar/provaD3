@@ -329,6 +329,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
 
                 for (var nActivities = 0; nActivities < chartsNumber; nActivities++) {
                     var activityMaxTime = activities[nActivities].data[activities[nActivities].data.length - 1].time;
+                    //BUG MOUSE A CAUSA DI QUESTA VARIABILE
                     var activityMaxDistance = activities[nActivities].data[activities[nActivities].data.length - 1].distance;
                     activities[nActivities].data.unshift({
                         distance: 0,
@@ -416,7 +417,6 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                             currentActivityMinYValue = computeActivityMinHbr(activities[graphIndex]);
                             idString = "hbr";
                         } else {
-                            ;
                             currentActivityMaxYValue = computeActivityMaxAltitude(activities[graphIndex]);
                             currentActivityMinYValue = computeActivityMinAltitude(activities[graphIndex]);
                             idString = "altitude";
@@ -486,16 +486,67 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     q = q + (currentActivityMaxYValue / ((lines + 1) / 2));
                                 }
 
-                                /*var originalPath = [];
-                                for (var pointIndex = 1; pointIndex < activities[graphIndex].data.length - 1; pointIndex++) {
-                                    originalPath.push([pointIndex-1,activities[graphIndex].data[pointIndex].distance])
+                                var originalPath = [];
+                                var pointIndex;
+                                for (pointIndex = 1; pointIndex < activities[graphIndex].data.length - 1; pointIndex++) {
+                                    originalPath.push({x:pointIndex-1,y:activities[graphIndex].data[pointIndex].distance})
                                 }
-                                var approximatedPath = new paper.Path({
-                                    segments: originalPath
-                                }).simplify(10).segments;
-                                approximatedPath.simplify(10);
-                                console.log(originalPath);
-                                console.log(approximatedPath.segments);*/
+                                var approximatedPath = simplify(originalPath,10.0,true);
+
+                                var mDegrees= Math.atan(m)*(180/Math.PI);
+                                var accuracy = 5;
+
+                                function colorByInclination(p1,p2,degrees, acc) {
+                                    var temporaryDegrees = Math.atan((p2.y-p1.y)/(p2.x-p1.x))*(180/Math.PI);
+                                    if(Math.abs(degrees-temporaryDegrees)<acc){
+                                        return "#5bdd74";
+                                    }else{
+                                        return "red";
+                                    }
+                                }
+
+                                var startPoint, endPoint;
+                                startPoint = approximatedPath[0];
+                                endPoint = approximatedPath[1];
+                                var startColor = colorByInclination(startPoint, endPoint, mDegrees, accuracy);
+                                var paceCircles =[];
+                                for(pointIndex=1; pointIndex<approximatedPath.length-1; pointIndex++){
+                                    var currentColor = colorByInclination(approximatedPath[pointIndex],approximatedPath[pointIndex+1],mDegrees,accuracy);
+                                    if(currentColor!=startColor) {
+                                        svgArray[svgInstance].append("line")
+                                            .attr('class', 'background-pace-path')
+                                            .attr('x1', xScale(startPoint.x) + currentChartPosition)
+                                            .attr('y1', yScale(startPoint.y))
+                                            .attr('x2', xScale(approximatedPath[pointIndex].x) + currentChartPosition)
+                                            .attr('y2', yScale(approximatedPath[pointIndex].y))
+                                            .style("stroke", startColor)
+                                            .style("stroke-width", '8px');
+
+                                        paceCircles.push({point:startPoint,color:startColor});
+
+                                        startColor = currentColor;
+                                        startPoint = approximatedPath[pointIndex];
+                                    }
+                                }
+                                svgArray[svgInstance].append("line")
+                                    .attr('class', 'background-pace-path')
+                                    .attr('x1', xScale(startPoint.x) + currentChartPosition)
+                                    .attr('y1', yScale(startPoint.y))
+                                    .attr('x2', xScale(approximatedPath[pointIndex].x) + currentChartPosition)
+                                    .attr('y2', yScale(approximatedPath[pointIndex].y))
+                                    .style("stroke", startColor)
+                                    .style("stroke-width", '8px');
+                                paceCircles.push({point:startPoint,color:startColor});
+                                paceCircles.push({point:approximatedPath[pointIndex],color:startColor});
+
+                                for(pointIndex=0; pointIndex<paceCircles.length; pointIndex++) {
+                                    svgArray[svgInstance].append("circle")
+                                        .attr('class', 'background-pace-circle')
+                                        .attr("cx", xScale(paceCircles[pointIndex].point.x) + currentChartPosition)
+                                        .attr("cy", yScale(paceCircles[pointIndex].point.y))
+                                        .attr("r", 4)
+                                        .attr("fill", paceCircles[pointIndex].color);
+                                }
                             }
 
 
