@@ -70,34 +70,44 @@ for (var i = 0; i < totalGraphs; i++) {
     //createGraphAxis(i, position);
     var graph_name = '#graphic' + i;
 
-    if (i > 0) {
-        svgArray.push(d3.select(graph_name)
-            .append("svg")
-            .attr("id", 'svg-container' + i)
-            .attr("class", 'svg-container' + i)
-            .attr("width", '100%')
-            .attr('preserveAspectRatio', 'xMinYMin')
-            .style('margin-top', '-1%')
-            .style('margin-bottom', '-1%')
+    if(i>0){
+        var div = document.createElement("div");
+        div.style.overflow = 'hidden';
+        graphic.append(div);
+
+        //svgArray.push(d3.select(graph_name)
+        svgArray.push(d3.select(div)
+                .append("svg")
+                .attr("id", 'svg-container' + i)
+                .attr("class", 'svg-container' + i)
+                .attr("width", '100%')
+                .attr('preserveAspectRatio', 'xMinYMin')
+                .style('margin-top', '-1%')
+                .style('margin-bottom', '-1%')
+                .style('position', 'relative')
+            //.style('top', '-18px')
+
         );
-    } else {
-        svgArray.push(d3.select(graph_name)
+    }
+    else {
+        var div = document.createElement("div");
+        div.style.overflow = 'hidden';
+        graphic.append(div);
+
+        svgArray.push(d3.select(div)
             .append("svg")
             .attr("id", 'svg-container' + i)
             .attr("class", 'svg-container' + i)
             .attr("width", '100%')
             .attr('preserveAspectRatio', 'xMinYMin')
             .style('margin-top', '-1%')
+
         );
     }
 
     //position = 'right';
     //createGraphAxis(i, position);
-
-
 }
-
-//document.getElementById("graphic0").style.display = "none";
 
 svgArray[0].attr("height", document.getElementById('svg-container0').getBoundingClientRect().width / 7.5);
 svgArray[1].attr("height", document.getElementById('svg-container1').getBoundingClientRect().width / 7.5);
@@ -966,23 +976,18 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
 //});
 
 
-function cutMarginBottomOfGraphics() {
+function stabilizeSvgView() {
     setTimeout(
-        function () {
-
-            for (var i = 0; i < totalGraphs; i++) {
-                var b = document.getElementById('svg-container' + i);
-                var height = b.height.baseVal.value;
-                //height = height.substring(0, height.indexOf('p'));
-                height *= 100 / 105;
-                b.style.height = height;
-                console.log()
-            }
+        function() {
+            // aggiorno il voto dello slider
             changeSliderLabelsColor(training.mark);
+            // simulo uno zoom per stabilizzare la posizione dei g negli svg
+            panZoomInstance[0].zoom(2);
+            panZoomInstance[0].zoom(1);
 
-        }, 100);
+        }, 700);
 
 }
 
-cutMarginBottomOfGraphics()
+stabilizeSvgView();
 

@@ -226,12 +226,12 @@ function createGraphTitle(index) {
 
     // controllo per il margin-top del 2 grafico
     if(index == 1) {
-        container.style.marginTop = "0.1%";
-        container.style.marginBottom = "0.5%";
+        container.style.marginTop = "0%";
+        container.style.marginBottom = "-0.5%";
     }
     else {
-        container.style.marginTop = "1%";
-        container.style.marginBottom = "0.5%";
+        container.style.marginTop = "0";
+        container.style.marginBottom = "-0.5%";
     }
 
     // 1a riga
@@ -276,6 +276,7 @@ function createGraphTitle(index) {
     // append del div principale
     document.getElementById("graphic" + index).appendChild(container);
 }
+
 
 function getLineColor(svgInstance) {
     var color;
@@ -441,12 +442,16 @@ function customeDistanceFormat(num, graphIndex) {
 function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, duration, totalGraphs) {
 //Funzione beforePan per limitare i grafici alla viewbox per svg-pan-zoom
     var customBeforePan = function (oldPan, newPan) {
+        var cut_height = 20;
+        if(index == 0)
+            cut_height -=20;
+
         var stopHorizontal = false
             , stopVertical = false
             ,
             gutterWidth = (panZoomInstance[index].getSizes().viewBox.width * panZoomInstance[index].getSizes().realZoom)
             ,
-            gutterHeight = (panZoomInstance[index].getSizes().viewBox.height * panZoomInstance[index].getSizes().realZoom)
+            gutterHeight = (cut_height+panZoomInstance[index].getSizes().viewBox.height * panZoomInstance[index].getSizes().realZoom)
             // Computed variables
             , sizes = this.getSizes()
             , leftLimit = -(gutterWidth - sizes.width)
