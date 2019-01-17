@@ -70,40 +70,25 @@ for (var i = 0; i < totalGraphs; i++) {
     //createGraphAxis(i, position);
     var graph_name = '#graphic' + i;
 
-    if(i>0){
-        var div = document.createElement("div");
-        div.style.overflow = 'hidden';
-        graphic.append(div);
 
-        //svgArray.push(d3.select(graph_name)
-        svgArray.push(d3.select(div)
-                .append("svg")
-                .attr("id", 'svg-container' + i)
-                .attr("class", 'svg-container' + i)
-                .attr("width", '100%')
-                .attr('preserveAspectRatio', 'xMinYMin')
-                .style('margin-top', '-1%')
-                .style('margin-bottom', '-1%')
-                .style('position', 'relative')
-            //.style('top', '-18px')
+    var div = document.createElement("div");
+    div.style.overflow = 'hidden';
+    graphic.append(div);
 
-        );
-    }
-    else {
-        var div = document.createElement("div");
-        div.style.overflow = 'hidden';
-        graphic.append(div);
-
-        svgArray.push(d3.select(div)
+    //svgArray.push(d3.select(graph_name)
+    svgArray.push(d3.select(div)
             .append("svg")
             .attr("id", 'svg-container' + i)
             .attr("class", 'svg-container' + i)
             .attr("width", '100%')
             .attr('preserveAspectRatio', 'xMinYMin')
             .style('margin-top', '-1%')
+            .style('margin-bottom', '-1%')
+            .style('position', 'relative')
+        //.style('top', '-18px')
 
-        );
-    }
+    );
+
 
     //position = 'right';
     //createGraphAxis(i, position);

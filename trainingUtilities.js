@@ -442,9 +442,7 @@ function customeDistanceFormat(num, graphIndex) {
 function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, duration, totalGraphs) {
 //Funzione beforePan per limitare i grafici alla viewbox per svg-pan-zoom
     var customBeforePan = function (oldPan, newPan) {
-        var cut_height = 20;
-        if(index == 0)
-            cut_height -=20;
+        var cut_height = panZoomInstance[index].getSizes().viewBox.height - (panZoomInstance[index].getSizes().viewBox.height*100/112);
 
         var stopHorizontal = false
             , stopVertical = false
