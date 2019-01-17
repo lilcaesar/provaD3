@@ -94,10 +94,12 @@ for (var i = 0; i < totalGraphs; i++) {
     //createGraphAxis(i, position);
 }
 
-svgArray[0].attr("height", document.getElementById('svg-container0').getBoundingClientRect().width / 7.5);
-svgArray[1].attr("height", document.getElementById('svg-container1').getBoundingClientRect().width / 7.5);
-svgArray[2].attr("height", document.getElementById('svg-container2').getBoundingClientRect().width / 7.5);
-svgArray[3].attr("height", document.getElementById('svg-container3').getBoundingClientRect().width / 7.5);
+var aspectRatio = 7.5;
+
+svgArray[0].attr("height", document.getElementById('svg-container0').getBoundingClientRect().width / aspectRatio);
+svgArray[1].attr("height", document.getElementById('svg-container1').getBoundingClientRect().width / aspectRatio);
+svgArray[2].attr("height", document.getElementById('svg-container2').getBoundingClientRect().width / aspectRatio);
+svgArray[3].attr("height", document.getElementById('svg-container3').getBoundingClientRect().width / aspectRatio);
 
 //Path per i grafici
 var paths = [];
@@ -485,8 +487,22 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .attr('class', 'expected-pace-circle')
                                     .attr("cx", xScale(0) + currentChartPosition)
                                     .attr("cy", yScale(0))
-                                    .attr("r", 3)
-                                    .attr("fill","#0065C5");
+                                    .attr("r", 4)
+                                    .attr("fill","#64C0AD");
+                                svgArray[svgInstance].append("line")
+                                    .attr('class', 'expected-pace')
+                                    .attr('x1', xScale(0) + currentChartPosition)
+                                    .attr('y1', yScale(0))
+                                    .attr('x2', xScale(currentActivityMaxYValue/m) + currentChartPosition)
+                                    .attr('y2', yScale(currentActivityMaxYValue))
+                                    .style("stroke", "#64C0AD")
+                                    .style("stroke-width", '8px');
+                                svgArray[svgInstance].append("circle")
+                                    .attr('class', 'expected-pace-circle')
+                                    .attr("cx", xScale(currentActivityMaxYValue/m) + currentChartPosition)
+                                    .attr("cy", yScale(currentActivityMaxYValue))
+                                    .attr("r", 4)
+                                    .attr("fill","#64C0AD");
                                 svgArray[svgInstance].append("line")
                                     .attr('class', 'expected-pace')
                                     .attr('x1', xScale(0) + currentChartPosition)
@@ -494,13 +510,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .attr('x2', xScale(currentActivityMaxYValue/m) + currentChartPosition)
                                     .attr('y2', yScale(currentActivityMaxYValue))
                                     .style("stroke", "#0065C5")
-                                    .style("stroke-width", '6px');
-                                svgArray[svgInstance].append("circle")
-                                    .attr('class', 'expected-pace-circle')
-                                    .attr("cx", xScale(currentActivityMaxYValue/m) + currentChartPosition)
-                                    .attr("cy", yScale(currentActivityMaxYValue))
-                                    .attr("r", 3)
-                                    .attr("fill","#0065C5");
+                                    .style("stroke-width", '2px');
 
                                 var originalPath = [];
                                 var pointIndex;
@@ -609,7 +619,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                             paths.push(
                                 svgArray[svgInstance].append("path")
                                     .attr("class", "data-line-distance")
-                                    .attr("id", "data-line" + graphIndex)
+                                    .attr("id", "data-line-distance" + graphIndex)
                                     .attr("d", valueline(activities[graphIndex].data))
                                     .style("stroke-width", "4px")
                                     .style("stroke", getLineColor(svgInstance))
@@ -620,7 +630,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                             paths.push(
                                 svgArray[svgInstance].append("path")
                                     .attr("class", "data-line-pace")
-                                    .attr("id", "data-line" + graphIndex)
+                                    .attr("id", "data-line-pace" + graphIndex)
                                     .attr("d", valueline(activities[graphIndex].data))
                                     .style("stroke-width", "2px")
                                     .style("stroke", getLineColor(svgInstance))
@@ -631,7 +641,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                             paths.push(
                                 svgArray[svgInstance].append("path")
                                     .attr("class", "data-line-hbr")
-                                    .attr("id", "data-line" + graphIndex)
+                                    .attr("id", "data-line-hbr" + graphIndex)
                                     .attr("d", valueline(activities[graphIndex].data))
                                     .style("stroke-width", "2px")
                                     .style("stroke", getLineColor(svgInstance))
@@ -642,7 +652,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                             paths.push(
                                 svgArray[svgInstance].append("path")
                                     .attr("class", "data-line-altitude")
-                                    .attr("id", "data-line" + graphIndex)
+                                    .attr("id", "data-line-altitude" + graphIndex)
                                     .attr("d", valueline(activities[graphIndex].data))
                                     .style("stroke-width", "2px")
                                     .style("stroke", getLineColor(svgInstance))
@@ -799,21 +809,13 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                             }
                         }
 
-                        function xLabelOffset() {
-                            if (svgInstance == 0) {
-                                return 0;
-                            } else {
-                                return 0;
-                            }
-                        }
-
                         svgArray[svgInstance].append('text') //Variabile max in Y
                             .attr('id', 'max-result-value-' + idString + graphIndex)
                             .attr('class', 'result-value-' + idString)
                             .attr('y', yScale(currentActivityMaxYValue))
-                            .attr('x', xScale(0) + currentChartPosition + xLabelOffset())
+                            .attr('x', xScale(0) + currentChartPosition)
                             .attr('original-y', yScale(currentActivityMaxYValue))
-                            .attr('original-x', xScale(0) + currentChartPosition + xLabelOffset())
+                            .attr('original-x', xScale(0) + currentChartPosition)
                             .attr('dy', '8px')
                             .style('fill', '#0062cc')
                             .style('font-size', '17px')
