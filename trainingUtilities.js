@@ -513,9 +513,6 @@ function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, d
                     if ((xp >= 0) && (yp >= 0)) {
                         labelY.style("visibility", "visible");
                         labelTime.style("visibility", "visible");
-                        if(activityImg._groups[0][0]!=null) {
-                            activityImg.style("visibility", "visible");
-                        }
                         if (labelY.attr("original-x") * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().x < 25) {
                             labelY.attr("x", (37 - panZoomInstance[index].getPan().x) / (panZoomInstance[index].getSizes().realZoom));
                             if(activityImg._groups[0][0]!=null) {
@@ -544,7 +541,8 @@ function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, d
                         labelY.style("visibility", "hidden");
                         labelTime.style("visibility", "hidden");
                         if(activityImg._groups[0][0]!=null) {
-                            activityImg.style("visibility", "hidden");
+                            activityImg.attr("y", ((activityImg.attr("original-y") - panZoomInstance[index].getPan().y) / (panZoomInstance[index].getSizes().realZoom)));
+                            activityImg.attr("y", activityImg.attr("original-y"));
                         }
                     }
                 }
@@ -564,9 +562,6 @@ function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, d
                     if ((xp >= 0) && (yp >= 0)) {
                         labelY.style("visibility", "visible");
                         labelTime.style("visibility", "visible");
-                        if(activityImg._groups[0][0]!=null) {
-                            activityImg.style("visibility", "visible");
-                        }
                         if (labelY.attr("original-x") * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().x < 25) {
                             labelY.attr("x", (37 - panZoomInstance[index].getPan().x) / (panZoomInstance[index].getSizes().realZoom));
                             if(activityImg._groups[0][0]!=null) {
@@ -595,7 +590,8 @@ function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, d
                         labelY.style("visibility", "hidden");
                         labelTime.style("visibility", "hidden");
                         if(activityImg._groups[0][0]!=null) {
-                            activityImg.style("visibility", "hidden");
+                            activityImg.attr("y", ((activityImg.attr("original-y") - panZoomInstance[index].getPan().y) / (panZoomInstance[index].getSizes().realZoom)));
+                            activityImg.attr("y", activityImg.attr("original-y"));
                         }
                     }
                 }
