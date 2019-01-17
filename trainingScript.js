@@ -761,49 +761,33 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                 svgArray[svgInstance].append("svg:image")
                                     .attr('id', 'time-img')
                                     .attr('xlink:href', 'img/time.png')
-                                    .attr('x', xScale(currentActivityObjectiveTimeValue) + currentChartPosition - xScale(currentActivityObjectiveTimeValue) / 2 - 10)
-                                    .attr('y', yScale(overallMaxYValue) - 34)
+                                    .attr('x', xScale(0) + currentChartPosition)
+                                    .attr('y', yScale(overallMaxYValue))
                                     .attr('width', 30)
                                     .attr('height', 30);
 
                             } else if (currentActivityObjective == "DISTANCE") {
                                 svgArray[svgInstance].append("svg:image")
                                     .attr('id', 'distance-img')
-                                    .attr('xlink:href', 'img/road.png')
-                                    .attr('x', xScale(currentActivityMaxTime) + currentChartPosition - xScale(currentActivityMaxTime) / 2 - 20)
-                                    .attr('y', yScale(overallMaxYValue) - 32)
+                                    .attr('xlink:href', 'img/distance.png')
+                                    .attr('x', xScale(0) + currentChartPosition)
+                                    .attr('y', yScale(overallMaxYValue))
                                     .attr('width', 30)
                                     .attr('height', 30);
                             } else if (currentActivityObjective == "DISTANCE_TIME") {
                                 svgArray[svgInstance].append("svg:image")
                                     .attr('id', 'distance-img')
-                                    .attr('xlink:href', 'img/road.png')
-                                    .attr('x', xScale(currentActivityMaxTime) + currentChartPosition - xScale(currentActivityMaxTime) / 2 - 40)
-                                    .attr('y', yScale(overallMaxYValue) - 32)
-                                    .attr('width', 30)
-                                    .attr('height', 30);
-
-                                svgArray[svgInstance].append("svg:image")
-                                    .attr('id', 'time-img')
-                                    .attr('xlink:href', 'img/time.png')
-                                    .attr('x', xScale(currentActivityMaxTime) + currentChartPosition - xScale(currentActivityMaxTime) / 2 + 20)
-                                    .attr('y', yScale(overallMaxYValue) - 34)
-                                    .attr('width', 30)
-                                    .attr('height', 30);
-
-                                svgArray[svgInstance].append("svg:image")
-                                    .attr('id', 'time-img')
-                                    .attr('xlink:href', 'img/plus.png')
-                                    .attr('x', xScale(currentActivityMaxTime) + currentChartPosition - xScale(currentActivityMaxTime) / 2 - 10)
-                                    .attr('y', yScale(overallMaxYValue) - 32)
-                                    .attr('width', 30)
+                                    .attr('xlink:href', 'img/distancetime.png')
+                                    .attr('x', xScale(0) + currentChartPosition)
+                                    .attr('y', yScale(overallMaxYValue))
+                                    .attr('width', 70)
                                     .attr('height', 30);
                             } else if (currentActivityObjective == "PACE") {
                                 svgArray[svgInstance].append("svg:image")
                                     .attr('id', 'pace-img')
                                     .attr('xlink:href', 'img/pace.png')
-                                    .attr('x', xScale(currentActivityMaxTime) + currentChartPosition - xScale(currentActivityMaxTime) / 2 - 20)
-                                    .attr('y', yScale(overallMaxYValue) - 32)
+                                    .attr('x', xScale(0) + currentChartPosition)
+                                    .attr('y', yScale(overallMaxYValue))
                                     .attr('width', 30)
                                     .attr('height', 30);
                             }
