@@ -497,63 +497,106 @@ function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, d
             d3.selectAll(".result-point").attr("r", 6 / scale);
             d3.selectAll(".result-line").style("stroke-width", (2 / scale) + 'px');
             d3.selectAll(".expected-line").style("stroke-width", (2 / scale) + 'px');
+            d3.selectAll(".distance-img").attr('width', 30/scale).attr('height', 30/scale);
+            d3.selectAll(".time-img").attr('width', 30/scale).attr('height', 30/scale);
+            d3.selectAll(".pace-img").attr('width', 30/scale).attr('height', 30/scale);
+            d3.selectAll(".distance-time-img").attr('width', 70/scale).attr('height', 30/scale);
 
             if(tipo=="distance") {
                 var points = d3.selectAll(".result-point")._groups[0];
                 for (var i = 0; i < points.length; i++) {
-                    var labelX = d3.select("#max-result-value-" + tipo + i);
+                    var labelY = d3.select("#max-result-value-" + tipo + i);
                     var labelTime = d3.select("#result-value-time" + index + i);
+                    var activityImg = d3.select("#activity-type-img"+ i);
                     var xp = points[i].cx.animVal.value * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().x;
                     var yp = -(points[i].cy.animVal.value * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().y - svgContainerHeight);
                     if ((xp >= 0) && (yp >= 0)) {
-                        labelX.style("visibility", "visible");
+                        labelY.style("visibility", "visible");
                         labelTime.style("visibility", "visible");
-                        if (labelX.attr("original-x") * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().x < 25) {
-                            labelX.attr("x", (25 - panZoomInstance[index].getPan().x) / (panZoomInstance[index].getSizes().realZoom));
-                        } else {
-                            labelX.attr("x", labelX.attr("original-x"));
+                        if(activityImg._groups[0][0]!=null) {
+                            activityImg.style("visibility", "visible");
                         }
-                        labelX.attr("y", labelX.attr("original-y") - 7);
+                        if (labelY.attr("original-x") * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().x < 25) {
+                            labelY.attr("x", (37 - panZoomInstance[index].getPan().x) / (panZoomInstance[index].getSizes().realZoom));
+                            if(activityImg._groups[0][0]!=null) {
+                                activityImg.attr("x", (- panZoomInstance[index].getPan().x) / (panZoomInstance[index].getSizes().realZoom));
+                            }
+                        } else {
+                            labelY.attr("x", labelY.attr("original-x"));
+                            if(activityImg._groups[0][0]!=null) {
+                                activityImg.attr("x", activityImg.attr("original-x"));
+                            }
+                        }
+                        labelY.attr("y", labelY.attr("original-y") - 7);
                         if (labelTime.attr("original-y") * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().y > (svgContainerHeight - 15)) {
-                            labelTime.attr("y", ((labelTime.attr("original-y") - (8 * (panZoomInstance[index].getSizes().realZoom)) - panZoomInstance[index].getPan().y) / (panZoomInstance[index].getSizes().realZoom)));
+                            labelTime.attr("y", ((labelTime.attr("original-y") - 8 - (8 * (panZoomInstance[index].getSizes().realZoom)) - panZoomInstance[index].getPan().y) / (panZoomInstance[index].getSizes().realZoom)));
+                            if(activityImg._groups[0][0]!=null) {
+                                activityImg.attr("y", ((activityImg.attr("original-y") - panZoomInstance[index].getPan().y) / (panZoomInstance[index].getSizes().realZoom)));
+                            }
                         } else {
                             labelTime.attr("y", labelTime.attr("original-y"));
+                            if(activityImg._groups[0][0]!=null) {
+                                activityImg.attr("y", activityImg.attr("original-y"));
+                            }
                         }
                         labelTime.attr("x", (1 * labelTime.attr("original-x")));
                     } else {
-                        labelX.style("visibility", "hidden");
+                        labelY.style("visibility", "hidden");
                         labelTime.style("visibility", "hidden");
+                        if(activityImg._groups[0][0]!=null) {
+                            activityImg.style("visibility", "hidden");
+                        }
                     }
                 }
             }
         },
+
         beforePan: customBeforePan,
         onPan: function (pan) {
             if(tipo=="distance") {
                 var points = d3.selectAll(".result-point")._groups[0];
                 for (var i = 0; i < points.length; i++) {
-                    var labelX = d3.select("#max-result-value-" + tipo + i);
+                    var labelY = d3.select("#max-result-value-" + tipo + i);
                     var labelTime = d3.select("#result-value-time" + index + i);
+                    var activityImg = d3.select("#activity-type-img"+ i);
                     var xp = points[i].cx.animVal.value * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().x;
                     var yp = -(points[i].cy.animVal.value * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().y - svgContainerHeight);
                     if ((xp >= 0) && (yp >= 0)) {
-                        labelX.style("visibility", "visible");
+                        labelY.style("visibility", "visible");
                         labelTime.style("visibility", "visible");
-                        if (labelX.attr("original-x") * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().x < 25) {
-                            labelX.attr("x", (25 - panZoomInstance[index].getPan().x) / (panZoomInstance[index].getSizes().realZoom));
-                        } else {
-                            labelX.attr("x", labelX.attr("original-x"));
+                        if(activityImg._groups[0][0]!=null) {
+                            activityImg.style("visibility", "visible");
                         }
-                        labelX.attr("y", labelX.attr("original-y") - 7);
+                        if (labelY.attr("original-x") * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().x < 25) {
+                            labelY.attr("x", (37 - panZoomInstance[index].getPan().x) / (panZoomInstance[index].getSizes().realZoom));
+                            if(activityImg._groups[0][0]!=null) {
+                                activityImg.attr("x", (- panZoomInstance[index].getPan().x) / (panZoomInstance[index].getSizes().realZoom));
+                            }
+                        } else {
+                            labelY.attr("x", labelY.attr("original-x"));
+                            if(activityImg._groups[0][0]!=null) {
+                                activityImg.attr("x", activityImg.attr("original-x"));
+                            }
+                        }
+                        labelY.attr("y", labelY.attr("original-y") - 7);
                         if (labelTime.attr("original-y") * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().y > (svgContainerHeight - 15)) {
-                            labelTime.attr("y", ((labelTime.attr("original-y") - (8 * (panZoomInstance[index].getSizes().realZoom)) - panZoomInstance[index].getPan().y) / (panZoomInstance[index].getSizes().realZoom)));
+                            labelTime.attr("y", ((labelTime.attr("original-y") - 8 - (8 * (panZoomInstance[index].getSizes().realZoom)) - panZoomInstance[index].getPan().y) / (panZoomInstance[index].getSizes().realZoom)));
+                            if(activityImg._groups[0][0]!=null) {
+                                activityImg.attr("y", ((activityImg.attr("original-y") - panZoomInstance[index].getPan().y) / (panZoomInstance[index].getSizes().realZoom)));
+                            }
                         } else {
                             labelTime.attr("y", labelTime.attr("original-y"));
+                            if(activityImg._groups[0][0]!=null) {
+                                activityImg.attr("y", activityImg.attr("original-y"));
+                            }
                         }
                         labelTime.attr("x", (1 * labelTime.attr("original-x")));
                     } else {
-                        labelX.style("visibility", "hidden");
+                        labelY.style("visibility", "hidden");
                         labelTime.style("visibility", "hidden");
+                        if(activityImg._groups[0][0]!=null) {
+                            activityImg.style("visibility", "hidden");
+                        }
                     }
                 }
             }

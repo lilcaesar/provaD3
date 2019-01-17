@@ -37,7 +37,7 @@ var chartsNumber;
 var activities = [];
 
 //Percorsi dei file csv
-var files = ['datasets2/point_item.csv', 'datasets2/workout_activity_workout_activity_result.csv', 'datasets2/cardio_item.csv'];
+var files = ['datasets/point_item.csv', 'datasets/workout_activity_workout_activity_result.csv', 'datasets/cardio_item.csv'];
 //Dati grezzi del parsing
 var allResults = [];
 
@@ -742,14 +742,24 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                             }
 
                             //Punto del risultato dell'utente
-                            if ((svgInstance) == 0 &&(currentActivityObjective!="PACE")) {
-                                svgArray[svgInstance].append("circle")
-                                    .attr('id', 'result-point' + graphIndex)
-                                    .attr('class', 'result-point')
-                                    .attr("cx", xScale(currentActivityMaxTime) + currentChartPosition)
-                                    .attr("cy", yScale(currentActivityMaxYValue))
-                                    .attr("r", 6)
-                                    .attr("fill", getResultPointColor(currentActivityObjective, currentActivityMaxTime, currentActivityObjectiveTimeValue, currentActivityMaxYValue, currentActivityObjectiveDistanceValue));
+                            if (svgInstance == 0) {
+                                if (currentActivityObjective != "PACE") {
+                                    svgArray[svgInstance].append("circle")
+                                        .attr('id', 'result-point' + graphIndex)
+                                        .attr('class', 'result-point')
+                                        .attr("cx", xScale(currentActivityMaxTime) + currentChartPosition)
+                                        .attr("cy", yScale(currentActivityMaxYValue))
+                                        .attr("r", 6)
+                                        .attr("fill", getResultPointColor(currentActivityObjective, currentActivityMaxTime, currentActivityObjectiveTimeValue, currentActivityMaxYValue, currentActivityObjectiveDistanceValue));
+                                } else {
+                                    svgArray[svgInstance].append("circle")
+                                        .attr('id', 'result-point' + graphIndex)
+                                        .attr('class', 'result-point')
+                                        .attr("cx", xScale(currentActivityMaxTime) + currentChartPosition)
+                                        .attr("cy", yScale(currentActivityMaxYValue))
+                                        .attr("r", 1)
+                                        .style("visibility", "hidden");
+                                }
                             }
 
                             //Punto dell'obiettivo dell'utente
@@ -775,37 +785,51 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
 
                             if (currentActivityObjective == "TIME") {
                                 svgArray[svgInstance].append("svg:image")
-                                    .attr('id', 'time-img')
+                                    .attr('class', 'time-img activity-type-img')
+                                    .attr('id', 'activity-type-img'+graphIndex)
                                     .attr('xlink:href', 'img/time.png')
                                     .attr('x', xScale(0) + currentChartPosition)
                                     .attr('y', yScale(overallMaxYValue))
                                     .attr('width', 30)
-                                    .attr('height', 30);
+                                    .attr('height', 30)
+                                    .attr('original-x', xScale(0) + currentChartPosition)
+                                    .attr('original-y', yScale(overallMaxYValue));
 
                             } else if (currentActivityObjective == "DISTANCE") {
                                 svgArray[svgInstance].append("svg:image")
-                                    .attr('id', 'distance-img')
+                                    .attr('class', 'distance-img activity-type-img')
+                                    .attr('id', 'activity-type-img'+graphIndex)
                                     .attr('xlink:href', 'img/distance.png')
                                     .attr('x', xScale(0) + currentChartPosition)
                                     .attr('y', yScale(overallMaxYValue))
                                     .attr('width', 30)
-                                    .attr('height', 30);
+                                    .attr('height', 30)
+                                    .attr('original-x', xScale(0) + currentChartPosition)
+                                    .attr('original-y', yScale(overallMaxYValue));
+
                             } else if (currentActivityObjective == "DISTANCE_TIME") {
                                 svgArray[svgInstance].append("svg:image")
-                                    .attr('id', 'distance-img')
+                                    .attr('class', 'distance-time-img activity-type-img')
+                                    .attr('id', 'activity-type-img'+graphIndex)
                                     .attr('xlink:href', 'img/distancetime.png')
                                     .attr('x', xScale(0) + currentChartPosition)
                                     .attr('y', yScale(overallMaxYValue))
                                     .attr('width', 70)
-                                    .attr('height', 30);
+                                    .attr('height', 30)
+                                    .attr('original-x', xScale(0) + currentChartPosition)
+                                    .attr('original-y', yScale(overallMaxYValue));
+
                             } else if (currentActivityObjective == "PACE") {
                                 svgArray[svgInstance].append("svg:image")
-                                    .attr('id', 'pace-img')
+                                    .attr('class', 'pace-img activity-type-img')
+                                    .attr('id', 'activity-type-img'+graphIndex)
                                     .attr('xlink:href', 'img/pace.png')
                                     .attr('x', xScale(0) + currentChartPosition)
                                     .attr('y', yScale(overallMaxYValue))
                                     .attr('width', 30)
-                                    .attr('height', 30);
+                                    .attr('height', 30)
+                                    .attr('original-x', xScale(0) + currentChartPosition)
+                                    .attr('original-y', yScale(overallMaxYValue));
                             }
                         }
 
