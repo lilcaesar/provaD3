@@ -315,16 +315,16 @@ function getGraphName(svgInstance) {
     var name;
     switch (svgInstance) {
         case 0:
-            name = "Distanza";
+            name = "Distanza (m)";
             break;
         case 1:
-            name = "Passo";
+            name = "Passo (mm:ss/km)";
             break;
         case 2:
             name = "Bpm";
             break;
         case 3:
-            name = "Altitudine";
+            name = "Altitudine (m)";
             break;
     }
 
@@ -488,7 +488,6 @@ function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, d
             panZoomInstance[(index + 3) % totalGraphs].zoom(scale);
             panZoomInstance[(index + 3) % totalGraphs].pan(panZoomInstance[index].getPan());
             d3.selectAll(".label").style("font-size", (16 / scale) + 'px');
-            d3.select('#label-y' + index).attr('x', 40 / scale).attr('y', 10 / scale);
             d3.selectAll(".result-value-" + tipo).style("font-size", (16 / scale) + 'px');
             d3.selectAll(".result-value-time" + index).style("font-size", (16 / scale) + 'px');
             d3.selectAll(".data-line-distance").style("stroke-width", (4 / scale) + 'px');
@@ -501,59 +500,63 @@ function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, d
             d3.selectAll(".result-line").style("stroke-width", (2 / scale) + 'px');
             d3.selectAll(".expected-line").style("stroke-width", (2 / scale) + 'px');
 
-            var points = d3.selectAll(".result-point")._groups[0];
-            for (var i = 0; i < points.length; i++) {
-                var labelX = d3.select("#max-result-value-" + tipo + i);
-                var labelTime = d3.select("#result-value-time" + index + i);
-                var xp = points[i].cx.animVal.value * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().x;
-                var yp = -(points[i].cy.animVal.value * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().y - svgContainerHeight);
-                if ((xp >= 0) && (yp >= 0)) {
-                    labelX.style("visibility", "visible");
-                    labelTime.style("visibility", "visible");
-                    if (labelX.attr("original-x") * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().x < 25) {
-                        labelX.attr("x", (25 - panZoomInstance[index].getPan().x) / (panZoomInstance[index].getSizes().realZoom));
+            if(tipo=="distance") {
+                var points = d3.selectAll(".result-point")._groups[0];
+                for (var i = 0; i < points.length; i++) {
+                    var labelX = d3.select("#max-result-value-" + tipo + i);
+                    var labelTime = d3.select("#result-value-time" + index + i);
+                    var xp = points[i].cx.animVal.value * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().x;
+                    var yp = -(points[i].cy.animVal.value * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().y - svgContainerHeight);
+                    if ((xp >= 0) && (yp >= 0)) {
+                        labelX.style("visibility", "visible");
+                        labelTime.style("visibility", "visible");
+                        if (labelX.attr("original-x") * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().x < 25) {
+                            labelX.attr("x", (25 - panZoomInstance[index].getPan().x) / (panZoomInstance[index].getSizes().realZoom));
+                        } else {
+                            labelX.attr("x", labelX.attr("original-x"));
+                        }
+                        labelX.attr("y", labelX.attr("original-y") - 7);
+                        if (labelTime.attr("original-y") * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().y > (svgContainerHeight - 15)) {
+                            labelTime.attr("y", ((labelTime.attr("original-y") - (8 * (panZoomInstance[index].getSizes().realZoom)) - panZoomInstance[index].getPan().y) / (panZoomInstance[index].getSizes().realZoom)));
+                        } else {
+                            labelTime.attr("y", labelTime.attr("original-y"));
+                        }
+                        labelTime.attr("x", (1 * labelTime.attr("original-x")));
                     } else {
-                        labelX.attr("x", labelX.attr("original-x"));
+                        labelX.style("visibility", "hidden");
+                        labelTime.style("visibility", "hidden");
                     }
-                    labelX.attr("y", labelX.attr("original-y") - 7);
-                    if (labelTime.attr("original-y") * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().y > (svgContainerHeight - 15)) {
-                        labelTime.attr("y", ((labelTime.attr("original-y")-(8*(panZoomInstance[index].getSizes().realZoom)) - panZoomInstance[index].getPan().y)/(panZoomInstance[index].getSizes().realZoom)));
-                    } else {
-                        labelTime.attr("y", labelTime.attr("original-y"));
-                    }
-                    labelTime.attr("x", (1 * labelTime.attr("original-x")));
-                } else {
-                    labelX.style("visibility", "hidden");
-                    labelTime.style("visibility", "hidden");
                 }
             }
         },
         beforePan: customBeforePan,
         onPan: function (pan) {
-            var points = d3.selectAll(".result-point")._groups[0];
-            for (var i = 0; i < points.length; i++) {
-                var labelX = d3.select("#max-result-value-" + tipo + i);
-                var labelTime = d3.select("#result-value-time" + index + i);
-                var xp = points[i].cx.animVal.value * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().x;
-                var yp = -(points[i].cy.animVal.value * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().y - svgContainerHeight);
-                if ((xp >= 0) && (yp >= 0)) {
-                    labelX.style("visibility", "visible");
-                    labelTime.style("visibility", "visible");
-                    if (labelX.attr("original-x") * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().x < 25) {
-                        labelX.attr("x", (25 - panZoomInstance[index].getPan().x) / (panZoomInstance[index].getSizes().realZoom));
+            if(tipo=="distance") {
+                var points = d3.selectAll(".result-point")._groups[0];
+                for (var i = 0; i < points.length; i++) {
+                    var labelX = d3.select("#max-result-value-" + tipo + i);
+                    var labelTime = d3.select("#result-value-time" + index + i);
+                    var xp = points[i].cx.animVal.value * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().x;
+                    var yp = -(points[i].cy.animVal.value * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().y - svgContainerHeight);
+                    if ((xp >= 0) && (yp >= 0)) {
+                        labelX.style("visibility", "visible");
+                        labelTime.style("visibility", "visible");
+                        if (labelX.attr("original-x") * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().x < 25) {
+                            labelX.attr("x", (25 - panZoomInstance[index].getPan().x) / (panZoomInstance[index].getSizes().realZoom));
+                        } else {
+                            labelX.attr("x", labelX.attr("original-x"));
+                        }
+                        labelX.attr("y", labelX.attr("original-y") - 7);
+                        if (labelTime.attr("original-y") * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().y > (svgContainerHeight - 15)) {
+                            labelTime.attr("y", ((labelTime.attr("original-y") - (8 * (panZoomInstance[index].getSizes().realZoom)) - panZoomInstance[index].getPan().y) / (panZoomInstance[index].getSizes().realZoom)));
+                        } else {
+                            labelTime.attr("y", labelTime.attr("original-y"));
+                        }
+                        labelTime.attr("x", (1 * labelTime.attr("original-x")));
                     } else {
-                        labelX.attr("x", labelX.attr("original-x"));
+                        labelX.style("visibility", "hidden");
+                        labelTime.style("visibility", "hidden");
                     }
-                    labelX.attr("y", labelX.attr("original-y") - 7);
-                    if (labelTime.attr("original-y") * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().y > (svgContainerHeight - 15)) {
-                        labelTime.attr("y", ((labelTime.attr("original-y")-(8*(panZoomInstance[index].getSizes().realZoom)) - panZoomInstance[index].getPan().y)/(panZoomInstance[index].getSizes().realZoom)));
-                    } else {
-                        labelTime.attr("y", labelTime.attr("original-y"));
-                    }
-                    labelTime.attr("x", (1 * labelTime.attr("original-x")));
-                } else {
-                    labelX.style("visibility", "hidden");
-                    labelTime.style("visibility", "hidden");
                 }
             }
 
@@ -574,7 +577,7 @@ function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, d
 }
 
 
-function createOnMouseMove(activities, totalGraphs) {
+function createOnMouseMove(activities, totalGraphs, spaceBetweenGraphs) {
     var index;
     for (var j = 0; j < totalGraphs; j++) {
         if (hasSomeParentTheClass(d3.event.target, "svg-container" + j)) {
@@ -598,7 +601,7 @@ function createOnMouseMove(activities, totalGraphs) {
             var domPoint = new DOMPoint(x[i], 0);
             ctm[i] = document.getElementsByClassName("svg-pan-zoom_viewport")[i].getCTM().inverse();
             domPoint = domPoint.matrixTransform(ctm[i]);
-            var beginning = domPoint.x - 40 - currentOffset - (30 * pathIndex),
+            var beginning = domPoint.x - 40 - currentOffset - (spaceBetweenGraphs * pathIndex),
                 end = pathLength * Math.max(1, panZoomInstance[0].getSizes().realZoom), target;
             currentOffset = currentOffset + end;
             var found = false;

@@ -339,7 +339,6 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
 
                 for (var nActivities = 0; nActivities < chartsNumber; nActivities++) {
                     var activityMaxTime = activities[nActivities].data[activities[nActivities].data.length - 1].time;
-                    //BUG MOUSE A CAUSA DI QUESTA VARIABILE
                     var activityMaxDistance = activities[nActivities].data[activities[nActivities].data.length - 1].distance;
                     activities[nActivities].data.unshift({
                         distance: 0,
@@ -357,8 +356,9 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                     });
                 }
 
+                var spaceBetweenGraphs = 40;
                 //Posizione x in cui iniziare a disegnare il primo grafico
-                var currentChartPosition = 40;
+                var currentChartPosition = spaceBetweenGraphs;
 
                 for (var svgInstance = 0; svgInstance < totalGraphs; svgInstance++) {
 
@@ -862,12 +862,12 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                             .text(customTimeFormat(parseInt(currentActivityMaxTime), svgInstance));
 
                         //Aggiorno la posizione corrente in cui iniziare a disegnare il prossimo grafico
-                        currentChartPosition = currentChartPosition + currentWidth + 40;
+                        currentChartPosition = currentChartPosition + currentWidth + spaceBetweenGraphs;
                     }
                     /** Fine del for per ogni attivià**/
 
                     //Dimensioni della viewport dell'svg corrente
-                    svgViewports[svgInstance] = [0, 0, (svgContainerWidth + (40 * chartsNumber)), (svgContainerHeight + 20)];
+                    svgViewports[svgInstance] = [0, 0, (svgContainerWidth + (spaceBetweenGraphs * chartsNumber)), (svgContainerHeight + 20)];
                     d3.select('#svg-container' + svgInstance)
                         .attr('viewBox', svgViewports[svgInstance][0] + " " + svgViewports[svgInstance][1] + " " + svgViewports[svgInstance][2] + " " + svgViewports[svgInstance][3]);
 
@@ -941,14 +941,16 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
 
                     //Funzione per il traching del mouse all'interno dell'svg e aggiornameno della posizione del punto e della linea corrispondenti
                     svgArray[svgInstance].on("mousemove", function () {
-                            createOnMouseMove(activities, totalGraphs);
+                            createOnMouseMove(activities, totalGraphs, spaceBetweenGraphs);
                         }
                     );
 
                     //Resetto la posizione x iniziale in cui disegnare i grafici
-                    currentChartPosition = 40;
+                    currentChartPosition = spaceBetweenGraphs;
                 }
                 /**Fine del for degli svg**/
+
+                stabilizeSvgView();
             }
             /**Fine dell'if nella complete di papaparse**/
         }
@@ -977,17 +979,10 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
 
 
 function stabilizeSvgView() {
-    setTimeout(
-        function() {
-            // aggiorno il voto dello slider
-            changeSliderLabelsColor(training.mark);
-            // simulo uno zoom per stabilizzare la posizione dei g negli svg
-            panZoomInstance[0].zoom(2);
-            panZoomInstance[0].zoom(1);
-
-        }, 700);
-
+    // aggiorno il voto dello slider
+    changeSliderLabelsColor(training.mark);
+    // simulo uno zoom per stabilizzare la posizione dei g negli svg
+    panZoomInstance[0].zoom(2);
+    panZoomInstance[0].zoom(1);
 }
-
-stabilizeSvgView();
 
