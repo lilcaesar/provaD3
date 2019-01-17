@@ -481,6 +481,27 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     q = q + (currentActivityMaxYValue / ((lines + 1) / 2));
                                 }
 
+                                svgArray[svgInstance].append("circle")
+                                    .attr('class', 'expected-pace-circle')
+                                    .attr("cx", xScale(0) + currentChartPosition)
+                                    .attr("cy", yScale(0))
+                                    .attr("r", 3)
+                                    .attr("fill","#0065C5");
+                                svgArray[svgInstance].append("line")
+                                    .attr('class', 'expected-pace')
+                                    .attr('x1', xScale(0) + currentChartPosition)
+                                    .attr('y1', yScale(0))
+                                    .attr('x2', xScale(currentActivityMaxYValue/m) + currentChartPosition)
+                                    .attr('y2', yScale(currentActivityMaxYValue))
+                                    .style("stroke", "#0065C5")
+                                    .style("stroke-width", '6px');
+                                svgArray[svgInstance].append("circle")
+                                    .attr('class', 'expected-pace-circle')
+                                    .attr("cx", xScale(currentActivityMaxYValue/m) + currentChartPosition)
+                                    .attr("cy", yScale(currentActivityMaxYValue))
+                                    .attr("r", 3)
+                                    .attr("fill","#0065C5");
+
                                 var originalPath = [];
                                 var pointIndex;
                                 for (pointIndex = 1; pointIndex < activities[graphIndex].data.length - 1; pointIndex++) {
@@ -494,9 +515,9 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                 function colorByInclination(p1,p2,degrees, acc) {
                                     var temporaryDegrees = Math.atan((p2.y-p1.y)/(p2.x-p1.x))*(180/Math.PI);
                                     if(Math.abs(degrees-temporaryDegrees)<acc){
-                                        return "#5bdd74";
+                                        return "green";
                                     }else{
-                                        return "red";
+                                        return "#ff4141";
                                     }
                                 }
 
@@ -642,7 +663,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .attr('y1', yScale(0))
                                     .attr('x2', xScale(currentActivityObjectiveTimeValue) + currentChartPosition)
                                     .attr('y2', yScale(currentActivityMaxYValue))
-                                    .style("stroke", "#9effff")
+                                    .style("stroke", "#64C0AD")
                                     .style("stroke-width", rangeTime + 'px')
                                     .attr("opacity", 0.7);
 
@@ -652,7 +673,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .attr('y1', yScale(0))
                                     .attr('x2', xScale(currentActivityObjectiveTimeValue) + currentChartPosition)
                                     .attr('y2', yScale(currentActivityMaxYValue))
-                                    .style("stroke", "blue")
+                                    .style("stroke", "#0065C5")
                                     .style("stroke-width", '2px');
 
                             } else if (currentActivityObjective == "DISTANCE") {
@@ -664,7 +685,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .attr('y1', yScale(currentActivityObjectiveDistanceValue))
                                     .attr('x2', xScale(currentActivityMaxTime) + currentChartPosition)
                                     .attr('y2', yScale(currentActivityObjectiveDistanceValue))
-                                    .style("stroke", "#9effff")
+                                    .style("stroke", "#64C0AD")
                                     .style("stroke-width", rangeDistance + 'px')
                                     .attr("opacity", 0.7);
 
@@ -674,7 +695,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .attr('y1', yScale(currentActivityObjectiveDistanceValue))
                                     .attr('x2', xScale(currentActivityMaxTime) + currentChartPosition)
                                     .attr('y2', yScale(currentActivityObjectiveDistanceValue))
-                                    .style("stroke", "blue")
+                                    .style("stroke", "0049FF")
                                     .style("stroke-width", '2px');
 
                             } else if (currentActivityObjective == "DISTANCE_TIME") {
@@ -687,7 +708,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .attr("y", yScale(currentActivityObjectiveDistanceValue) - rangeDistance / 2)
                                     .attr("width", rangeTime)
                                     .attr("height", rangeDistance)
-                                    .style("fill", "#9effff")
+                                    .style("fill", "#64C0AD")
                                     .attr("opacity", 0.7);
 
                                 svgArray[svgInstance].append("line")
@@ -696,7 +717,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .attr('y1', yScale(0))
                                     .attr('x2', xScale(currentActivityObjectiveTimeValue) + currentChartPosition)
                                     .attr('y2', yScale(currentActivityObjectiveDistanceValue))
-                                    .style("stroke", "blue")
+                                    .style("stroke", "0049FF")
                                     .style("stroke-width", '2px');
 
                                 svgArray[svgInstance].append("line")
@@ -705,13 +726,13 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .attr('y1', yScale(currentActivityObjectiveDistanceValue))
                                     .attr('x2', xScale(currentActivityObjectiveTimeValue) + currentChartPosition)
                                     .attr('y2', yScale(currentActivityObjectiveDistanceValue))
-                                    .style("stroke", "blue")
+                                    .style("stroke", "0049FF")
                                     .style("stroke-width", '2px');
 
                             }
 
                             //Punto del risultato dell'utente
-                            if (svgInstance == 0) {
+                            if ((svgInstance) == 0 &&(currentActivityObjective!="PACE")) {
                                 svgArray[svgInstance].append("circle")
                                     .attr('id', 'result-point' + graphIndex)
                                     .attr('class', 'result-point')

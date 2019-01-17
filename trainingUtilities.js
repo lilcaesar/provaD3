@@ -373,7 +373,7 @@ function getResultPointColor(currentActivityObjective, currentActivityMaxTime, c
         if ((valueTime < (objectiveTime + deltaTime)) && (valueTime > (objectiveTime - deltaTime))) {
             color = "green";
         } else {
-            color = "red";
+            color = "#ff0000";
         }
     } else if (currentActivityObjective == "DISTANCE") {
         valueDistance = currentActivityMaxXValue;
@@ -382,7 +382,7 @@ function getResultPointColor(currentActivityObjective, currentActivityMaxTime, c
         if ((valueDistance < (objectiveDistance + deltaDistance)) && (valueDistance > (objectiveDistance - deltaDistance))) {
             color = "green";
         } else {
-            color = "red";
+            color = "#ff4141";
         }
     } else {
         valueDistance = currentActivityMaxXValue;
@@ -395,10 +395,10 @@ function getResultPointColor(currentActivityObjective, currentActivityMaxTime, c
             if ((valueTime < (objectiveTime + deltaTime)) && (valueTime > (objectiveTime - deltaTime))) {
                 color = "green";
             } else {
-                color = "red";
+                color = "#ff4141";
             }
         } else {
-            color = "red";
+            color = "#ff4141";
         }
     }
     return color;
