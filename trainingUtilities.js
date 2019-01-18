@@ -442,6 +442,7 @@ function customeDistanceFormat(num, graphIndex) {
 function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, duration, totalGraphs) {
 //Funzione beforePan per limitare i grafici alla viewbox per svg-pan-zoom
     var customBeforePan = function (oldPan, newPan) {
+        //Per centrare il g all'interno dell'svg
         var cut_height = panZoomInstance[index].getSizes().viewBox.height - (panZoomInstance[index].getSizes().viewBox.height*100/112);
 
         var stopHorizontal = false
@@ -515,36 +516,40 @@ function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, d
                         labelTime.style("visibility", "visible");
                         if (labelY.attr("original-x") * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().x < 25) {
                             labelY.attr("x", (37 - panZoomInstance[index].getPan().x) / (panZoomInstance[index].getSizes().realZoom));
-                            if(activityImg._groups[0][0]!=null) {
-                                activityImg.attr("x", (- panZoomInstance[index].getPan().x) / (panZoomInstance[index].getSizes().realZoom));
-                            }
                         } else {
                             labelY.attr("x", labelY.attr("original-x"));
-                            if(activityImg._groups[0][0]!=null) {
-                                activityImg.attr("x", activityImg.attr("original-x"));
-                            }
                         }
                         labelY.attr("y", labelY.attr("original-y") - 7);
                         if (labelTime.attr("original-y") * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().y > (svgContainerHeight - 15)) {
                             labelTime.attr("y", ((labelTime.attr("original-y") - 8 - (8 * (panZoomInstance[index].getSizes().realZoom)) - panZoomInstance[index].getPan().y) / (panZoomInstance[index].getSizes().realZoom)));
-                            if(activityImg._groups[0][0]!=null) {
-                                activityImg.attr("y", ((activityImg.attr("original-y") - panZoomInstance[index].getPan().y) / (panZoomInstance[index].getSizes().realZoom)));
-                            }
                         } else {
                             labelTime.attr("y", labelTime.attr("original-y"));
-                            if(activityImg._groups[0][0]!=null) {
-                                activityImg.attr("y", activityImg.attr("original-y"));
-                            }
                         }
                         labelTime.attr("x", (1 * labelTime.attr("original-x")));
                     } else {
                         labelY.style("visibility", "hidden");
                         labelTime.style("visibility", "hidden");
-                        if(activityImg._groups[0][0]!=null) {
-                            activityImg.attr("y", ((activityImg.attr("original-y") - panZoomInstance[index].getPan().y) / (panZoomInstance[index].getSizes().realZoom)));
+                    }
+
+                    if (activityImg._groups[0][0] != null) {
+                        if (xp > 0) {
+                            if (activityImg.attr("original-x") * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().x < 0) {
+                                activityImg.attr("x", (-panZoomInstance[index].getPan().x) / (panZoomInstance[index].getSizes().realZoom));
+                            }else{
+                                activityImg.attr("x", activityImg.attr("original-x"));
+                            }
+                            if (activityImg.attr("original-y") * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().y < (0)) {
+                                activityImg.attr("y", (15- panZoomInstance[index].getPan().y) / (panZoomInstance[index].getSizes().realZoom));
+                            } else {
+                                activityImg.attr("y", activityImg.attr("original-y"));
+                            }
+                            console.log(activityImg.attr("y"));
+                        } else {
+                            activityImg.attr("x", activityImg.attr("original-x"));
                             activityImg.attr("y", activityImg.attr("original-y"));
                         }
                     }
+
                 }
             }
         },
@@ -564,36 +569,40 @@ function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, d
                         labelTime.style("visibility", "visible");
                         if (labelY.attr("original-x") * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().x < 25) {
                             labelY.attr("x", (37 - panZoomInstance[index].getPan().x) / (panZoomInstance[index].getSizes().realZoom));
-                            if(activityImg._groups[0][0]!=null) {
-                                activityImg.attr("x", (- panZoomInstance[index].getPan().x) / (panZoomInstance[index].getSizes().realZoom));
-                            }
                         } else {
                             labelY.attr("x", labelY.attr("original-x"));
-                            if(activityImg._groups[0][0]!=null) {
-                                activityImg.attr("x", activityImg.attr("original-x"));
-                            }
                         }
                         labelY.attr("y", labelY.attr("original-y") - 7);
                         if (labelTime.attr("original-y") * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().y > (svgContainerHeight - 15)) {
                             labelTime.attr("y", ((labelTime.attr("original-y") - 8 - (8 * (panZoomInstance[index].getSizes().realZoom)) - panZoomInstance[index].getPan().y) / (panZoomInstance[index].getSizes().realZoom)));
-                            if(activityImg._groups[0][0]!=null) {
-                                activityImg.attr("y", ((activityImg.attr("original-y") - panZoomInstance[index].getPan().y) / (panZoomInstance[index].getSizes().realZoom)));
-                            }
                         } else {
                             labelTime.attr("y", labelTime.attr("original-y"));
-                            if(activityImg._groups[0][0]!=null) {
-                                activityImg.attr("y", activityImg.attr("original-y"));
-                            }
                         }
                         labelTime.attr("x", (1 * labelTime.attr("original-x")));
                     } else {
                         labelY.style("visibility", "hidden");
                         labelTime.style("visibility", "hidden");
-                        if(activityImg._groups[0][0]!=null) {
-                            activityImg.attr("y", ((activityImg.attr("original-y") - panZoomInstance[index].getPan().y) / (panZoomInstance[index].getSizes().realZoom)));
+                    }
+
+                    if (activityImg._groups[0][0] != null) {
+                        if (xp > 0) {
+                            if (activityImg.attr("original-x") * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().x < 0) {
+                                activityImg.attr("x", (-panZoomInstance[index].getPan().x) / (panZoomInstance[index].getSizes().realZoom));
+                            }else{
+                                activityImg.attr("x", activityImg.attr("original-x"));
+                            }
+                            if (activityImg.attr("original-y") * panZoomInstance[index].getSizes().realZoom + panZoomInstance[index].getPan().y < (0)) {
+                                activityImg.attr("y", (15- panZoomInstance[index].getPan().y) / (panZoomInstance[index].getSizes().realZoom));
+                            } else {
+                                activityImg.attr("y", activityImg.attr("original-y"));
+                            }
+                            console.log(activityImg.attr("y"));
+                        } else {
+                            activityImg.attr("x", activityImg.attr("original-x"));
                             activityImg.attr("y", activityImg.attr("original-y"));
                         }
                     }
+
                 }
             }
 
