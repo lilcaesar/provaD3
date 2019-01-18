@@ -469,7 +469,8 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                             .attr('x2', xScale(x) + currentChartPosition)
                                             .attr('y2', yScale(y))
                                             .style("stroke", "#dddddd")
-                                            .style("stroke-width", '1px');
+                                            .style("stroke-width", '1px')
+                                            .style("stroke-linecap", "round");
                                     } else {
                                         svgArray[svgInstance].append("line")
                                             .attr('class', 'background-pace-line')
@@ -478,31 +479,21 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                             .attr('x2', xScale((currentActivityMaxYValue - q) / m) + currentChartPosition)
                                             .attr('y2', yScale(currentActivityMaxYValue))
                                             .style("stroke", "#dddddd")
-                                            .style("stroke-width", '1px');
+                                            .style("stroke-width", '1px')
+                                            .style("stroke-linecap", "round");
                                     }
                                     q = q + (currentActivityMaxYValue / ((lines + 1) / 2));
                                 }
 
-                                svgArray[svgInstance].append("circle")
-                                    .attr('class', 'expected-pace-circle')
-                                    .attr("cx", xScale(0) + currentChartPosition)
-                                    .attr("cy", yScale(0))
-                                    .attr("r", 4)
-                                    .attr("fill","#64C0AD");
                                 svgArray[svgInstance].append("line")
                                     .attr('class', 'expected-pace')
                                     .attr('x1', xScale(0) + currentChartPosition)
                                     .attr('y1', yScale(0))
                                     .attr('x2', xScale(currentActivityMaxYValue/m) + currentChartPosition)
                                     .attr('y2', yScale(currentActivityMaxYValue))
-                                    .style("stroke", "#64C0AD")
-                                    .style("stroke-width", '8px');
-                                svgArray[svgInstance].append("circle")
-                                    .attr('class', 'expected-pace-circle')
-                                    .attr("cx", xScale(currentActivityMaxYValue/m) + currentChartPosition)
-                                    .attr("cy", yScale(currentActivityMaxYValue))
-                                    .attr("r", 4)
-                                    .attr("fill","#64C0AD");
+                                    .style("stroke", "#0065C588")
+                                    .style("stroke-width", '20px')
+                                    .style("stroke-linecap", "round");
                                 svgArray[svgInstance].append("line")
                                     .attr('class', 'expected-pace')
                                     .attr('x1', xScale(0) + currentChartPosition)
@@ -510,7 +501,8 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .attr('x2', xScale(currentActivityMaxYValue/m) + currentChartPosition)
                                     .attr('y2', yScale(currentActivityMaxYValue))
                                     .style("stroke", "#0065C5")
-                                    .style("stroke-width", '2px');
+                                    .style("stroke-width", '2px')
+                                    .style("stroke-linecap", "round");
 
                                 var originalPath = [];
                                 var pointIndex;
@@ -525,9 +517,9 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                 function colorByInclination(p1,p2,degrees, acc) {
                                     var temporaryDegrees = Math.atan((p2.y-p1.y)/(p2.x-p1.x))*(180/Math.PI);
                                     if(Math.abs(degrees-temporaryDegrees)<acc){
-                                        return "green";
+                                        return "#339933";
                                     }else{
-                                        return "#ff4141";
+                                        return "#ff6767";
                                     }
                                 }
 
@@ -535,7 +527,6 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                 startPoint = approximatedPath[0];
                                 endPoint = approximatedPath[1];
                                 var startColor = colorByInclination(startPoint, endPoint, mDegrees, accuracy);
-                                var paceCircles =[];
                                 for(pointIndex=1; pointIndex<approximatedPath.length-1; pointIndex++){
                                     var currentColor = colorByInclination(approximatedPath[pointIndex],approximatedPath[pointIndex+1],mDegrees,accuracy);
                                     if(currentColor!=startColor) {
@@ -546,9 +537,8 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                             .attr('x2', xScale(approximatedPath[pointIndex].x) + currentChartPosition)
                                             .attr('y2', yScale(approximatedPath[pointIndex].y))
                                             .style("stroke", startColor)
-                                            .style("stroke-width", '8px');
-
-                                        paceCircles.push({point:startPoint,color:startColor});
+                                            .style("stroke-width", '8px')
+                                            .style("stroke-linecap", "round");
 
                                         startColor = currentColor;
                                         startPoint = approximatedPath[pointIndex];
@@ -561,18 +551,9 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .attr('x2', xScale(approximatedPath[pointIndex].x) + currentChartPosition)
                                     .attr('y2', yScale(approximatedPath[pointIndex].y))
                                     .style("stroke", startColor)
-                                    .style("stroke-width", '8px');
-                                paceCircles.push({point:startPoint,color:startColor});
-                                paceCircles.push({point:approximatedPath[pointIndex],color:startColor});
+                                    .style("stroke-width", '8px')
+                                    .style("stroke-linecap", "round");
 
-                                for(pointIndex=0; pointIndex<paceCircles.length; pointIndex++) {
-                                    svgArray[svgInstance].append("circle")
-                                        .attr('class', 'background-pace-circle')
-                                        .attr("cx", xScale(paceCircles[pointIndex].point.x) + currentChartPosition)
-                                        .attr("cy", yScale(paceCircles[pointIndex].point.y))
-                                        .attr("r", 4)
-                                        .attr("fill", paceCircles[pointIndex].color);
-                                }
                             }
 
 
@@ -621,7 +602,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .attr("class", "data-line-distance")
                                     .attr("id", "data-line-distance" + graphIndex)
                                     .attr("d", valueline(activities[graphIndex].data))
-                                    .style("stroke-width", "4px")
+                                    .style("stroke-width", "3px")
                                     .style("stroke", getLineColor(svgInstance))
                                     .style("fill", "none")
                             );
@@ -675,6 +656,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .attr('y2', yScale(currentActivityMaxYValue))
                                     .style("stroke", "#64C0AD")
                                     .style("stroke-width", rangeTime + 'px')
+                                    .style("stroke-linecap", "round")
                                     .attr("opacity", 0.7);
 
                                 svgArray[svgInstance].append("line")
@@ -684,7 +666,8 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .attr('x2', xScale(currentActivityObjectiveTimeValue) + currentChartPosition)
                                     .attr('y2', yScale(currentActivityMaxYValue))
                                     .style("stroke", "#0065C5")
-                                    .style("stroke-width", '2px');
+                                    .style("stroke-width", '2px')
+                                    .style("stroke-linecap", "round");
 
                             } else if (currentActivityObjective == "DISTANCE") {
                                 rangeDistance = yScale(currentActivityObjectiveDistanceValue * 0.95) - yScale(currentActivityObjectiveDistanceValue * 1.05);
@@ -695,8 +678,9 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .attr('y1', yScale(currentActivityObjectiveDistanceValue))
                                     .attr('x2', xScale(currentActivityMaxTime) + currentChartPosition)
                                     .attr('y2', yScale(currentActivityObjectiveDistanceValue))
-                                    .style("stroke", "#64C0AD")
+                                    .style("stroke", "#0065C588")
                                     .style("stroke-width", rangeDistance + 'px')
+                                    .style("stroke-linecap", "round")
                                     .attr("opacity", 0.7);
 
                                 svgArray[svgInstance].append("line")
@@ -706,7 +690,8 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .attr('x2', xScale(currentActivityMaxTime) + currentChartPosition)
                                     .attr('y2', yScale(currentActivityObjectiveDistanceValue))
                                     .style("stroke", "0049FF")
-                                    .style("stroke-width", '2px');
+                                    .style("stroke-width", '2px')
+                                    .style("stroke-linecap", "round");
 
                             } else if (currentActivityObjective == "DISTANCE_TIME") {
                                 rangeTime = xScale(currentActivityObjectiveTimeValue * 1.05) - xScale(currentActivityObjectiveTimeValue * 0.95);
@@ -718,7 +703,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .attr("y", yScale(currentActivityObjectiveDistanceValue) - rangeDistance / 2)
                                     .attr("width", rangeTime)
                                     .attr("height", rangeDistance)
-                                    .style("fill", "#64C0AD")
+                                    .style("fill", "#0065C588")
                                     .attr("opacity", 0.7);
 
                                 svgArray[svgInstance].append("line")
@@ -728,7 +713,8 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .attr('x2', xScale(currentActivityObjectiveTimeValue) + currentChartPosition)
                                     .attr('y2', yScale(currentActivityObjectiveDistanceValue))
                                     .style("stroke", "0049FF")
-                                    .style("stroke-width", '2px');
+                                    .style("stroke-width", '2px')
+                                    .style("stroke-linecap", "round");
 
                                 svgArray[svgInstance].append("line")
                                     .attr('class', 'expected-line')
@@ -737,29 +723,9 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .attr('x2', xScale(currentActivityObjectiveTimeValue) + currentChartPosition)
                                     .attr('y2', yScale(currentActivityObjectiveDistanceValue))
                                     .style("stroke", "0049FF")
-                                    .style("stroke-width", '2px');
+                                    .style("stroke-width", '2px')
+                                    .style("stroke-linecap", "round");
 
-                            }
-
-                            //Punto del risultato dell'utente
-                            if (svgInstance == 0) {
-                                if (currentActivityObjective != "PACE") {
-                                    svgArray[svgInstance].append("circle")
-                                        .attr('id', 'result-point' + graphIndex)
-                                        .attr('class', 'result-point')
-                                        .attr("cx", xScale(currentActivityMaxTime) + currentChartPosition)
-                                        .attr("cy", yScale(currentActivityMaxYValue))
-                                        .attr("r", 6)
-                                        .attr("fill", getResultPointColor(currentActivityObjective, currentActivityMaxTime, currentActivityObjectiveTimeValue, currentActivityMaxYValue, currentActivityObjectiveDistanceValue));
-                                } else {
-                                    svgArray[svgInstance].append("circle")
-                                        .attr('id', 'result-point' + graphIndex)
-                                        .attr('class', 'result-point')
-                                        .attr("cx", xScale(currentActivityMaxTime) + currentChartPosition)
-                                        .attr("cy", yScale(currentActivityMaxYValue))
-                                        .attr("r", 1)
-                                        .style("visibility", "hidden");
-                                }
                             }
 
                             //Punto dell'obiettivo dell'utente
@@ -771,6 +737,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                 .attr('y2', yScale(currentActivityMaxYValue))
                                 .style("stroke", "grey")
                                 .style("stroke-width", '2px')
+                                .style("stroke-linecap", "round")
                                 .style("stroke-dasharray", ("3, 3"));
 
                             svgArray[svgInstance].append("line")
@@ -781,6 +748,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                 .attr('y2', yScale(currentActivityMaxYValue))
                                 .style("stroke", "grey")
                                 .style("stroke-width", '2px')
+                                .style("stroke-linecap", "round")
                                 .style("stroke-dasharray", ("3, 3"));
 
                             if (currentActivityObjective == "TIME") {
@@ -830,6 +798,27 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     .attr('height', 30)
                                     .attr('original-x', xScale(0) + currentChartPosition)
                                     .attr('original-y', yScale(overallMaxYValue));
+                            }
+
+                            //Punto del risultato dell'utente
+                            if (svgInstance == 0) {
+                                if (currentActivityObjective != "PACE") {
+                                    svgArray[svgInstance].append("circle")
+                                        .attr('id', 'result-point' + graphIndex)
+                                        .attr('class', 'result-point')
+                                        .attr("cx", xScale(currentActivityMaxTime) + currentChartPosition)
+                                        .attr("cy", yScale(currentActivityMaxYValue))
+                                        .attr("r", 6)
+                                        .attr("fill", getResultPointColor(currentActivityObjective, currentActivityMaxTime, currentActivityObjectiveTimeValue, currentActivityMaxYValue, currentActivityObjectiveDistanceValue));
+                                } else {
+                                    svgArray[svgInstance].append("circle")
+                                        .attr('id', 'result-point' + graphIndex)
+                                        .attr('class', 'result-point')
+                                        .attr("cx", xScale(currentActivityMaxTime) + currentChartPosition)
+                                        .attr("cy", yScale(currentActivityMaxYValue))
+                                        .attr("r", 1)
+                                        .style("visibility", "hidden");
+                                }
                             }
                         }
 
@@ -899,6 +888,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                         .attr("y2", svgContainerHeight)
                         .style("stroke", "#ffe724")
                         .style("stroke-width", '2px')
+                        .style("stroke-linecap", "round")
                         .attr("opacity", 0)
                     );
 

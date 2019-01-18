@@ -489,7 +489,7 @@ function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, d
             d3.selectAll(".label").style("font-size", (16 / scale) + 'px');
             d3.selectAll(".result-value-" + tipo).style("font-size", (16 / scale) + 'px');
             d3.selectAll(".result-value-time" + index).style("font-size", (16 / scale) + 'px');
-            d3.selectAll(".data-line-distance").style("stroke-width", (4 / scale) + 'px');
+            d3.selectAll(".data-line-distance").style("stroke-width", (3 / scale) + 'px');
             d3.selectAll(".data-line-altitude").style("stroke-width", (2 / scale) + 'px');
             d3.selectAll(".data-line-pace").style("stroke-width", (2 / scale) + 'px');
             d3.selectAll(".background-pace-line").style("stroke-width", (1 / scale) + 'px');

@@ -1,9 +1,4 @@
 d3.dsv(',', 'datasets/workout.csv').then(function (data) {
-    // Variables
-    var body = d3.select('body');
-    var margin = {top: 10, right: 50, bottom: 20, left: 50};
-    /*    var h = 600 - margin.top - margin.bottom;
-        var w = 600 - margin.left - margin.right;*/
 // SVG
     var svg = d3.select('#graphic')
         .append('svg')
