@@ -834,7 +834,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                             .style('font-size', '17px')
                             .style('font-weight', '600')
                             .style('text-anchor', 'end')
-                            .text(customeDistanceFormat(parseInt(currentActivityMaxYValue), svgInstance));
+                            .text(customDistanceFormat(parseInt(currentActivityMaxYValue), svgInstance, false));
 
                         if (svgInstance != 0) {
                             svgArray[svgInstance].append('text') //Variabile min in Y
@@ -849,7 +849,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                 .style('font-size', '17px')
                                 .style('font-weight', '600')
                                 .style('text-anchor', 'end')
-                                .text(customeDistanceFormat(parseInt(currentActivityMinYValue), svgInstance));
+                                .text(customDistanceFormat(parseInt(currentActivityMinYValue), svgInstance, false));
                         }
 
                         svgArray[svgInstance].append('text') //Tempo

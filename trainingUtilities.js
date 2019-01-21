@@ -416,27 +416,47 @@ function customTimeFormat(num) {
     if(num<60){
         result = s + "s";
     }else if(num<3600){
-        result = m + "m" + (s>0?(":" + s + "s"):"");
+        result = m + "m" + (s>0?("" + s + "s"):"");
     }else{
-        result =  h + "h:" + m + "m" + s + (s>0?(":" + s + "s"):"");
+        result =  h + "h" + m + "m" + s + (s>0?("" + s + "s"):"");
     }
     return result;
 }
-function customeDistanceFormat(num, graphIndex) {
+
+function customTimeFormatPace(num) {
+    var h = Math.floor( num / 3600 );
+    var m = Math.floor((num - h * 3600) / 60 );
+    var s = num - (h * 3600 + m * 60);
     var result;
-    if(graphIndex == 0 || graphIndex == 3) {
-        var km = Math.floor( num / 1000 );
-        var m = num - (km * 1000);
-        if (num < 1000) {
-            result = m + "m";
-        } else {
-            m = Math.round(m/10);
-            result = km + "," + (m < 10 ? "0" +m : m) + "km";
-        }
+    if(num<3600){
+        result = m + ":" + (s<10?("0" + s):s);
     }else{
-        result = num;
+        result =  h + ":" + (m<10?("0" + m):m) + ":" + (s<10?("0" + s):s);
     }
     return result;
+}
+
+function customDistanceFormat(num, graphIndex, isOnMouse) {
+    var res;
+    if (graphIndex == 0 || graphIndex == 3) {
+        var km = Math.floor(num / 1000);
+        var m = num - (km * 1000);
+        if (num < 1000) {
+            res = m + "m";
+        } else {
+            m = Math.round(m / 10);
+            res = km + "," + (m < 10 ? "0" + m : m) + "km";
+        }
+    } else if (graphIndex == 1) {
+        if (isOnMouse) {
+            res = customTimeFormatPace(num) + "/km";
+        } else {
+            res = customTimeFormatPace(num);
+        }
+    } else {
+        res = num;
+    }
+    return res;
 }
 
 function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, duration, totalGraphs) {
@@ -543,7 +563,6 @@ function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, d
                             } else {
                                 activityImg.attr("y", activityImg.attr("original-y"));
                             }
-                            console.log(activityImg.attr("y"));
                         } else {
                             activityImg.attr("x", activityImg.attr("original-x"));
                             activityImg.attr("y", activityImg.attr("original-y"));
@@ -596,7 +615,6 @@ function createPanZoomData(index, tipo, svgContainerHeight, svgContainerWidth, d
                             } else {
                                 activityImg.attr("y", activityImg.attr("original-y"));
                             }
-                            console.log(activityImg.attr("y"));
                         } else {
                             activityImg.attr("x", activityImg.attr("original-x"));
                             activityImg.attr("y", activityImg.attr("original-y"));
@@ -677,7 +695,7 @@ function createOnMouseMove(activities, totalGraphs, spaceBetweenGraphs) {
         if (i == 0) {
             return parseInt(activities[column].data[arrayPositions[index]].distance);
         } else if (i == 1) {
-            return "mm:ss/km:" + parseInt(activities[column].data[arrayPositions[index]].pace);
+            return parseInt(activities[column].data[arrayPositions[index]].pace);
         } else if (i == 2) {
             return "bpm:" + parseInt(activities[column].data[arrayPositions[index]].hbr);
         } else if (i == 3) {
@@ -709,7 +727,7 @@ function createOnMouseMove(activities, totalGraphs, spaceBetweenGraphs) {
                 .attr("opacity", 1)
                 .attr("x", x[svgIndex] - 10)
                 .attr("y", pos[svgIndex].matrixTransform(ctm[svgIndex].inverse()).y)
-                .text(customeDistanceFormat(dataType(svgIndex), svgIndex));
+                .text(customDistanceFormat(dataType(svgIndex), svgIndex, true));
 
             currentBbox = d3.select("#mouse-label-x" + svgIndex)._groups[0][0].getBBox();
             d3.select("#mouse-label-x-rect" + svgIndex)
