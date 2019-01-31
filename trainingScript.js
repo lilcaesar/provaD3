@@ -49,49 +49,26 @@ var position = '';
 var totalGraphs = 4;
 
 for (var i = 0; i < totalGraphs; i++) {
-
-    //position = 'left';
-
     // creo il div per l'nesimo grafico
     var graphic = document.createElement("div");
     graphic.id = "graphic" + i;
     var container = document.getElementById('graphic-container');
     container.append(graphic);
 
-    /*if(i > 0) {
-        // linea per separare i grafici
-        var divider_line = document.createElement("hr");
-        divider_line.className = "divider-line";
-        divider_line.style.marginTop = '30px';
-        document.getElementById("graphic" + i).append(divider_line);
-    }*/
-
     createGraphTitle(i);
-    //createGraphAxis(i, position);
-    var graph_name = '#graphic' + i;
-
 
     var div = document.createElement("div");
-    div.style.overflow = 'hidden';
     graphic.append(div);
 
-    //svgArray.push(d3.select(graph_name)
     svgArray.push(d3.select(div)
             .append("svg")
             .attr("id", 'svg-container' + i)
             .attr("class", 'svg-container' + i)
             .attr("width", '100%')
             .attr('preserveAspectRatio', 'xMinYMin')
-            .style('margin-top', '-1%')
-            .style('margin-bottom', '-1%')
-            .style('position', 'relative')
         //.style('top', '-18px')
 
     );
-
-
-    //position = 'right';
-    //createGraphAxis(i, position);
 }
 
 var aspectRatio = 7.5;
@@ -880,9 +857,6 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                     d3.select('#svg-container' + svgInstance)
                         .attr('viewBox', svgViewports[svgInstance][0] + " " + svgViewports[svgInstance][1] + " " + svgViewports[svgInstance][2] + " " + svgViewports[svgInstance][3]);
 
-                    //Istanza pan-zoom per l'svg corrente
-                    panZoomInstance.push(svgPanZoom('#svg-container' + svgInstance, createPanZoomData(svgInstance, idString, svgContainerHeight, svgContainerWidth, training.duration, totalGraphs)));
-
                     //Linea in corrispondenza del mouse
                     mouseLine.push(svgArray[svgInstance].append("line")
                         .attr("id", "mouse-line" + svgInstance)
@@ -947,8 +921,6 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                             .attr("opacity", 0)
                     ]);
 
-                    var pathEl, pathLength;
-
                     //Funzione per il traching del mouse all'interno dell'svg e aggiornameno della posizione del punto e della linea corrispondenti
                     svgArray[svgInstance].on("mousemove", function () {
                             createOnMouseMove(activities, totalGraphs, spaceBetweenGraphs);
@@ -968,25 +940,6 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
     })
     ;
 }
-
-// aggiornamento label iniziale
-
-
-//document.addEventListener("DOMContentLoaded", function(){
-
-/*
-    for(var i = 1; i < totalGraphs; i++){
-        //var svg_height = svgArray[i]._groups[0][0].height.baseVal.value;
-        //console.log(svg_height);
-        var svg_container = document.getElementById('svg-container'+i);
-        var svg_height = svg_container.style.height;
-        svg_height  *= 100/109;
-        console.log(svg_height);
-        svg_container.style.height = svg_height;
-    }*/
-
-//});
-
 
 function stabilizeSvgView() {
     // aggiorno il voto dello slider
