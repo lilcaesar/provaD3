@@ -235,9 +235,11 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                         if (timeStep > 1) {
                             var distanceGap = distanceStep / timeStep;
                             var altitudeGap = (gpsData[gpsIndex].altitude - gpsData[gpsIndex - 1].altitude) / timeStep;
-                            var pace = (timeStep / 60) / (distanceStep / 1000);
-                            if (pace > 60) {
-                                currentActivityPace = 65;
+                            var pace = timeStep*(1000/(distanceStep));
+                            if (pace < 65) {
+                                currentActivityPace = 60;
+                            } else if (pace > 1000) {
+                                currentActivityPace = 1000;
                             } else {
                                 currentActivityPace = pace;
                             }
@@ -262,9 +264,11 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                             currentActivityDistance = currentActivityDistance + distanceStep;
                             currentActivityTime = currentActivityTime + ((gpsData[gpsIndex].time - gpsData[gpsIndex - 1].time) / 1000);
                             currentActivityAltitude = (gpsData[gpsIndex].altitude);
-                            var pace = (1 / 60) / (distanceStep / 1000);
-                            if (pace > 60) {
-                                currentActivityPace = 65;
+                            var pace = (1000/(distanceStep));
+                            if (pace < 65) {
+                                currentActivityPace = 60;
+                            } else if (pace > 1000) {
+                                currentActivityPace = 1000;
                             } else {
                                 currentActivityPace = pace;
                             }
@@ -345,7 +349,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
 
                 var spaceBetweenGraphs = 40;
                 //Posizione x in cui iniziare a disegnare il primo grafico
-                var currentChartPosition = spaceBetweenGraphs;
+                var currentChartPosition = spaceBetweenGraphs+10;
 
                 for (var svgInstance = 0; svgInstance < totalGraphs; svgInstance++) {
 
@@ -952,7 +956,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                     );
 
                     //Resetto la posizione x iniziale in cui disegnare i grafici
-                    currentChartPosition = spaceBetweenGraphs;
+                    currentChartPosition = spaceBetweenGraphs+10;
                 }
                 /**Fine del for degli svg**/
 
