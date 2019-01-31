@@ -1,3 +1,178 @@
+function parseData(gpsData, cardioData) {
+    var activities = [];
+    //Variabili per la computazione del vettore "activities" coi dati per i grafici
+    var currentActivityDataArray = [];
+    var currentActivityDistance = -1;
+    var currentActivityTime = -1;
+    var currentActivityAltitude = -1.0;
+    var currentActivityPace = 30;
+    var currentActivityCardio = -1;
+    var currentActivityID = gpsData[0].workout_activity_id;
+    var cardioIndex = 0;
+
+    while (cardioData[cardioIndex].time < gpsData[0].time) {
+        cardioIndex++;
+    }
+    for (var gpsIndex = 0; gpsIndex < gpsData.length; gpsIndex++) {
+        if (gpsData[gpsIndex].workout_activity_id != currentActivityID) {
+            while (cardioData[cardioIndex].time < gpsData[0].time) {
+                cardioIndex++;
+            }
+            var temporaryActivity = getActivityInformations(gpsData[gpsIndex - 1].workout_activity_id);
+            var informations = ({
+                objective: temporaryActivity[0].wactivity_type,
+                objectiveTimeValue: temporaryActivity[0].wactivity_time,
+                objectiveDistanceValue: temporaryActivity[0].wactivity_distance,
+                type: temporaryActivity[0].wactivity_label,
+                pauseTime: (gpsData[gpsIndex].time - gpsData[gpsIndex - 1].time) / 1000,
+                comment: temporaryActivity[0].wactivity_comment
+            });
+            activities.push({
+                info: informations,
+                data: currentActivityDataArray
+            });
+            currentActivityDataArray = [];
+            currentActivityDistance = -1;
+            currentActivityTime = -1;
+            currentActivityAltitude = -1.0;
+            currentActivityCardio = -1;
+            currentActivityID = gpsData[gpsIndex].workout_activity_id;
+        }
+        if (currentActivityDistance == -1) {
+            currentActivityDistance = 0;
+            currentActivityTime = 0;
+            currentActivityAltitude = parseFloat(gpsData[gpsIndex].altitude);
+            currentActivityPace = 30;
+            currentActivityCardio = cardioData[cardioIndex].rate;
+            currentActivityDataArray.push({
+                distance: currentActivityDistance,
+                time: currentActivityTime,
+                altitude: Number(currentActivityAltitude),
+                pace: currentActivityPace,
+                hbr: Number(currentActivityCardio)
+            });
+        } else {
+            var timeStep = ((gpsData[gpsIndex].time - gpsData[gpsIndex - 1].time) / 1000);
+            var distanceStep = compute3DDistance(
+                computeCartesianPoint([gpsData[gpsIndex].longitude, gpsData[gpsIndex].latitude, gpsData[gpsIndex].altitude]),
+                computeCartesianPoint([gpsData[gpsIndex - 1].longitude, gpsData[gpsIndex - 1].latitude, gpsData[gpsIndex - 1].altitude])
+            );
+            //Se passa più di un secondo tra un punto e l'altro calcolo le distanze percorse nei tempi vuoti
+            if (timeStep > 1) {
+                var distanceGap = distanceStep / timeStep;
+                var altitudeGap = (gpsData[gpsIndex].altitude - gpsData[gpsIndex - 1].altitude) / timeStep;
+                var pace = timeStep*(1000/(distanceStep));
+                if (pace < 65) {
+                    currentActivityPace = 60;
+                } else if (pace > 1000) {
+                    currentActivityPace = 1000;
+                } else {
+                    currentActivityPace = pace;
+                }
+                for (var iterations = 0; iterations < timeStep; iterations++) {
+                    currentActivityDistance = currentActivityDistance + distanceGap;
+                    currentActivityAltitude = parseFloat(currentActivityAltitude) + parseFloat(altitudeGap);
+                    currentActivityTime = currentActivityTime + 1;
+                    while ((Math.abs(cardioData[cardioIndex].time - (gpsData[gpsIndex].time - (timeStep * 1000 * iterations)))) >
+                    (Math.abs(cardioData[cardioIndex + 1].time - (gpsData[gpsIndex].time - (timeStep * 1000 * iterations))))) {
+                        cardioIndex++;
+                    }
+                    currentActivityCardio = cardioData[cardioIndex].rate;
+                    currentActivityDataArray.push({
+                        distance: currentActivityDistance,
+                        time: currentActivityTime,
+                        altitude: Number(currentActivityAltitude),
+                        pace: currentActivityPace,
+                        hbr: Number(currentActivityCardio)
+                    });
+                }
+            } else {
+                currentActivityDistance = currentActivityDistance + distanceStep;
+                currentActivityTime = currentActivityTime + ((gpsData[gpsIndex].time - gpsData[gpsIndex - 1].time) / 1000);
+                currentActivityAltitude = (gpsData[gpsIndex].altitude);
+                var pace = (1000/(distanceStep));
+                if (pace < 65) {
+                    currentActivityPace = 60;
+                } else if (pace > 1000) {
+                    currentActivityPace = 1000;
+                } else {
+                    currentActivityPace = pace;
+                }
+                while ((Math.abs(cardioData[cardioIndex].time - gpsData[gpsIndex].time)) >
+                (Math.abs(cardioData[cardioIndex + 1].time - gpsData[gpsIndex].time))) {
+                    cardioIndex++;
+                }
+                currentActivityCardio = cardioData[cardioIndex].rate;
+                currentActivityDataArray.push({
+                    distance: currentActivityDistance,
+                    time: currentActivityTime,
+                    altitude: Number(currentActivityAltitude),
+                    pace: currentActivityPace,
+                    hbr: Number(currentActivityCardio)
+                });
+            }
+        }
+        if (gpsIndex == gpsData.length - 1) {
+            var temporaryActivity = getActivityInformations(gpsData[gpsIndex - 1].workout_activity_id);
+            var informations = ({
+                objective: temporaryActivity[0].wactivity_type,
+                objectiveTimeValue: temporaryActivity[0].wactivity_time,
+                objectiveDistanceValue: temporaryActivity[0].wactivity_distance,
+                type: temporaryActivity[0].wactivity_label,
+                pauseTime: (gpsData[gpsIndex].time - gpsData[gpsIndex - 1].time) / 1000,
+                comment: temporaryActivity[0].wactivity_comment
+            });
+            activities.push({
+                info: informations,
+                data: currentActivityDataArray
+            });
+        }
+    }
+    return activities;
+}
+
+function filterPace(activities){
+    var filteredActivities = activities;
+    for (var nActivities = 0; nActivities < chartsNumber; nActivities++) {
+        var kf = new KalmanFilter({R: 0.1, Q: 20, A: 1.1});
+        var filteredPaces = [];
+        filteredActivities[nActivities].data.forEach(function (row) {
+            filteredPaces.push(row.pace);
+        });
+
+        filteredPaces = filteredPaces.map(function (v) {
+            return kf.filter(v, 1);
+        });
+        for (var row = 0; row < filteredActivities[nActivities].data.length; row++) {
+            filteredActivities[nActivities].data[row].pace = filteredPaces[row];
+        }
+    }
+    return filteredActivities;
+}
+
+function addPointsForFillColor(activities, minAltitude, maxPace, minHbr) {
+    var newActivities = activities;
+    for (var nActivities = 0; nActivities < chartsNumber; nActivities++) {
+        var activityMaxTime = newActivities[nActivities].data[newActivities[nActivities].data.length - 1].time;
+        var activityMaxDistance = newActivities[nActivities].data[newActivities[nActivities].data.length - 1].distance;
+        newActivities[nActivities].data.unshift({
+            distance: 0,
+            time: 0,
+            altitude: minAltitude,
+            pace: maxPace,
+            hbr: minHbr
+        });
+        newActivities[nActivities].data.push({
+            distance: activityMaxDistance,
+            time: activityMaxTime,
+            altitude: minAltitude,
+            pace: maxPace,
+            hbr: minHbr
+        });
+    }
+    return newActivities;
+}
+
 function computeAge(birthdate) {
     var parseDate = d3.timeParse("%d/%m/%Y");
     var age = d3.timeYear.count(parseDate(birthdate), new Date());
