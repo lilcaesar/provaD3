@@ -569,7 +569,7 @@ function drawLabels(svgArray, svgInstance, idString, graphIndex, xScale, yScale,
         .attr('original-x', xScale(0) + currentChartPosition)
         .attr('dy', '8px')
         .style('fill', '#0062cc')
-        .style('font-size', '17px')
+        .style('font-size', '14px')
         .style('font-weight', '600')
         .style('text-anchor', 'end')
         .text(customDistanceFormat(parseInt(currentActivityMaxYValue), svgInstance, false));
@@ -584,7 +584,7 @@ function drawLabels(svgArray, svgInstance, idString, graphIndex, xScale, yScale,
             .attr('original-x', xScale(0) + currentChartPosition)
             .attr('dy', '8px')
             .style('fill', '#0062cc')
-            .style('font-size', '17px')
+            .style('font-size', '14px')
             .style('font-weight', '600')
             .style('text-anchor', 'end')
             .text(customDistanceFormat(parseInt(currentActivityMinYValue), svgInstance, false));
@@ -599,7 +599,7 @@ function drawLabels(svgArray, svgInstance, idString, graphIndex, xScale, yScale,
         .attr('original-x', xScale(currentActivityMaxTime) + currentChartPosition)
         .attr('dy', '8px')
         .style('fill', '#0062cc')
-        .style('font-size', '17px')
+        .style('font-size', '14px')
         .style('font-weight', '600')
         .style('text-anchor', 'end')
         .text(customTimeFormat(parseInt(currentActivityMaxTime), svgInstance));
@@ -935,7 +935,6 @@ function createGraphTitle(index) {
     document.getElementById("graphic" + index).appendChild(container);
 }
 
-
 function getLineColor(svgInstance) {
     var color;
     switch (svgInstance) {
@@ -1088,7 +1087,7 @@ function createOnMouseMove(activities, totalGraphs, spaceBetweenGraphs) {
             var offsetLeft = d3.select("#svg-container" + i)._groups[0][0].getBoundingClientRect().x;
             x[i] = d3.event.pageX - offsetLeft;
             var domPoint = new DOMPoint(x[i], 0);
-            var beginning = domPoint.x - 40 - currentOffset - (spaceBetweenGraphs * pathIndex),
+            var beginning = domPoint.x - spaceBetweenGraphs - currentOffset - (spaceBetweenGraphs * pathIndex),
                 end = pathLength, target;
             currentOffset = currentOffset + end;
             var found = false;

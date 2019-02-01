@@ -94,7 +94,7 @@ for (var i = 0; i < totalGraphs; i++) {
         .attr("id", 'svg-container' + i)
         .attr("class", 'svg-container' + i)
         .attr("width", '100%')
-        .attr('preserveAspectRatio', 'xMinYMin')
+        .attr('preserveAspectRatio', 'xMidYMid')
     );
 }
 
@@ -167,7 +167,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                 //Spazio tra i singolo grafici delle attività
                 var spaceBetweenGraphs = 40;
                 //Posizione x in cui iniziare a disegnare il primo grafico
-                var currentChartPosition = spaceBetweenGraphs + 10;
+                var currentChartPosition = spaceBetweenGraphs;
 
                 for (var svgInstance = 0; svgInstance < totalGraphs; svgInstance++) {
 
@@ -197,16 +197,16 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                     if (svgInstance == 1) {
                         var yScale = d3.scaleLinear()
                             .domain([overallMinYValue, overallMaxYValue])
-                            .range([10, svgContainerHeight - 15]);
+                            .range([0, svgContainerHeight]);
                     } else {
                         var yScale = d3.scaleLinear()
                             .domain([overallMinYValue, overallMaxYValue])
-                            .range([svgContainerHeight - 15, 10]);
+                            .range([svgContainerHeight, 0]);
                     }
 
                     var yScaleLabel = d3.scaleLinear()
                         .domain([overallMinYValue, overallMaxYValue])
-                        .range([svgContainerHeight - 15, 10]);
+                        .range([svgContainerHeight, 0]);
 
                     var yAxis = d3.axisLeft(yScale)
                         .ticks(0);
@@ -220,7 +220,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                         var currentActivityObjectiveTimeValue = activities[graphIndex].info.objectiveTimeValue;
                         var currentActivityObjectiveDistanceValue = activities[graphIndex].info.objectiveDistanceValue;
                         var xProportion = currentActivityMaxTime / totalTime;
-                        var currentWidth = (svgContainerWidth - 20) * xProportion;
+                        var currentWidth = (svgContainerWidth-(chartsNumber*spaceBetweenGraphs)) * xProportion;
                         var valueline;
                         var idString;
 
@@ -263,7 +263,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
 
                         svgArray[svgInstance].append('g')
                             .attr('class', 'axis' + svgInstance)
-                            .attr('transform', 'translate(' + (currentChartPosition).toString() + ',' + (svgContainerHeight - 15) + ')')
+                            .attr('transform', 'translate(' + (currentChartPosition).toString() + ',' + (svgContainerHeight) + ')')
                             .call(xAxis)
                             .style('color', 'grey')
                             .style({'stroke-width': '1px'});
@@ -317,21 +317,20 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                     /** Fine del for per ogni attivià**/
 
                     //Dimensioni della viewport dell'svg corrente
-                    svgViewports[svgInstance] = [0, 0, (svgContainerWidth + (spaceBetweenGraphs * chartsNumber)), (svgContainerHeight + 20)];
-                    d3.select('#svg-container' + svgInstance)
-                        .attr('viewBox', svgViewports[svgInstance][0] + " " + svgViewports[svgInstance][1] + " " + svgViewports[svgInstance][2] + " " + svgViewports[svgInstance][3]);
+                    svgViewports[svgInstance] = [0, 0, svgContainerWidth, svgContainerHeight];
+                    d3.select('#svg-container' + svgInstance).attr('viewBox', svgViewports[svgInstance][0] + " " + svgViewports[svgInstance][1] + " " + svgViewports[svgInstance][2] + " " + svgViewports[svgInstance][3]);
 
                     //Punti, linee ed etichette legate al mouse
                     drawMouseObjects(mouseLine, mouseCircle, mouseLabels, svgArray, svgInstance, svgContainerHeight);
 
-                    //Funzione per il traching del mouse all'interno dell'svg e aggiornameno della posizione del punto e della linea corrispondenti
+                    //Funzione per il tracking del mouse all'interno dell'svg e aggiornameno della posizione del punto e della linea corrispondenti
                     svgArray[svgInstance].on("mousemove", function () {
                             createOnMouseMove(activities, totalGraphs, spaceBetweenGraphs);
                         }
                     );
 
                     //Resetto la posizione x iniziale in cui disegnare i grafici
-                    currentChartPosition = spaceBetweenGraphs + 10;
+                    currentChartPosition = spaceBetweenGraphs;
                 }
                 /**Fine del for degli svg**/
 
@@ -348,3 +347,12 @@ function stabilizeSvgView() {
     // aggiorno il voto dello slider
     changeSliderLabelsColor(training.mark);
 }
+
+function resizeFunction(){
+    for(var i=0; i<totalGraphs; i++){
+        console.log(svgArray[i].attr('viewBox'));
+    }
+    console.log("****************************************************");
+}
+
+window.addEventListener('resize', resizeFunction);
