@@ -214,6 +214,40 @@ h6{
     color: grey;
 }*/
 
+.swap-divs-arrow{
+    height: 17px;
+    width: 17px;
+    cursor: pointer;
+}
+
+.arrow{
+    border: solid black;
+    border-width: 0 4px 4px 0;
+    display: inline-block;
+    padding: 4px;
+}
+
+.up {
+    transform: rotate(-135deg);
+    -webkit-transform: rotate(-135deg);
+}
+
+.down {
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+    margin-bottom: 5px;
+}
+
+.arrow:hover{
+    border-color: #007bff;
+    cursor: pointer;
+}
+
+.arrow:active{
+    border-color: rgb(149, 218, 182);
+    cursor: pointer;
+}
+
 @media (min-width: 1400px) {
     .container{
         max-width: 1350px;

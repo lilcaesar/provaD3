@@ -892,19 +892,53 @@ function computeMaxObjectiveDistance(activityArray) {
     return currentMaxDistance;
 }
 
+function swapDivs(id, direction){
+    console.log(id, direction);
+    var elem = document.getElementById(id);
+    var next = elem.nextSibling;
+    var prev = elem.previousSibling;
+    var parent = elem.parentNode;
+
+    console.log(parent.children[0], elem);
+
+
+    // posso swappare solo all'interno e non il primo con l'ultimo
+    if(direction === 'up' && parent.children[0] !== elem){
+        parent.insertBefore(elem, prev);
+    }
+    else if(direction === 'down'){
+        if(next !== null)
+            parent.insertBefore(next, elem);
+    }
+}
+
 function createGraphTitle(index) {
     // div principale
     var container = document.createElement("div");
     container.className = "container";
 
+    // controllo per il margin-top del 2 grafico
+    if (index == 1) {
+        container.style.marginTop = "0%";
+        container.style.marginBottom = "-0.5%";
+    } else {
+        container.style.marginTop = "0";
+        container.style.marginBottom = "-0.5%";
+    }
+
     // 1a riga
     var row_div = document.createElement("div");
-    row_div.className = "row justify-content-left";
+    row_div.className = "row";
 
     // 1a colonna
     var col_div1 = document.createElement("div");
     col_div1.className = "col-md-auto align-middle";
     row_div.appendChild(col_div1);
+
+    // div contenente la linea del grafico
+    /*var graph_color_class = document.createElement("div");
+    graph_color_class.className = "graph-line";
+    graph_color_class.style.borderBottom = "3px solid " + getLineColor(index);*/
 
     var graph_color_class = document.createElement("div");
     graph_color_class.className = "graph-circle";
@@ -913,7 +947,7 @@ function createGraphTitle(index) {
     // append degli elementi creati
     col_div1.append(graph_color_class);
     row_div.appendChild(col_div1);
-    container.appendChild(row_div)
+    container.appendChild(row_div);
 
     // 2a colonna
     var col_div2 = document.createElement("div");
@@ -930,6 +964,53 @@ function createGraphTitle(index) {
     graph_name_class.append(graph_name_text);
     col_div2.append(graph_name_class);
     row_div.append(col_div2);
+
+    // 3a colonna
+    var col_div3 = document.createElement("div");
+    col_div3.className = "col-md-auto no-gutters ml-auto";
+    col_div3.style.paddingLeft = '5px';
+    col_div3.style.paddingRight = '5px';
+    // riga
+    var col_div4 = document.createElement("div");
+    col_div4.className = "col-md-auto no-gutters";
+    // spazio tra i div
+    col_div4.style.paddingLeft = '10px';
+    col_div4.style.paddingRight = '10px';
+
+    // colonna per freccia up
+    var col_arrow1 = document.createElement("div");
+    col_arrow1.className = "col-md-auto";
+
+    // freccia up
+    var arrow1 = document.createElement("span");
+    /*
+    arrow1.setAttribute("src", "img/swap_div_up.png");
+    arrow1.setAttribute("alt", "Swap up");*/
+    arrow1.setAttribute("onclick", "swapDivs('graphic" + index + "','up')");
+    arrow1.className = 'swap-divs-arrow';
+    arrow1.className = 'arrow up';
+    // append immagine freccia up sulla colonna
+    col_arrow1.append(arrow1);
+
+    // colonna freccia down
+    var col_arrow2 = document.createElement("div");
+    col_arrow2.className = "col-md-auto";
+    // freccia down
+    var arrow2 = document.createElement("span");
+    /*
+    arrow2.setAttribute("src", "img/swap_div_down.png");
+    arrow2.setAttribute("alt", "Swap up");*/
+    arrow2.setAttribute("onclick", "swapDivs('graphic" + index + "','down')");
+    arrow2.className = 'arrow down';
+    // append immagine freccia down sulla colonna
+    col_arrow2.append(arrow2);
+
+    col_div3.append(col_arrow1);
+    col_div4.append(col_arrow2);
+
+    row_div.append(col_div3);
+    row_div.append(col_div4);
+
 
     // append del div principale
     document.getElementById("graphic" + index).appendChild(container);

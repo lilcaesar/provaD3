@@ -350,9 +350,10 @@ function stabilizeSvgView() {
 
 function resizeFunction(){
     for(var i=0; i<totalGraphs; i++){
-        console.log(svgArray[i].attr('viewBox'));
+        var svgContainerWidth = document.getElementById("svg-container" + i).getBoundingClientRect().width;
+        var svgContainerHeight = svgContainerWidth/aspectRatio;
+        svgArray[i].attr("height", svgContainerHeight);
     }
-    console.log("****************************************************");
 }
 
 window.addEventListener('resize', resizeFunction);
