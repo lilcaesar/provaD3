@@ -72,6 +72,9 @@ var allResults = [];
 
 var svgViewports = [];
 var svgArray = [];
+var svgArrayG = [];
+
+var xScale, yScale, xAxis, yAxis;
 
 var position = '';
 
@@ -94,9 +97,15 @@ for (var i = 0; i < totalGraphs; i++) {
         .attr("id", 'svg-container' + i)
         .attr("class", 'svg-container' + i)
         .attr("width", '100%')
-        .attr('preserveAspectRatio', 'xMidYMid')
+        .attr('preserveAspectRatio', 'none')
     );
 }
+
+var zoom;
+var spaceBetweenGraphs;
+var svgContainerWidth;
+var svgContainerHeight;
+var totalTime;
 
 var aspectRatio = 7.5;
 
@@ -151,7 +160,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                 //Filtriamo i dati relativi al passo usando un filtro di kalman
                 activities = filterPace(activities);
 
-                var totalTime = computeTotalTime(activities);
+                totalTime = computeTotalTime(activities);
                 var maxDistance = computeMaxDistance(activities);
                 var maxAltitude = computeAllActivitiesMaxAltitude(activities);
                 var maxPace = computeAllActivitiesMaxPace(activities);
@@ -165,187 +174,56 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                 activities = addPointsForFillColor(activities, minAltitude, maxPace, minHbr);
 
                 //Spazio tra i singolo grafici delle attività
-                var spaceBetweenGraphs = 40;
+                spaceBetweenGraphs = 500;
                 //Posizione x in cui iniziare a disegnare il primo grafico
                 var currentChartPosition = spaceBetweenGraphs;
 
-                for (var svgInstance = 0; svgInstance < totalGraphs; svgInstance++) {
+                svgContainerWidth = document.getElementById("svg-container0").getBoundingClientRect().width;
+                svgContainerHeight = document.getElementById("svg-container0").getBoundingClientRect().height;
 
-                    var svgContainerWidth = document.getElementById("svg-container" + svgInstance).getBoundingClientRect().width;
-                    var svgContainerHeight = document.getElementById("svg-container" + svgInstance).getBoundingClientRect().height;
+                xScale = d3.scaleLinear()
+                    .domain([0, totalTime+(spaceBetweenGraphs*chartsNumber)])
+                    .range([0, svgContainerWidth]);
+                xAxis = d3.axisBottom(xScale)
+                    .ticks(0);
 
-                    var overallMaxYValue, overallMinYValue, overallMaxTimeValue;
-                    if (svgInstance == 0) {
-                        overallMinYValue = 0;
-                        if (maxObjectiveDistance > maxDistance) {
-                            overallMaxYValue = maxObjectiveDistance;
-                        } else {
-                            overallMaxYValue = maxDistance;
-                        }
-                    } else if (svgInstance == 1) {
-                        overallMinYValue = minPace;
-                        overallMaxYValue = maxPace;
-                    } else if (svgInstance == 2) {
-                        overallMinYValue = minHbr;
-                        overallMaxYValue = maxHbr;
-                    } else if (svgInstance == 3) {
-                        overallMinYValue = minAltitude;
-                        overallMaxYValue = maxAltitude;
-                    }
+                zoom = d3.zoom()
+                    .scaleExtent([1, 40])
+                    .translateExtent([[0, 0], [svgContainerWidth, svgContainerHeight]])
+                    .on("zoom", function () {
+                        var e=d3.event.transform;
 
+                        var w = totalTime+(spaceBetweenGraphs*chartsNumber);
 
-                    if (svgInstance == 1) {
-                        var yScale = d3.scaleLinear()
-                            .domain([overallMinYValue, overallMaxYValue])
-                            .range([0, svgContainerHeight]);
-                    } else {
-                        var yScale = d3.scaleLinear()
-                            .domain([overallMinYValue, overallMaxYValue])
-                            .range([svgContainerHeight, 0]);
-                    }
-
-                    var yScaleLabel = d3.scaleLinear()
-                        .domain([overallMinYValue, overallMaxYValue])
-                        .range([svgContainerHeight, 0]);
-
-                    var yAxis = d3.axisLeft(yScale)
-                        .ticks(0);
-
-                    //Per ogni attività disegno il suo grafico
-                    for (var graphIndex = 0; graphIndex < chartsNumber; graphIndex++) {
-                        var currentActivityMaxTime = activities[graphIndex].data[activities[graphIndex].data.length - 1].time;
-                        var currentActivityMaxYValue;
-                        var currentActivityMinYValue;
-                        var currentActivityObjective = activities[graphIndex].info.objective;
-                        var currentActivityObjectiveTimeValue = activities[graphIndex].info.objectiveTimeValue;
-                        var currentActivityObjectiveDistanceValue = activities[graphIndex].info.objectiveDistanceValue;
-                        var xProportion = currentActivityMaxTime / totalTime;
-                        var currentWidth = (svgContainerWidth-(chartsNumber*spaceBetweenGraphs)) * xProportion;
-                        var valueline;
-                        var idString;
-
-                        if (svgInstance == 0) {
-                            currentActivityMaxYValue = activities[graphIndex].data[activities[graphIndex].data.length - 2].distance;
-                            idString = "distance";
-                        } else if (svgInstance == 1) {
-                            currentActivityMaxYValue = computeActivityMaxPace(activities[graphIndex]);
-                            currentActivityMinYValue = computeActivityMinPace(activities[graphIndex]);
-                            idString = "pace"
-                        } else if (svgInstance == 2) {
-                            currentActivityMaxYValue = computeActivityMaxHbr(activities[graphIndex]);
-                            currentActivityMinYValue = computeActivityMinHbr(activities[graphIndex]);
-                            idString = "hbr";
-                        } else {
-                            currentActivityMaxYValue = computeActivityMaxAltitude(activities[graphIndex]);
-                            currentActivityMinYValue = computeActivityMinAltitude(activities[graphIndex]);
-                            idString = "altitude";
-                        }
-
-
-                        if (currentActivityObjectiveTimeValue > currentActivityMaxTime) {
-                            overallMaxTimeValue = currentActivityObjectiveTimeValue;
-                        } else {
-                            overallMaxTimeValue = currentActivityMaxTime;
-                        }
-
-                        var xScale = d3.scaleLinear()
-                            .domain([0, overallMaxTimeValue])
-                            .range([0, currentWidth]);
-                        var xAxis = d3.axisBottom(xScale)
+                        xScale = d3.scaleLinear()
+                            .domain([(w/2)-((w/e.k)/2)-(e.x*e.k), (w/2)+((w/e.k)/2)-(e.x*e.k)])
+                            .range([0, svgContainerWidth]);
+                        xAxis = d3.axisBottom(xScale)
                             .ticks(0);
 
-                        svgArray[svgInstance].append('g')
-                            .attr('class', 'axis' + svgInstance)
-                            .attr('transform', 'translate(' + (currentChartPosition).toString() + ',0)')
-                            .call(yAxis)
-                            .style('color', 'grey')
-                            .style({'stroke-width': '1px'});
+                        svgArray.forEach(function (el) {
+                            el.selectAll("*").remove();
+                        });
 
-                        svgArray[svgInstance].append('g')
-                            .attr('class', 'axis' + svgInstance)
-                            .attr('transform', 'translate(' + (currentChartPosition).toString() + ',' + (svgContainerHeight) + ')')
-                            .call(xAxis)
-                            .style('color', 'grey')
-                            .style({'stroke-width': '1px'});
+                        drawSVG(totalGraphs, maxObjectiveDistance, maxDistance, minPace, maxPace, minHbr, maxHbr, minAltitude, maxAltitude, xScale, yScale, currentChartPosition);
 
-                        if (svgInstance == 0) {
-                            var lines = 20;
-                            if (currentActivityObjective == "PACE") {
-                                var m = currentActivityObjectiveDistanceValue / currentActivityObjectiveTimeValue;
-                                var q = -m * currentActivityMaxTime;
-                                drawBackgroundPaceLines(m, q, lines, currentActivityMaxYValue, currentActivityMaxTime, svgArray, svgInstance, xScale, yScale, currentChartPosition);
+                        /*for(var j=0;j<totalGraphs;j++){
+                            //viewArray[j].attr("transform", d3.event.transform);
+                            svgArrayG[j].call(xAxis.scale(d3.event.transform.rescaleX(xScale)));
+                            //gY[j].call(yAxis.scale(d3.event.transform.rescaleY(y)));
+                        }*/
+                    });
 
-                                drawExpectedPace(m, svgArray, svgInstance, xScale, yScale, currentChartPosition, currentActivityMaxYValue);
+                //Disegno gli SVG
+                drawSVG(totalGraphs, maxObjectiveDistance, maxDistance, minPace, maxPace, minHbr, maxHbr, minAltitude, maxAltitude, xScale, yScale, currentChartPosition);
 
-                                var approximatedPath = simplifyLine(activities, graphIndex);
-
-                                drawApproximatedPath(m, approximatedPath, svgArray, svgInstance, xScale, yScale, currentChartPosition);
-                            }
-                        }
-
-                        //Funzione per disegnare i grafici in base ai punti
-                        valueline = getValueLine(xScale, yScale, currentChartPosition, svgInstance);
-
-                        //Grafici dei dati
-                        drawDataLines(paths, svgArray, svgInstance, graphIndex, valueline, activities);
-
-                        //Grafici legati all'svg distanza
-                        if (svgInstance == 0) {
-                            //Disegno le aree obiettivo
-                            drawObjectives(svgArray, svgInstance, currentActivityObjective, xScale, yScale,
-                                currentActivityObjectiveTimeValue, currentChartPosition, currentActivityMaxYValue,
-                                currentActivityObjectiveDistanceValue, currentActivityMaxTime);
-
-                            //Linee del risultato dell'utente
-                            drawResultLines(svgArray, svgInstance, xScale, yScale, currentChartPosition, currentActivityMaxYValue, currentActivityMaxTime);
-
-                            //Immagini degli obiettivi
-                            drawObjectiveImages(currentActivityObjective, svgArray, svgInstance, graphIndex, xScale, yScale, currentChartPosition, overallMaxYValue);
-
-                            //Punto del risultato dell'utente
-                            drawResultPoint(currentActivityObjective, svgArray, svgInstance, graphIndex, xScale, yScale, currentChartPosition, currentActivityMaxTime,
-                                currentActivityMaxYValue, currentActivityObjectiveTimeValue, currentActivityObjectiveDistanceValue);
-                        }
-
-                        //Disegno le etichette degli assi
-                        drawLabels(svgArray, svgInstance, idString, graphIndex, xScale, yScale, yScaleLabel, currentChartPosition, currentActivityMaxYValue,
-                            currentActivityMinYValue, overallMinYValue, currentActivityMaxTime);
-
-                        //Aggiorno la posizione corrente in cui iniziare a disegnare il prossimo grafico
-                        currentChartPosition = currentChartPosition + currentWidth + spaceBetweenGraphs;
-                    }
-                    /** Fine del for per ogni attivià**/
-
-                    //Dimensioni della viewport dell'svg corrente
-                    svgViewports[svgInstance] = [0, 0, svgContainerWidth, svgContainerHeight];
-                    d3.select('#svg-container' + svgInstance).attr('viewBox', svgViewports[svgInstance][0] + " " + svgViewports[svgInstance][1] + " " + svgViewports[svgInstance][2] + " " + svgViewports[svgInstance][3]);
-
-                    //Punti, linee ed etichette legate al mouse
-                    drawMouseObjects(mouseLine, mouseCircle, mouseLabels, svgArray, svgInstance, svgContainerHeight);
-
-                    //Funzione per il tracking del mouse all'interno dell'svg e aggiornameno della posizione del punto e della linea corrispondenti
-                    svgArray[svgInstance].on("mousemove", function () {
-                            createOnMouseMove(activities, totalGraphs, spaceBetweenGraphs);
-                        }
-                    );
-
-                    //Resetto la posizione x iniziale in cui disegnare i grafici
-                    currentChartPosition = spaceBetweenGraphs;
-                }
-                /**Fine del for degli svg**/
-
-                stabilizeSvgView();
+                changeSliderLabelsColor(training.mark);
             }
             /**Fine dell'if nella complete di papaparse**/
         }
         /**Fine della complete di papaparse**/
     })
     ;
-}
-
-function stabilizeSvgView() {
-    // aggiorno il voto dello slider
-    changeSliderLabelsColor(training.mark);
 }
 
 function resizeFunction(){

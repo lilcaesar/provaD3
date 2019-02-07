@@ -1,3 +1,161 @@
+function drawSVG(totalGraphs, maxObjectiveDistance, maxDistance, minPace, maxPace, minHbr, maxHbr, minAltitude, maxAltitude, xScale, yScale, currentChartPosition) {
+    for (var svgInstance = 0; svgInstance < totalGraphs; svgInstance++) {
+        var overallMaxYValue, overallMinYValue, overallMaxTimeValue;
+        if (svgInstance == 0) {
+            overallMinYValue = 0;
+            if (maxObjectiveDistance > maxDistance) {
+                overallMaxYValue = maxObjectiveDistance;
+            } else {
+                overallMaxYValue = maxDistance;
+            }
+        } else if (svgInstance == 1) {
+            overallMinYValue = minPace;
+            overallMaxYValue = maxPace;
+        } else if (svgInstance == 2) {
+            overallMinYValue = minHbr;
+            overallMaxYValue = maxHbr;
+        } else if (svgInstance == 3) {
+            overallMinYValue = minAltitude;
+            overallMaxYValue = maxAltitude;
+        }
+
+
+        if (svgInstance == 1) {
+            yScale = d3.scaleLinear()
+                .domain([overallMinYValue, overallMaxYValue])
+                .range([0, svgContainerHeight]);
+        } else {
+            yScale = d3.scaleLinear()
+                .domain([overallMinYValue, overallMaxYValue])
+                .range([svgContainerHeight, 0]);
+        }
+
+        var yScaleLabel = d3.scaleLinear()
+            .domain([overallMinYValue, overallMaxYValue])
+            .range([svgContainerHeight, 0]);
+
+        yAxis = d3.axisLeft(yScale)
+            .ticks(0);
+
+        //Per ogni attività disegno il suo grafico
+        for (var graphIndex = 0; graphIndex < chartsNumber; graphIndex++) {
+            var currentActivityMaxTime = activities[graphIndex].data[activities[graphIndex].data.length - 1].time;
+            var currentActivityMaxYValue;
+            var currentActivityMinYValue;
+            var currentActivityObjective = activities[graphIndex].info.objective;
+            var currentActivityObjectiveTimeValue = activities[graphIndex].info.objectiveTimeValue;
+            var currentActivityObjectiveDistanceValue = activities[graphIndex].info.objectiveDistanceValue;
+            //var xProportion = currentActivityMaxTime / totalTime;
+            //var currentWidth = (svgContainerWidth-(chartsNumber*spaceBetweenGraphs)) * xProportion;
+            var valueline;
+            var idString;
+
+            if (svgInstance == 0) {
+                currentActivityMaxYValue = activities[graphIndex].data[activities[graphIndex].data.length - 2].distance;
+                idString = "distance";
+            } else if (svgInstance == 1) {
+                currentActivityMaxYValue = computeActivityMaxPace(activities[graphIndex]);
+                currentActivityMinYValue = computeActivityMinPace(activities[graphIndex]);
+                idString = "pace"
+            } else if (svgInstance == 2) {
+                currentActivityMaxYValue = computeActivityMaxHbr(activities[graphIndex]);
+                currentActivityMinYValue = computeActivityMinHbr(activities[graphIndex]);
+                idString = "hbr";
+            } else {
+                currentActivityMaxYValue = computeActivityMaxAltitude(activities[graphIndex]);
+                currentActivityMinYValue = computeActivityMinAltitude(activities[graphIndex]);
+                idString = "altitude";
+            }
+
+
+            if (currentActivityObjectiveTimeValue > currentActivityMaxTime) {
+                overallMaxTimeValue = currentActivityObjectiveTimeValue;
+            } else {
+                overallMaxTimeValue = currentActivityMaxTime;
+            }
+
+            svgArray[svgInstance].append('g')
+                .attr('class', 'axis' + svgInstance)
+                .attr('transform', 'translate(' + (xScale(currentChartPosition)).toString() + ',0)')
+                .call(yAxis)
+                .style('color', 'grey')
+                .style({'stroke-width': '1px'});
+
+            svgArrayG[svgInstance] = svgArray[svgInstance].append('g');
+
+            svgArrayG[svgInstance]
+                .attr('class', 'axis' + svgInstance)
+                .attr('transform', 'translate(' + (xScale(currentChartPosition)).toString() + ',' + (svgContainerHeight) + ')')
+                .call(xAxis);
+
+            if (svgInstance == 0) {
+                var lines = 20;
+                if (currentActivityObjective == "PACE") {
+                    var m = currentActivityObjectiveDistanceValue / currentActivityObjectiveTimeValue;
+                    var q = -m * currentActivityMaxTime;
+                    drawBackgroundPaceLines(m, q, lines, currentActivityMaxYValue, currentActivityMaxTime, svgArray, svgInstance, xScale, yScale, currentChartPosition);
+
+                    drawExpectedPace(m, svgArray, svgInstance, xScale, yScale, currentChartPosition, currentActivityMaxYValue);
+
+                    var approximatedPath = simplifyLine(activities, graphIndex);
+
+                    drawApproximatedPath(m, approximatedPath, svgArray, svgInstance, xScale, yScale, currentChartPosition);
+                }
+            }
+
+            //Funzione per disegnare i grafici in base ai punti
+            valueline = getValueLine(xScale, yScale, currentChartPosition, svgInstance);
+
+            //Grafici dei dati
+            drawDataLines(paths, svgArray, svgInstance, graphIndex, valueline, activities);
+
+            //Grafici legati all'svg distanza
+            if (svgInstance == 0) {
+                //Disegno le aree obiettivo
+                drawObjectives(svgArray, svgInstance, currentActivityObjective, xScale, yScale,
+                    currentActivityObjectiveTimeValue, currentChartPosition, currentActivityMaxYValue,
+                    currentActivityObjectiveDistanceValue, currentActivityMaxTime);
+
+                //Linee del risultato dell'utente
+                drawResultLines(svgArray, svgInstance, xScale, yScale, currentChartPosition, currentActivityMaxYValue, currentActivityMaxTime);
+
+                //Immagini degli obiettivi
+                drawObjectiveImages(currentActivityObjective, svgArray, svgInstance, graphIndex, xScale, yScale, currentChartPosition, overallMaxYValue);
+
+                //Punto del risultato dell'utente
+                drawResultPoint(currentActivityObjective, svgArray, svgInstance, graphIndex, xScale, yScale, currentChartPosition, currentActivityMaxTime,
+                    currentActivityMaxYValue, currentActivityObjectiveTimeValue, currentActivityObjectiveDistanceValue);
+            }
+
+            //Disegno le etichette degli assi
+            drawLabels(svgArray, svgInstance, idString, graphIndex, xScale, yScale, yScaleLabel, currentChartPosition, currentActivityMaxYValue,
+                currentActivityMinYValue, overallMinYValue, currentActivityMaxTime);
+
+            //Aggiorno la posizione corrente in cui iniziare a disegnare il prossimo grafico
+            currentChartPosition = parseInt(currentChartPosition) + parseInt(overallMaxTimeValue) + spaceBetweenGraphs;
+        }
+        /** Fine del for per ogni attivià**/
+
+        //Dimensioni della viewport dell'svg corrente
+        svgViewports[svgInstance] = [0, 0, svgContainerWidth, svgContainerHeight];
+        d3.select('#svg-container' + svgInstance).attr('viewBox', svgViewports[svgInstance][0] + " " + svgViewports[svgInstance][1] + " " + svgViewports[svgInstance][2] + " " + svgViewports[svgInstance][3]);
+
+        //Punti, linee ed etichette legate al mouse
+        drawMouseObjects(mouseLine, mouseCircle, mouseLabels, svgArray, svgInstance, svgContainerHeight);
+
+        svgArray[svgInstance].call(zoom);
+
+        //Funzione per il tracking del mouse all'interno dell'svg e aggiornameno della posizione del punto e della linea corrispondenti
+        svgArray[svgInstance].on("mousemove", function () {
+                createOnMouseMove(activities, totalGraphs, spaceBetweenGraphs);
+            }
+        );
+
+        //Resetto la posizione x iniziale in cui disegnare i grafici
+        currentChartPosition = spaceBetweenGraphs;
+    }
+}
+
 function parseData(gpsData, cardioData) {
     var activities = [];
     //Variabili per la computazione del vettore "activities" coi dati per i grafici
@@ -187,9 +345,9 @@ function drawBackgroundPaceLines(m, q, lines, currentActivityMaxYValue, currentA
             }
             svgArray[svgInstance].append("line")
                 .attr('class', 'background-pace-line')
-                .attr('x1', xScale(-q / m) + currentChartPosition)
+                .attr('x1', xScale((-q / m) + currentChartPosition))
                 .attr('y1', yScale(0))
-                .attr('x2', xScale(x) + currentChartPosition)
+                .attr('x2', xScale(x + currentChartPosition))
                 .attr('y2', yScale(y))
                 .style("stroke", "#dddddd")
                 .style("stroke-width", '1px')
@@ -197,9 +355,9 @@ function drawBackgroundPaceLines(m, q, lines, currentActivityMaxYValue, currentA
         } else {
             svgArray[svgInstance].append("line")
                 .attr('class', 'background-pace-line')
-                .attr('x1', xScale(0) + currentChartPosition)
+                .attr('x1', xScale(currentChartPosition))
                 .attr('y1', yScale(q))
-                .attr('x2', xScale((currentActivityMaxYValue - q) / m) + currentChartPosition)
+                .attr('x2', xScale(((currentActivityMaxYValue - q) / m) + currentChartPosition))
                 .attr('y2', yScale(currentActivityMaxYValue))
                 .style("stroke", "#dddddd")
                 .style("stroke-width", '1px')
@@ -212,18 +370,18 @@ function drawBackgroundPaceLines(m, q, lines, currentActivityMaxYValue, currentA
 function drawExpectedPace(m, svgArray, svgInstance, xScale, yScale, currentChartPosition, currentActivityMaxYValue) {
     svgArray[svgInstance].append("line")
         .attr('class', 'expected-pace')
-        .attr('x1', xScale(0) + currentChartPosition)
+        .attr('x1', xScale(currentChartPosition))
         .attr('y1', yScale(0))
-        .attr('x2', xScale(currentActivityMaxYValue / m) + currentChartPosition)
+        .attr('x2', xScale(((currentActivityMaxYValue) / m) + currentChartPosition))
         .attr('y2', yScale(currentActivityMaxYValue))
         .style("stroke", "#0065C588")
         .style("stroke-width", '20px')
         .style("stroke-linecap", "round");
     svgArray[svgInstance].append("line")
         .attr('class', 'expected-pace')
-        .attr('x1', xScale(0) + currentChartPosition)
+        .attr('x1', xScale(currentChartPosition))
         .attr('y1', yScale(0))
-        .attr('x2', xScale(currentActivityMaxYValue / m) + currentChartPosition)
+        .attr('x2', xScale((currentActivityMaxYValue / m) + currentChartPosition))
         .attr('y2', yScale(currentActivityMaxYValue))
         .style("stroke", "#0065C5")
         .style("stroke-width", '2px')
@@ -264,9 +422,9 @@ function drawApproximatedPath(m, approximatedPath, svgArray, svgInstance, xScale
         if (currentColor != startColor) {
             svgArray[svgInstance].append("line")
                 .attr('class', 'background-pace-path')
-                .attr('x1', xScale(startPoint.x) + currentChartPosition)
+                .attr('x1', xScale(startPoint.x + currentChartPosition))
                 .attr('y1', yScale(startPoint.y))
-                .attr('x2', xScale(approximatedPath[pointIndex].x) + currentChartPosition)
+                .attr('x2', xScale(approximatedPath[pointIndex].x + currentChartPosition))
                 .attr('y2', yScale(approximatedPath[pointIndex].y))
                 .style("stroke", startColor)
                 .style("stroke-width", '8px')
@@ -278,9 +436,9 @@ function drawApproximatedPath(m, approximatedPath, svgArray, svgInstance, xScale
     }
     svgArray[svgInstance].append("line")
         .attr('class', 'background-pace-path')
-        .attr('x1', xScale(startPoint.x) + currentChartPosition)
+        .attr('x1', xScale(startPoint.x + currentChartPosition))
         .attr('y1', yScale(startPoint.y))
-        .attr('x2', xScale(approximatedPath[pointIndex].x) + currentChartPosition)
+        .attr('x2', xScale(approximatedPath[pointIndex].x + currentChartPosition))
         .attr('y2', yScale(approximatedPath[pointIndex].y))
         .style("stroke", startColor)
         .style("stroke-width", '8px')
@@ -292,7 +450,7 @@ function getValueLine(xScale, yScale, currentChartPosition, svgInstance) {
     if (svgInstance == 0) {
         valueline = d3.line()
             .x(function (d) {
-                return xScale(d.time) + currentChartPosition;
+                return xScale(d.time + currentChartPosition);
             })
             .y(function (d) {
                 return yScale(d.distance);
@@ -301,7 +459,7 @@ function getValueLine(xScale, yScale, currentChartPosition, svgInstance) {
         //Funzione per disegnare i grafici in base ai punti
         valueline = d3.line()
             .x(function (d) {
-                return xScale(d.time) + currentChartPosition;
+                return xScale(d.time + currentChartPosition);
             })
             .y(function (d) {
                 return yScale(d.pace);
@@ -310,7 +468,7 @@ function getValueLine(xScale, yScale, currentChartPosition, svgInstance) {
         //Funzione per disegnare i grafici in base ai punti
         valueline = d3.line()
             .x(function (d) {
-                return xScale(d.time) + currentChartPosition;
+                return xScale(d.time + currentChartPosition);
             })
             .y(function (d) {
                 return yScale(d.hbr);
@@ -319,7 +477,7 @@ function getValueLine(xScale, yScale, currentChartPosition, svgInstance) {
         //Funzione per disegnare i grafici in base ai punti
         valueline = d3.line()
             .x(function (d) {
-                return xScale(d.time) + currentChartPosition;
+                return xScale(d.time + currentChartPosition);
             })
             .y(function (d) {
                 return yScale(d.altitude);
@@ -376,17 +534,18 @@ function drawDataLines(paths, svgArray, svgInstance, graphIndex, valueline, acti
     }
 }
 
-function drawObjectives(svgArray, svgInstance, currentActivityObjective, xScale, yScale, currentActivityObjectiveTimeValue,
+function drawObjectives(svgArray, svgInstance, currentActivityObjective, xScale, yScale, currentActivityObjectiveTime,
                         currentChartPosition, currentActivityMaxYValue, currentActivityObjectiveDistanceValue, currentActivityMaxTime) {
     var rangeDistance, rangeTime;
+    var currentActivityObjectiveTimeValue = parseInt(currentActivityObjectiveTime);
     if (currentActivityObjective == "TIME") {
         rangeTime = xScale(currentActivityObjectiveTimeValue * 1.05) - xScale(currentActivityObjectiveTimeValue * 0.95);
 
         svgArray[svgInstance].append("line")
-            .attr('class', 'expected-range-line')
-            .attr('x1', xScale(currentActivityObjectiveTimeValue) + currentChartPosition)
+            .attr('class', 'expected-range-line-time')
+            .attr('x1', xScale(currentActivityObjectiveTimeValue + currentChartPosition))
             .attr('y1', yScale(0))
-            .attr('x2', xScale(currentActivityObjectiveTimeValue) + currentChartPosition)
+            .attr('x2', xScale(currentActivityObjectiveTimeValue + currentChartPosition))
             .attr('y2', yScale(currentActivityMaxYValue))
             .style("stroke", "#64C0AD")
             .style("stroke-width", rangeTime + 'px')
@@ -394,10 +553,10 @@ function drawObjectives(svgArray, svgInstance, currentActivityObjective, xScale,
             .attr("opacity", 0.7);
 
         svgArray[svgInstance].append("line")
-            .attr('class', 'expected-line')
-            .attr('x1', xScale(currentActivityObjectiveTimeValue) + currentChartPosition)
+            .attr('class', 'expected-line-time')
+            .attr('x1', xScale(currentActivityObjectiveTimeValue + currentChartPosition))
             .attr('y1', yScale(0))
-            .attr('x2', xScale(currentActivityObjectiveTimeValue) + currentChartPosition)
+            .attr('x2', xScale(currentActivityObjectiveTimeValue + currentChartPosition))
             .attr('y2', yScale(currentActivityMaxYValue))
             .style("stroke", "#0065C5")
             .style("stroke-width", '2px')
@@ -407,10 +566,10 @@ function drawObjectives(svgArray, svgInstance, currentActivityObjective, xScale,
         rangeDistance = yScale(currentActivityObjectiveDistanceValue * 0.95) - yScale(currentActivityObjectiveDistanceValue * 1.05);
 
         svgArray[svgInstance].append("line")
-            .attr('class', 'expected-range-line')
-            .attr('x1', xScale(0) + currentChartPosition + 1)
+            .attr('class', 'expected-range-line-distance')
+            .attr('x1', xScale(currentChartPosition))
             .attr('y1', yScale(currentActivityObjectiveDistanceValue))
-            .attr('x2', xScale(currentActivityMaxTime) + currentChartPosition)
+            .attr('x2', xScale(currentActivityMaxTime + currentChartPosition))
             .attr('y2', yScale(currentActivityObjectiveDistanceValue))
             .style("stroke", "#0065C588")
             .style("stroke-width", rangeDistance + 'px')
@@ -418,10 +577,10 @@ function drawObjectives(svgArray, svgInstance, currentActivityObjective, xScale,
             .attr("opacity", 0.7);
 
         svgArray[svgInstance].append("line")
-            .attr('class', 'expected-line')
-            .attr('x1', xScale(0) + currentChartPosition)
+            .attr('class', 'expected-line-distance')
+            .attr('x1', xScale(currentChartPosition))
             .attr('y1', yScale(currentActivityObjectiveDistanceValue))
-            .attr('x2', xScale(currentActivityMaxTime) + currentChartPosition)
+            .attr('x2', xScale(currentActivityMaxTime + currentChartPosition))
             .attr('y2', yScale(currentActivityObjectiveDistanceValue))
             .style("stroke", "0049FF")
             .style("stroke-width", '2px')
@@ -432,8 +591,8 @@ function drawObjectives(svgArray, svgInstance, currentActivityObjective, xScale,
         rangeDistance = yScale(currentActivityObjectiveDistanceValue * 0.95) - yScale(currentActivityObjectiveDistanceValue * 1.05);
 
         svgArray[svgInstance].append("rect")
-            .attr('class', 'expected-range-rect')
-            .attr("x", xScale(currentActivityObjectiveTimeValue) + currentChartPosition - rangeTime / 2)
+            .attr('class', 'expected-range-rect-distance-time')
+            .attr("x", xScale(currentActivityObjectiveTimeValue + currentChartPosition - rangeTime / 2))
             .attr("y", yScale(currentActivityObjectiveDistanceValue) - rangeDistance / 2)
             .attr("width", rangeTime)
             .attr("height", rangeDistance)
@@ -441,20 +600,20 @@ function drawObjectives(svgArray, svgInstance, currentActivityObjective, xScale,
             .attr("opacity", 0.7);
 
         svgArray[svgInstance].append("line")
-            .attr('class', 'expected-line')
-            .attr('x1', xScale(currentActivityObjectiveTimeValue) + currentChartPosition)
+            .attr('class', 'expected-line-distance-time-t')
+            .attr('x1', xScale(currentActivityObjectiveTimeValue + currentChartPosition))
             .attr('y1', yScale(0))
-            .attr('x2', xScale(currentActivityObjectiveTimeValue) + currentChartPosition)
+            .attr('x2', xScale(currentActivityObjectiveTimeValue + currentChartPosition))
             .attr('y2', yScale(currentActivityObjectiveDistanceValue))
             .style("stroke", "0049FF")
             .style("stroke-width", '2px')
             .style("stroke-linecap", "round");
 
         svgArray[svgInstance].append("line")
-            .attr('class', 'expected-line')
-            .attr('x1', xScale(0) + currentChartPosition)
+            .attr('class', 'expected-line-distance-time-d')
+            .attr('x1', xScale(currentChartPosition))
             .attr('y1', yScale(currentActivityObjectiveDistanceValue))
-            .attr('x2', xScale(currentActivityObjectiveTimeValue) + currentChartPosition)
+            .attr('x2', xScale(currentActivityObjectiveTimeValue + currentChartPosition))
             .attr('y2', yScale(currentActivityObjectiveDistanceValue))
             .style("stroke", "0049FF")
             .style("stroke-width", '2px')
@@ -465,9 +624,9 @@ function drawObjectives(svgArray, svgInstance, currentActivityObjective, xScale,
 function drawResultLines(svgArray, svgInstance, xScale, yScale, currentChartPosition, currentActivityMaxYValue, currentActivityMaxTime) {
     svgArray[svgInstance].append("line")
         .attr('class', 'result-line')
-        .attr('x1', xScale(0) + currentChartPosition)
+        .attr('x1', xScale(currentChartPosition))
         .attr('y1', yScale(currentActivityMaxYValue))
-        .attr('x2', xScale(currentActivityMaxTime) + currentChartPosition)
+        .attr('x2', xScale(currentActivityMaxTime + currentChartPosition))
         .attr('y2', yScale(currentActivityMaxYValue))
         .style("stroke", "grey")
         .style("stroke-width", '2px')
@@ -476,9 +635,9 @@ function drawResultLines(svgArray, svgInstance, xScale, yScale, currentChartPosi
 
     svgArray[svgInstance].append("line")
         .attr('class', 'result-line')
-        .attr('x1', xScale(currentActivityMaxTime) + currentChartPosition)
+        .attr('x1', xScale(currentActivityMaxTime + currentChartPosition))
         .attr('y1', yScale(0))
-        .attr('x2', xScale(currentActivityMaxTime) + currentChartPosition)
+        .attr('x2', xScale(currentActivityMaxTime + currentChartPosition))
         .attr('y2', yScale(currentActivityMaxYValue))
         .style("stroke", "grey")
         .style("stroke-width", '2px')
@@ -492,11 +651,11 @@ function drawObjectiveImages(currentActivityObjective, svgArray, svgInstance, gr
             .attr('class', 'time-img activity-type-img')
             .attr('id', 'activity-type-img' + graphIndex)
             .attr('xlink:href', 'img/time.png')
-            .attr('x', xScale(0) + currentChartPosition)
+            .attr('x', xScale(currentChartPosition))
             .attr('y', yScale(overallMaxYValue))
             .attr('width', 30)
             .attr('height', 30)
-            .attr('original-x', xScale(0) + currentChartPosition)
+            .attr('original-x', xScale(currentChartPosition))
             .attr('original-y', yScale(overallMaxYValue));
 
     } else if (currentActivityObjective == "DISTANCE") {
@@ -504,11 +663,11 @@ function drawObjectiveImages(currentActivityObjective, svgArray, svgInstance, gr
             .attr('class', 'distance-img activity-type-img')
             .attr('id', 'activity-type-img' + graphIndex)
             .attr('xlink:href', 'img/distance.png')
-            .attr('x', xScale(0) + currentChartPosition)
+            .attr('x', xScale(currentChartPosition))
             .attr('y', yScale(overallMaxYValue))
             .attr('width', 30)
             .attr('height', 30)
-            .attr('original-x', xScale(0) + currentChartPosition)
+            .attr('original-x', xScale(currentChartPosition))
             .attr('original-y', yScale(overallMaxYValue));
 
     } else if (currentActivityObjective == "DISTANCE_TIME") {
@@ -516,11 +675,11 @@ function drawObjectiveImages(currentActivityObjective, svgArray, svgInstance, gr
             .attr('class', 'distance-time-img activity-type-img')
             .attr('id', 'activity-type-img' + graphIndex)
             .attr('xlink:href', 'img/distancetime.png')
-            .attr('x', xScale(0) + currentChartPosition)
+            .attr('x', xScale(currentChartPosition))
             .attr('y', yScale(overallMaxYValue))
             .attr('width', 70)
             .attr('height', 30)
-            .attr('original-x', xScale(0) + currentChartPosition)
+            .attr('original-x', xScale(currentChartPosition))
             .attr('original-y', yScale(overallMaxYValue));
 
     } else if (currentActivityObjective == "PACE") {
@@ -528,11 +687,11 @@ function drawObjectiveImages(currentActivityObjective, svgArray, svgInstance, gr
             .attr('class', 'pace-img activity-type-img')
             .attr('id', 'activity-type-img' + graphIndex)
             .attr('xlink:href', 'img/pace.png')
-            .attr('x', xScale(0) + currentChartPosition)
+            .attr('x', xScale(currentChartPosition))
             .attr('y', yScale(overallMaxYValue))
             .attr('width', 30)
             .attr('height', 30)
-            .attr('original-x', xScale(0) + currentChartPosition)
+            .attr('original-x', xScale(currentChartPosition))
             .attr('original-y', yScale(overallMaxYValue));
     }
 }
@@ -543,7 +702,7 @@ function drawResultPoint(currentActivityObjective, svgArray, svgInstance, graphI
         svgArray[svgInstance].append("circle")
             .attr('id', 'result-point' + graphIndex)
             .attr('class', 'result-point')
-            .attr("cx", xScale(currentActivityMaxTime) + currentChartPosition)
+            .attr("cx", xScale(currentActivityMaxTime + currentChartPosition))
             .attr("cy", yScale(currentActivityMaxYValue))
             .attr("r", 6)
             .attr("fill", getResultPointColor(currentActivityObjective, currentActivityMaxTime, currentActivityObjectiveTimeValue, currentActivityMaxYValue, currentActivityObjectiveDistanceValue));
@@ -551,7 +710,7 @@ function drawResultPoint(currentActivityObjective, svgArray, svgInstance, graphI
         svgArray[svgInstance].append("circle")
             .attr('id', 'result-point' + graphIndex)
             .attr('class', 'result-point')
-            .attr("cx", xScale(currentActivityMaxTime) + currentChartPosition)
+            .attr("cx", xScale(currentActivityMaxTime + currentChartPosition))
             .attr("cy", yScale(currentActivityMaxYValue))
             .attr("r", 1)
             .style("visibility", "hidden");
@@ -562,11 +721,11 @@ function drawLabels(svgArray, svgInstance, idString, graphIndex, xScale, yScale,
                     currentActivityMinYValue, overallMinYValue, currentActivityMaxTime) {
     svgArray[svgInstance].append('text') //Variabile max in Y
         .attr('id', 'max-result-value-' + idString + graphIndex)
-        .attr('class', 'result-value-' + idString)
+        .attr('class', 'result-value result-value-' + idString)
         .attr('y', yScale(currentActivityMaxYValue))
-        .attr('x', xScale(0) + currentChartPosition)
+        .attr('x', xScale(currentChartPosition))
         .attr('original-y', yScale(currentActivityMaxYValue))
-        .attr('original-x', xScale(0) + currentChartPosition)
+        .attr('original-x', xScale(currentChartPosition))
         .attr('dy', '8px')
         .style('fill', '#0062cc')
         .style('font-size', '14px')
@@ -577,11 +736,11 @@ function drawLabels(svgArray, svgInstance, idString, graphIndex, xScale, yScale,
     if (svgInstance != 0) {
         svgArray[svgInstance].append('text') //Variabile min in Y
             .attr('id', 'min-result-value-' + idString + graphIndex)
-            .attr('class', 'result-value-' + idString)
+            .attr('class', 'result-value result-value-' + idString)
             .attr('y', yScale(currentActivityMinYValue))
-            .attr('x', xScale(0) + currentChartPosition)
+            .attr('x', xScale(currentChartPosition))
             .attr('original-y', yScale(currentActivityMinYValue))
-            .attr('original-x', xScale(0) + currentChartPosition)
+            .attr('original-x', xScale(currentChartPosition))
             .attr('dy', '8px')
             .style('fill', '#0062cc')
             .style('font-size', '14px')
@@ -592,11 +751,11 @@ function drawLabels(svgArray, svgInstance, idString, graphIndex, xScale, yScale,
 
     svgArray[svgInstance].append('text') //Tempo
         .attr('id', 'result-value-time' + svgInstance + graphIndex)
-        .attr('class', 'result-value-time' + svgInstance)
+        .attr('class', 'result-value result-value-time' + svgInstance)
         .attr('y', yScaleLabel(overallMinYValue) + 10)
-        .attr('x', xScale(currentActivityMaxTime) + currentChartPosition)
+        .attr('x', xScale(currentActivityMaxTime + currentChartPosition))
         .attr('original-y', yScaleLabel(overallMinYValue) + 10)
-        .attr('original-x', xScale(currentActivityMaxTime) + currentChartPosition)
+        .attr('original-x', xScale(currentActivityMaxTime + currentChartPosition))
         .attr('dy', '8px')
         .style('fill', '#0062cc')
         .style('font-size', '14px')
