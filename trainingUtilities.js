@@ -1,4 +1,6 @@
-function drawSVG(totalGraphs, maxObjectiveDistance, maxDistance, minPace, maxPace, minHbr, maxHbr, minAltitude, maxAltitude, xScale, yScale, currentChartPosition) {
+function drawSVG(totalGraphs, maxObjectiveDistance, maxDistance, minPace, maxPace, minHbr, maxHbr, minAltitude, maxAltitude, xScale, yScale, xAxis, yAxis, currentChartPosition, spaceBetweenGraphs) {
+    paths=[];
+
     for (var svgInstance = 0; svgInstance < totalGraphs; svgInstance++) {
         var overallMaxYValue, overallMinYValue, overallMaxTimeValue;
         if (svgInstance == 0) {
@@ -147,7 +149,7 @@ function drawSVG(totalGraphs, maxObjectiveDistance, maxDistance, minPace, maxPac
 
         //Funzione per il tracking del mouse all'interno dell'svg e aggiornameno della posizione del punto e della linea corrispondenti
         svgArray[svgInstance].on("mousemove", function () {
-                createOnMouseMove(activities, totalGraphs, spaceBetweenGraphs);
+                createOnMouseMove(activities, totalGraphs, spaceBetweenGraphs, svgContainerWidth);
             }
         );
 
@@ -1306,7 +1308,35 @@ function customDistanceFormat(num, graphIndex, isOnMouse) {
     return res;
 }
 
-function createOnMouseMove(activities, totalGraphs, spaceBetweenGraphs) {
+function chartInViewbox(pathEl, pathLength, width){
+    var min = pathEl.getPointAtLength(0).x;
+    var max = pathEl.getPointAtLength(pathLength).x;
+    var isInside;
+    if(min>=0){
+        if((max<=width)||(min<=width)){
+            isInside=true;
+        }else{
+            isInside=false;
+        }
+    }else{
+        if(max>=0){
+            isInside=true;
+        }else{
+            isInside=false;
+        }
+    }
+    return isInside;
+}
+
+function getPointOnMouse(pathEl, pathLength, xMouse){
+    var point = {x:-1,y:-1};
+    if((xMouse>=pathEl.getPointAtLength(0).x)&&(xMouse<=pathEl.getPointAtLength(pathLength).x)){
+        point = pathEl.getPointAtLength(xMouse-pathEl.getPointAtLength(0).x);
+    }
+    return point;
+}
+
+function createOnMouseMove(activities, totalGraphs, spaceBetweenGraphs, svgContainerWidth) {
     var index;
     for (var j = 0; j < totalGraphs; j++) {
         if (hasSomeParentTheClass(d3.event.target, "svg-container" + j)) {
@@ -1319,17 +1349,44 @@ function createOnMouseMove(activities, totalGraphs, spaceBetweenGraphs) {
     var x = [];
     var arrayPositions = [];
     var column;
-    for (var i = 0; i < totalGraphs; i++) {
+    var found = false;
+    for(var i=0; i<totalGraphs; i++){
+        for (var pathIndex = 0; pathIndex < paths.length/totalGraphs; pathIndex++) {
+            var pathEl = paths[pathIndex+((paths.length/totalGraphs)*i)].node();
+            var pathLength = pathEl.getTotalLength();
+            var offsetLeft = d3.select("#svg-container" + i)._groups[0][0].getBoundingClientRect().x;
+            x[i] = d3.event.pageX - offsetLeft;
+            if (chartInViewbox(pathEl, pathLength, svgContainerWidth)) {
+                pos[i]= getPointOnMouse(pathEl, pathLength, x[i]);
+                if(pos[i].y!=-1) {
+                    column = pathIndex;
+                    arrayPositions.push(parseInt(((x[i]-pathEl.getPointAtLength(0).x)/pathLength)*activities[pathIndex].data.length-1));
+                    found = true;
+                    //console.log(x[i], pathEl.getPointAtLength(0).x, pathLength, activities[pathIndex].data.length-1);
+                    console.log(pathEl);
+                    pathIndex=paths.length/totalGraphs;
+                }else{
+                    found=false;
+                }
+            }
+        }
+    }
+    console.log(arrayPositions);
+    console.log("****************************************************");
+    /*for (var i = 0; i < totalGraphs; i++) {
+        var zoomK = parseFloat(svgArray[i].attr("zoom-k"));
+        var zoomX = parseFloat(svgArray[i].attr("zoom-x"));
         var currentOffset = 0;
         for (var pathIndex = 0; pathIndex < paths.length / totalGraphs; pathIndex++) {
             pathEl = paths[pathIndex + ((paths.length / totalGraphs) * i)].node();
             pathLength = pathEl.getTotalLength();
             var offsetLeft = d3.select("#svg-container" + i)._groups[0][0].getBoundingClientRect().x;
             x[i] = d3.event.pageX - offsetLeft;
-            var domPoint = new DOMPoint(x[i], 0);
-            var beginning = domPoint.x - spaceBetweenGraphs - currentOffset - (spaceBetweenGraphs * pathIndex),
-                end = pathLength, target;
+            var domPoint = new DOMPoint((x[i]-zoomX)/zoomK, 0);
+            var beginning = domPoint.x - spaceBetweenGraphs/zoomK - currentOffset - (spaceBetweenGraphs/zoomK * pathIndex),
+                end = pathLength/zoomK, target;
             currentOffset = currentOffset + end;
+            console.log(x[i], domPoint, beginning,end);
             var found = false;
             if ((domPoint.x > pathEl.getPointAtLength(0).x) && (domPoint.x < (pathEl.getPointAtLength(pathLength).x))) {
                 //Troviamo l'indice del vettore corrispondente al punto evidenziato col mouse
@@ -1351,7 +1408,8 @@ function createOnMouseMove(activities, totalGraphs, spaceBetweenGraphs) {
                 pathIndex = paths.length / totalGraphs;
             }
         }
-    }
+        console.log("****************************************************");
+    }*/
 
     function dataType(i) {
         if (i == 0) {

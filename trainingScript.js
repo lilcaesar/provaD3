@@ -74,7 +74,7 @@ var svgViewports = [];
 var svgArray = [];
 var svgArrayG = [];
 
-var xScale, yScale, xAxis, yAxis;
+var xScale, xScaleOriginal, yScale, xAxis, yAxis;
 
 var position = '';
 
@@ -98,6 +98,8 @@ for (var i = 0; i < totalGraphs; i++) {
         .attr("class", 'svg-container' + i)
         .attr("width", '100%')
         .attr('preserveAspectRatio', 'none')
+        .attr("zoom-k","1")
+        .attr("zoom-x","0")
     );
 }
 
@@ -184,38 +186,41 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                 xScale = d3.scaleLinear()
                     .domain([0, totalTime+(spaceBetweenGraphs*chartsNumber)])
                     .range([0, svgContainerWidth]);
+                xScaleOriginal = d3.scaleLinear()
+                    .domain([0, totalTime+(spaceBetweenGraphs*chartsNumber)])
+                    .range([0, svgContainerWidth]);
                 xAxis = d3.axisBottom(xScale)
                     .ticks(0);
 
                 zoom = d3.zoom()
-                    .scaleExtent([1, 40])
+                    .scaleExtent([1, 20])
                     .translateExtent([[0, 0], [svgContainerWidth, svgContainerHeight]])
+                    .extent([[0, 0], [svgContainerWidth, svgContainerHeight]])
                     .on("zoom", function () {
                         var e=d3.event.transform;
 
-                        var w = totalTime+(spaceBetweenGraphs*chartsNumber);
-
-                        xScale = d3.scaleLinear()
-                            .domain([(w/2)-((w/e.k)/2)-(e.x*e.k), (w/2)+((w/e.k)/2)-(e.x*e.k)])
+                        var w = totalTime+((spaceBetweenGraphs/e.k)*chartsNumber);
+                        /*var domainMin = (w/2)-((w/e.k)/2);
+                        var domainMax = (w/2)+((w/e.k)/2);
+                        console.log(d3.event);
+                        console.log(e, w, domainMin, domainMax);*/
+                        xScaleOriginal = d3.scaleLinear()
+                            .domain([0, w])
                             .range([0, svgContainerWidth]);
-                        xAxis = d3.axisBottom(xScale)
-                            .ticks(0);
+
+                        xScale.domain(e.rescaleX(xScaleOriginal).domain());
 
                         svgArray.forEach(function (el) {
                             el.selectAll("*").remove();
+                            el.attr("zoom-k", e.k);
+                            el.attr("zoom-x", e.x);
                         });
 
-                        drawSVG(totalGraphs, maxObjectiveDistance, maxDistance, minPace, maxPace, minHbr, maxHbr, minAltitude, maxAltitude, xScale, yScale, currentChartPosition);
-
-                        /*for(var j=0;j<totalGraphs;j++){
-                            //viewArray[j].attr("transform", d3.event.transform);
-                            svgArrayG[j].call(xAxis.scale(d3.event.transform.rescaleX(xScale)));
-                            //gY[j].call(yAxis.scale(d3.event.transform.rescaleY(y)));
-                        }*/
+                        drawSVG(totalGraphs, maxObjectiveDistance, maxDistance, minPace, maxPace, minHbr, maxHbr, minAltitude, maxAltitude, xScale, yScale, xAxis, yAxis, currentChartPosition/e.k, spaceBetweenGraphs/e.k);
                     });
 
                 //Disegno gli SVG
-                drawSVG(totalGraphs, maxObjectiveDistance, maxDistance, minPace, maxPace, minHbr, maxHbr, minAltitude, maxAltitude, xScale, yScale, currentChartPosition);
+                drawSVG(totalGraphs, maxObjectiveDistance, maxDistance, minPace, maxPace, minHbr, maxHbr, minAltitude, maxAltitude, xScale, yScale, xAxis, yAxis, currentChartPosition, spaceBetweenGraphs);
 
                 changeSliderLabelsColor(training.mark);
             }
