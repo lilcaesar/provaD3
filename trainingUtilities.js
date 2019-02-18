@@ -122,7 +122,7 @@ function drawSVG(totalGraphs, maxObjectiveDistance, maxDistance, minPace, maxPac
                 drawResultLines(svgArray, svgInstance, xScale, yScale, currentChartPosition, currentActivityMaxYValue, currentActivityMaxTime);
 
                 //Immagini degli obiettivi
-                drawObjectiveImages(currentActivityObjective, svgArray, svgInstance, graphIndex, xScale, yScale, currentChartPosition, overallMaxYValue);
+                drawObjectiveImages(currentActivityObjective, svgArray, svgInstance, graphIndex, xScale, yScale, currentChartPosition, overallMaxYValue, svgContainerWidth, currentActivityMaxTime);
 
                 //Punto del risultato dell'utente
                 drawResultPoint(currentActivityObjective, svgArray, svgInstance, graphIndex, xScale, yScale, currentChartPosition, currentActivityMaxTime,
@@ -647,13 +647,26 @@ function drawResultLines(svgArray, svgInstance, xScale, yScale, currentChartPosi
         .style("stroke-dasharray", ("3, 3"));
 }
 
-function drawObjectiveImages(currentActivityObjective, svgArray, svgInstance, graphIndex, xScale, yScale, currentChartPosition, overallMaxYValue) {
+function computeImagePosition(xScale, currentChartPosition, svgContainerWidth, currentActivityMaxTime){
+    var xPosition;
+    if((xScale(currentChartPosition)<svgContainerWidth)&&(xScale(currentChartPosition)<0)&&(xScale(currentChartPosition+currentActivityMaxTime)>=0)){
+        xPosition = xScale(xScale.domain()[0]);
+    }else{
+        xPosition=xScale(currentChartPosition);
+    }
+
+    return xPosition;
+}
+
+function drawObjectiveImages(currentActivityObjective, svgArray, svgInstance, graphIndex, xScale, yScale, currentChartPosition, overallMaxYValue, svgContainerWidth, currentActivityMaxTime) {
+    var xPosition = computeImagePosition(xScale, currentChartPosition, svgContainerWidth, currentActivityMaxTime);
+
     if (currentActivityObjective == "TIME") {
         svgArray[svgInstance].append("svg:image")
             .attr('class', 'time-img activity-type-img')
             .attr('id', 'activity-type-img' + graphIndex)
             .attr('xlink:href', 'img/time.png')
-            .attr('x', xScale(currentChartPosition))
+            .attr('x', xPosition)
             .attr('y', yScale(overallMaxYValue))
             .attr('width', 30)
             .attr('height', 30)
@@ -665,7 +678,7 @@ function drawObjectiveImages(currentActivityObjective, svgArray, svgInstance, gr
             .attr('class', 'distance-img activity-type-img')
             .attr('id', 'activity-type-img' + graphIndex)
             .attr('xlink:href', 'img/distance.png')
-            .attr('x', xScale(currentChartPosition))
+            .attr('x', xPosition)
             .attr('y', yScale(overallMaxYValue))
             .attr('width', 30)
             .attr('height', 30)
@@ -677,7 +690,7 @@ function drawObjectiveImages(currentActivityObjective, svgArray, svgInstance, gr
             .attr('class', 'distance-time-img activity-type-img')
             .attr('id', 'activity-type-img' + graphIndex)
             .attr('xlink:href', 'img/distancetime.png')
-            .attr('x', xScale(currentChartPosition))
+            .attr('x', xPosition)
             .attr('y', yScale(overallMaxYValue))
             .attr('width', 70)
             .attr('height', 30)
@@ -689,7 +702,7 @@ function drawObjectiveImages(currentActivityObjective, svgArray, svgInstance, gr
             .attr('class', 'pace-img activity-type-img')
             .attr('id', 'activity-type-img' + graphIndex)
             .attr('xlink:href', 'img/pace.png')
-            .attr('x', xScale(currentChartPosition))
+            .attr('x', xPosition)
             .attr('y', yScale(overallMaxYValue))
             .attr('width', 30)
             .attr('height', 30)
@@ -1051,26 +1064,6 @@ function computeMaxObjectiveDistance(activityArray) {
         }
     });
     return currentMaxDistance;
-}
-
-function swapDivs(id, direction){
-    console.log(id, direction);
-    var elem = document.getElementById(id);
-    var next = elem.nextSibling;
-    var prev = elem.previousSibling;
-    var parent = elem.parentNode;
-
-    console.log(parent.children[0], elem);
-
-
-    // posso swappare solo all'interno e non il primo con l'ultimo
-    if(direction === 'up' && parent.children[0] !== elem){
-        parent.insertBefore(elem, prev);
-    }
-    else if(direction === 'down'){
-        if(next !== null)
-            parent.insertBefore(next, elem);
-    }
 }
 
 function createGraphTitle(index) {
