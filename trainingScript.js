@@ -198,20 +198,23 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                     .translateExtent([[0, 0], [svgContainerWidth, svgContainerHeight]])
                     .extent([[0, 0], [svgContainerWidth, svgContainerHeight]])
                     .on("zoom", function () {
-                        var e=d3.event.transform;
+                        if(d3.event.sourceEvent.type=="wheel"||d3.event.sourceEvent.type=="mousemove") {
+                            var e = d3.event.transform;
 
-                        var w = totalTime+((spaceBetweenGraphs/e.k)*chartsNumber);
-                        xScaleOriginal = d3.scaleLinear()
-                            .domain([0, w])
-                            .range([0, svgContainerWidth]);
+                            var w = totalTime + ((spaceBetweenGraphs / e.k) * chartsNumber);
+                            xScaleOriginal = d3.scaleLinear()
+                                .domain([0, w])
+                                .range([0, svgContainerWidth]);
 
-                        xScale.domain(e.rescaleX(xScaleOriginal).domain());
+                            xScale.domain(e.rescaleX(xScaleOriginal).domain());
 
-                        svgArray.forEach(function (el) {
-                            el.selectAll("*").remove();
-                        });
+                            svgArray.forEach(function (el) {
+                                el.call(zoom.transform, e);
+                                el.selectAll("*").remove();
+                            });
 
-                        drawSVG(totalGraphs, maxObjectiveDistance, maxDistance, minPace, maxPace, minHbr, maxHbr, minAltitude, maxAltitude, xScale, yScale, xAxis, yAxis, currentChartPosition/e.k, spaceBetweenGraphs/e.k);
+                            drawSVG(totalGraphs, maxObjectiveDistance, maxDistance, minPace, maxPace, minHbr, maxHbr, minAltitude, maxAltitude, xScale, yScale, xAxis, yAxis, currentChartPosition / e.k, spaceBetweenGraphs / e.k);
+                        }
                     });
 
                 //Disegno gli SVG
