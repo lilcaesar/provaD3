@@ -200,10 +200,6 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                         var e=d3.event.transform;
 
                         var w = totalTime+((spaceBetweenGraphs/e.k)*chartsNumber);
-                        /*var domainMin = (w/2)-((w/e.k)/2);
-                        var domainMax = (w/2)+((w/e.k)/2);
-                        console.log(d3.event);
-                        console.log(e, w, domainMin, domainMax);*/
                         xScaleOriginal = d3.scaleLinear()
                             .domain([0, w])
                             .range([0, svgContainerWidth]);

@@ -1310,7 +1310,7 @@ function customDistanceFormat(num, graphIndex, isOnMouse) {
 
 function chartInViewbox(pathEl, pathLength, width){
     var min = pathEl.getPointAtLength(0).x;
-    var max = pathEl.getPointAtLength(pathLength).x;
+    var max = pathEl.getPointAtLength(pathEl.getTotalLength()).x;
     var isInside;
     if(min>=0){
         if((max<=width)||(min<=width)){
@@ -1330,8 +1330,20 @@ function chartInViewbox(pathEl, pathLength, width){
 
 function getPointOnMouse(pathEl, pathLength, xMouse){
     var point = {x:-1,y:-1};
+    var beginning=0;
+    var end=pathLength;
+    var target;
     if((xMouse>=pathEl.getPointAtLength(0).x)&&(xMouse<=pathEl.getPointAtLength(pathLength).x)){
-        point = pathEl.getPointAtLength(xMouse-pathEl.getPointAtLength(0).x);
+        while (true) {
+            target = Math.floor((beginning + end) / 2);
+            point = pathEl.getPointAtLength(target);
+            if ((target === end || target === beginning) && point.x !== xMouse) {
+                break;
+            }
+            if (point.x > xMouse) end = target;
+            else if (point.x < xMouse) beginning = target;
+            else break; //position found
+        }
     }
     return point;
 }
@@ -1362,8 +1374,6 @@ function createOnMouseMove(activities, totalGraphs, spaceBetweenGraphs, svgConta
                     column = pathIndex;
                     arrayPositions.push(parseInt(((x[i]-pathEl.getPointAtLength(0).x)/pathLength)*activities[pathIndex].data.length-1));
                     found = true;
-                    //console.log(x[i], pathEl.getPointAtLength(0).x, pathLength, activities[pathIndex].data.length-1);
-                    console.log(pathEl);
                     pathIndex=paths.length/totalGraphs;
                 }else{
                     found=false;
@@ -1371,46 +1381,6 @@ function createOnMouseMove(activities, totalGraphs, spaceBetweenGraphs, svgConta
             }
         }
     }
-    console.log(arrayPositions);
-    console.log("****************************************************");
-    /*for (var i = 0; i < totalGraphs; i++) {
-        var zoomK = parseFloat(svgArray[i].attr("zoom-k"));
-        var zoomX = parseFloat(svgArray[i].attr("zoom-x"));
-        var currentOffset = 0;
-        for (var pathIndex = 0; pathIndex < paths.length / totalGraphs; pathIndex++) {
-            pathEl = paths[pathIndex + ((paths.length / totalGraphs) * i)].node();
-            pathLength = pathEl.getTotalLength();
-            var offsetLeft = d3.select("#svg-container" + i)._groups[0][0].getBoundingClientRect().x;
-            x[i] = d3.event.pageX - offsetLeft;
-            var domPoint = new DOMPoint((x[i]-zoomX)/zoomK, 0);
-            var beginning = domPoint.x - spaceBetweenGraphs/zoomK - currentOffset - (spaceBetweenGraphs/zoomK * pathIndex),
-                end = pathLength/zoomK, target;
-            currentOffset = currentOffset + end;
-            console.log(x[i], domPoint, beginning,end);
-            var found = false;
-            if ((domPoint.x > pathEl.getPointAtLength(0).x) && (domPoint.x < (pathEl.getPointAtLength(pathLength).x))) {
-                //Troviamo l'indice del vettore corrispondente al punto evidenziato col mouse
-                //Calcoliamo il fattore di conversione con (arrayLenght-1)/(graph.end.x - graph.start.x)
-                //che andremo a moltiplicare per il punto in cui si trova il mouse per ricavare l'indice
-                arrayPositions.push(parseInt(((activities[pathIndex].data.length - 1) / ((pathEl.getPointAtLength(pathLength).x) - (pathEl.getPointAtLength(0).x))) * (domPoint.x - (pathEl.getPointAtLength(0).x))));
-                found = true;
-                while (true) {
-                    target = Math.floor((beginning + end) / 2);
-                    pos[i] = pathEl.getPointAtLength(target);
-                    if ((target === end || target === beginning) && pos[i].x !== domPoint.x) {
-                        break;
-                    }
-                    if (pos[i].x > domPoint.x) end = target;
-                    else if (pos[i].x < domPoint.x) beginning = target;
-                    else break; //position found
-                }
-                column = pathIndex;
-                pathIndex = paths.length / totalGraphs;
-            }
-        }
-        console.log("****************************************************");
-    }*/
-
     function dataType(i) {
         if (i == 0) {
             return parseInt(activities[column].data[arrayPositions[index]].distance);
