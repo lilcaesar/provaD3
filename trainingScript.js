@@ -81,15 +81,18 @@ var position = '';
 var totalGraphs = 4;
 
 for (var i = 0; i < totalGraphs; i++) {
-    // creo il div per l'nesimo grafico
     var graphic = document.createElement("div");
     graphic.id = "graphic" + i;
+    graphic.className = 'graph-div-animation';
+    graphic.style.position = 'relative';
     var container = document.getElementById('graphic-container');
     container.append(graphic);
 
     createGraphTitle(i);
 
+
     var div = document.createElement("div");
+    div.style.overflow = 'hidden';
     graphic.append(div);
 
     svgArray.push(d3.select(div)
@@ -98,8 +101,6 @@ for (var i = 0; i < totalGraphs; i++) {
         .attr("class", 'svg-container' + i)
         .attr("width", '100%')
         .attr('preserveAspectRatio', 'none')
-        .attr("zoom-k","1")
-        .attr("zoom-x","0")
     );
 }
 
@@ -208,8 +209,6 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
 
                         svgArray.forEach(function (el) {
                             el.selectAll("*").remove();
-                            el.attr("zoom-k", e.k);
-                            el.attr("zoom-x", e.x);
                         });
 
                         drawSVG(totalGraphs, maxObjectiveDistance, maxDistance, minPace, maxPace, minHbr, maxHbr, minAltitude, maxAltitude, xScale, yScale, xAxis, yAxis, currentChartPosition/e.k, spaceBetweenGraphs/e.k);

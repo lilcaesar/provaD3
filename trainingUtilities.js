@@ -1074,15 +1074,17 @@ function swapDivs(id, direction){
 }
 
 function createGraphTitle(index) {
+
     // div principale
     var container = document.createElement("div");
     container.className = "container";
 
     // controllo per il margin-top del 2 grafico
-    if (index == 1) {
+    if(index == 1) {
         container.style.marginTop = "0%";
         container.style.marginBottom = "-0.5%";
-    } else {
+    }
+    else {
         container.style.marginTop = "0";
         container.style.marginBottom = "-0.5%";
     }
@@ -1144,11 +1146,11 @@ function createGraphTitle(index) {
 
     // freccia up
     var arrow1 = document.createElement("span");
+    arrow1.id = 'graphic' + index + ' up';
     /*
     arrow1.setAttribute("src", "img/swap_div_up.png");
     arrow1.setAttribute("alt", "Swap up");*/
-    arrow1.setAttribute("onclick", "swapDivs('graphic" + index + "','up')");
-    arrow1.className = 'swap-divs-arrow';
+    //arrow1.setAttribute("onclick", "swapDivs('graphic"+ index + "','up')");
     arrow1.className = 'arrow up';
     // append immagine freccia up sulla colonna
     col_arrow1.append(arrow1);
@@ -1161,7 +1163,7 @@ function createGraphTitle(index) {
     /*
     arrow2.setAttribute("src", "img/swap_div_down.png");
     arrow2.setAttribute("alt", "Swap up");*/
-    arrow2.setAttribute("onclick", "swapDivs('graphic" + index + "','down')");
+    //arrow2.setAttribute("onclick", "swapDivs('graphic"+ index + "','down')");
     arrow2.className = 'arrow down';
     // append immagine freccia down sulla colonna
     col_arrow2.append(arrow2);
@@ -1171,6 +1173,7 @@ function createGraphTitle(index) {
 
     row_div.append(col_div3);
     row_div.append(col_div4);
+
 
 
     // append del div principale
