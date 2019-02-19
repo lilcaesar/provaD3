@@ -72,9 +72,9 @@ var allResults = [];
 
 var svgViewports = [];
 var svgArray = [];
-var svgArrayG = [];
 
 var xScale, xScaleOriginal, yScale, xAxis, yAxis;
+var svgMarginXRight = 10;
 
 var position = '';
 
@@ -186,10 +186,10 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
 
                 xScale = d3.scaleLinear()
                     .domain([0, totalTime+(spaceBetweenGraphs*chartsNumber)])
-                    .range([0, svgContainerWidth]);
+                    .range([0, svgContainerWidth-svgMarginXRight]);
                 xScaleOriginal = d3.scaleLinear()
                     .domain([0, totalTime+(spaceBetweenGraphs*chartsNumber)])
-                    .range([0, svgContainerWidth]);
+                    .range([0, svgContainerWidth-svgMarginXRight]);
                 xAxis = d3.axisBottom(xScale)
                     .ticks(0);
 
@@ -204,7 +204,7 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                             var w = totalTime + ((spaceBetweenGraphs / e.k) * chartsNumber);
                             xScaleOriginal = d3.scaleLinear()
                                 .domain([0, w])
-                                .range([0, svgContainerWidth]);
+                                .range([0, svgContainerWidth-svgMarginXRight]);
 
                             xScale.domain(e.rescaleX(xScaleOriginal).domain());
 

@@ -1,3 +1,8 @@
+var xSpaceLabels = 50;
+var ySpaceLabels = 10;
+var svgMarginYBottom = 18;
+var svgMarginYTop = 12;
+
 function drawSVG(totalGraphs, maxObjectiveDistance, maxDistance, minPace, maxPace, minHbr, maxHbr, minAltitude, maxAltitude, xScale, yScale, xAxis, yAxis, currentChartPosition, spaceBetweenGraphs) {
     paths=[];
 
@@ -25,19 +30,20 @@ function drawSVG(totalGraphs, maxObjectiveDistance, maxDistance, minPace, maxPac
         if (svgInstance == 1) {
             yScale = d3.scaleLinear()
                 .domain([overallMinYValue, overallMaxYValue])
-                .range([0, svgContainerHeight]);
+                .range([svgMarginYTop, svgContainerHeight-svgMarginYBottom]);
         } else {
             yScale = d3.scaleLinear()
                 .domain([overallMinYValue, overallMaxYValue])
-                .range([svgContainerHeight, 0]);
+                .range([svgContainerHeight-svgMarginYBottom, svgMarginYTop]);
         }
 
         var yScaleLabel = d3.scaleLinear()
             .domain([overallMinYValue, overallMaxYValue])
-            .range([svgContainerHeight, 0]);
+            .range([svgContainerHeight-svgMarginYBottom, svgMarginYTop]);
 
         yAxis = d3.axisLeft(yScale)
-            .ticks(0);
+            .ticks(0)
+            .tickSize(0);
 
         //Per ogni attività disegno il suo grafico
         for (var graphIndex = 0; graphIndex < chartsNumber; graphIndex++) {
@@ -77,18 +83,22 @@ function drawSVG(totalGraphs, maxObjectiveDistance, maxDistance, minPace, maxPac
             }
 
             svgArray[svgInstance].append('g')
-                .attr('class', 'axis' + svgInstance)
+                .attr('class', 'y-axis' + svgInstance)
                 .attr('transform', 'translate(' + (xScale(currentChartPosition)).toString() + ',0)')
                 .call(yAxis)
                 .style('color', 'grey')
                 .style({'stroke-width': '1px'});
 
-            svgArrayG[svgInstance] = svgArray[svgInstance].append('g');
+            d3.select(".axis"+svgInstance).attr("opacity",0);
 
-            svgArrayG[svgInstance]
-                .attr('class', 'axis' + svgInstance)
-                .attr('transform', 'translate(' + (xScale(currentChartPosition)).toString() + ',' + (svgContainerHeight) + ')')
-                .call(xAxis);
+            svgArray[svgInstance].append("line")
+                .attr('class', 'x-axis' + svgInstance)
+                .attr('x1', xScale(currentChartPosition))
+                .attr('y1', yScaleLabel(overallMinYValue))
+                .attr('x2', xScale(currentChartPosition+currentActivityMaxTime))
+                .attr('y2', yScaleLabel(overallMinYValue))
+                .style('stroke', 'grey')
+                .style('stroke-width', '1px');
 
             if (svgInstance == 0) {
                 var lines = 20;
@@ -155,6 +165,7 @@ function drawSVG(totalGraphs, maxObjectiveDistance, maxDistance, minPace, maxPac
 
         //Resetto la posizione x iniziale in cui disegnare i grafici
         currentChartPosition = spaceBetweenGraphs;
+        //console.log("***********************************************");
     }
 }
 
@@ -666,7 +677,7 @@ function drawObjectiveImages(currentActivityObjective, svgArray, svgInstance, gr
             .attr('class', 'time-img activity-type-img')
             .attr('id', 'activity-type-img' + graphIndex)
             .attr('xlink:href', 'img/time.png')
-            .attr('x', xPosition)
+            .attr('x', xPosition-3)
             .attr('y', yScale(overallMaxYValue))
             .attr('width', 30)
             .attr('height', 30)
@@ -702,7 +713,7 @@ function drawObjectiveImages(currentActivityObjective, svgArray, svgInstance, gr
             .attr('class', 'pace-img activity-type-img')
             .attr('id', 'activity-type-img' + graphIndex)
             .attr('xlink:href', 'img/pace.png')
-            .attr('x', xPosition)
+            .attr('x', xPosition-5)
             .attr('y', yScale(overallMaxYValue))
             .attr('width', 30)
             .attr('height', 30)
@@ -732,15 +743,28 @@ function drawResultPoint(currentActivityObjective, svgArray, svgInstance, graphI
     }
 }
 
+function computeLabelPosition(xScale, currentChartPosition, svgContainerWidth, currentActivityMaxTime){
+    var xPosition;
+    //console.log(xScale(currentActivityMaxTime+currentChartPosition),xScale(currentChartPosition));
+    if((xScale(currentActivityMaxTime+currentChartPosition)>0)&&(xScale(currentChartPosition)<xSpaceLabels)){
+        xPosition = xScale(xScale.domain()[0])+xSpaceLabels;
+    }else{
+        xPosition=xScale(currentChartPosition);
+    }
+
+    return xPosition;
+}
+
 function drawLabels(svgArray, svgInstance, idString, graphIndex, xScale, yScale, yScaleLabel, currentChartPosition, currentActivityMaxYValue,
                     currentActivityMinYValue, overallMinYValue, currentActivityMaxTime) {
+    var xPosition = computeLabelPosition(xScale, currentChartPosition, svgContainerWidth, currentActivityMaxTime);
     svgArray[svgInstance].append('text') //Variabile max in Y
         .attr('id', 'max-result-value-' + idString + graphIndex)
         .attr('class', 'result-value result-value-' + idString)
-        .attr('y', yScale(currentActivityMaxYValue))
-        .attr('x', xScale(currentChartPosition))
-        .attr('original-y', yScale(currentActivityMaxYValue))
-        .attr('original-x', xScale(currentChartPosition))
+        .attr('y', yScale(currentActivityMaxYValue)-ySpaceLabels)
+        .attr('x', xPosition)
+        .attr('original-y', yScale(currentActivityMaxYValue)-ySpaceLabels)
+        .attr('original-x', xPosition)
         .attr('dy', '8px')
         .style('fill', '#0062cc')
         .style('font-size', '14px')
@@ -752,10 +776,10 @@ function drawLabels(svgArray, svgInstance, idString, graphIndex, xScale, yScale,
         svgArray[svgInstance].append('text') //Variabile min in Y
             .attr('id', 'min-result-value-' + idString + graphIndex)
             .attr('class', 'result-value result-value-' + idString)
-            .attr('y', yScale(currentActivityMinYValue))
-            .attr('x', xScale(currentChartPosition))
-            .attr('original-y', yScale(currentActivityMinYValue))
-            .attr('original-x', xScale(currentChartPosition))
+            .attr('y', yScale(currentActivityMinYValue)-ySpaceLabels)
+            .attr('x', xPosition)
+            .attr('original-y', yScale(currentActivityMinYValue)-ySpaceLabels)
+            .attr('original-x', xPosition)
             .attr('dy', '8px')
             .style('fill', '#0062cc')
             .style('font-size', '14px')
