@@ -198,8 +198,10 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                     .translateExtent([[0, 0], [svgContainerWidth, svgContainerHeight]])
                     .extent([[0, 0], [svgContainerWidth, svgContainerHeight]])
                     .on("zoom", function () {
-                        if(d3.event.sourceEvent.type=="wheel"||d3.event.sourceEvent.type=="mousemove") {
-                            var e = d3.event.transform;
+                        var ev = d3.event;
+                        console.log(ev);
+                        if((ev.sourceEvent.type=="wheel"&&ev.sourceEvent.ctrlKey)||ev.sourceEvent.type=="mousemove") {
+                            var e = ev.transform;
 
                             var w = totalTime + ((spaceBetweenGraphs / e.k) * chartsNumber);
                             xScaleOriginal = d3.scaleLinear()
