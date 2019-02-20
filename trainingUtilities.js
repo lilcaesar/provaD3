@@ -3,6 +3,23 @@ var ySpaceLabels = 10;
 var svgMarginYBottom = 18;
 var svgMarginYTop = 12;
 
+var graphColors = {
+    expectedRangeDistanceTime: '#CFE4F6',
+    expectedPaceLineContour: '#CFE4F6',
+    expectedTimeDistanceLine: '#0049FF',
+    expectedPaceLine: '#0065C5',
+    rightPaceProgress : '#339933',
+    wrongPaceProgress : '#d10000',
+    labelValue : '#0062cc',
+    mouseCircle : '#ffe724',
+    mouseLine : '#ffe724',
+    mouseTextBackground : '#ffffff',
+    mouseTextColor : '#000000',
+    paceBackgroundLines : '#dddddd',
+    rightObjectiveCircle : '#339933',
+    wrongObjectiveCircle : '#d10000'
+};
+
 function drawSVG(totalGraphs, maxObjectiveDistance, maxDistance, minPace, maxPace, minHbr, maxHbr, minAltitude, maxAltitude, xScale, yScale, xAxis, yAxis, currentChartPosition, spaceBetweenGraphs) {
     paths=[];
 
@@ -362,7 +379,7 @@ function drawBackgroundPaceLines(m, q, lines, currentActivityMaxYValue, currentA
                 .attr('y1', yScale(0))
                 .attr('x2', xScale(x + currentChartPosition))
                 .attr('y2', yScale(y))
-                .style("stroke", "#dddddd")
+                .style("stroke", graphColors.paceBackgroundLines)
                 .style("stroke-width", '1px')
                 .style("stroke-linecap", "round");
         } else {
@@ -372,7 +389,7 @@ function drawBackgroundPaceLines(m, q, lines, currentActivityMaxYValue, currentA
                 .attr('y1', yScale(q))
                 .attr('x2', xScale(((currentActivityMaxYValue - q) / m) + currentChartPosition))
                 .attr('y2', yScale(currentActivityMaxYValue))
-                .style("stroke", "#dddddd")
+                .style("stroke", graphColors.paceBackgroundLines)
                 .style("stroke-width", '1px')
                 .style("stroke-linecap", "round");
         }
@@ -387,7 +404,7 @@ function drawExpectedPace(m, svgArray, svgInstance, xScale, yScale, currentChart
         .attr('y1', yScale(0))
         .attr('x2', xScale(((currentActivityMaxYValue) / m) + currentChartPosition))
         .attr('y2', yScale(currentActivityMaxYValue))
-        .style("stroke", "#0065C588")
+        .style("stroke", graphColors.expectedPaceLineContour)
         .style("stroke-width", '20px')
         .style("stroke-linecap", "round");
     svgArray[svgInstance].append("line")
@@ -396,7 +413,7 @@ function drawExpectedPace(m, svgArray, svgInstance, xScale, yScale, currentChart
         .attr('y1', yScale(0))
         .attr('x2', xScale((currentActivityMaxYValue / m) + currentChartPosition))
         .attr('y2', yScale(currentActivityMaxYValue))
-        .style("stroke", "#0065C5")
+        .style("stroke", graphColors.expectedPaceLine)
         .style("stroke-width", '2px')
         .style("stroke-linecap", "round");
 }
@@ -416,9 +433,9 @@ function simplifyLine(activities, graphIndex) {
 function colorByInclination(p1, p2, degrees, acc) {
     var temporaryDegrees = Math.atan((p2.y - p1.y) / (p2.x - p1.x)) * (180 / Math.PI);
     if (Math.abs(degrees - temporaryDegrees) < acc) {
-        return "#339933";
+        return graphColors.rightPaceProgress;
     } else {
-        return "#ff6767";
+        return graphColors.wrongPaceProgress;
     }
 }
 
@@ -560,7 +577,7 @@ function drawObjectives(svgArray, svgInstance, currentActivityObjective, xScale,
             .attr('y1', yScale(0))
             .attr('x2', xScale(currentActivityObjectiveTimeValue + currentChartPosition))
             .attr('y2', yScale(currentActivityMaxYValue))
-            .style("stroke", "#64C0AD")
+            .style("stroke", graphColors.expectedRangeDistanceTime)
             .style("stroke-width", rangeTime + 'px')
             .style("stroke-linecap", "round")
             .attr("opacity", 0.7);
@@ -571,7 +588,7 @@ function drawObjectives(svgArray, svgInstance, currentActivityObjective, xScale,
             .attr('y1', yScale(0))
             .attr('x2', xScale(currentActivityObjectiveTimeValue + currentChartPosition))
             .attr('y2', yScale(currentActivityMaxYValue))
-            .style("stroke", "#0065C5")
+            .style("stroke", graphColors.expectedTimeDistanceLine)
             .style("stroke-width", '2px')
             .style("stroke-linecap", "round");
 
@@ -584,13 +601,13 @@ function drawObjectives(svgArray, svgInstance, currentActivityObjective, xScale,
             .attr('y1', yScale(currentActivityObjectiveDistanceValue))
             .attr('x2', xScale(currentActivityMaxTime + currentChartPosition))
             .attr('y2', yScale(currentActivityObjectiveDistanceValue))
-            .style("stroke", "#0065C588")
+            .style("stroke", graphColors.expectedRangeDistanceTime)
             .style("stroke-width", rangeDistance + 'px')
             .style("stroke-linecap", "round")
             .attr("opacity", 0.7);
 
         svgArray[svgInstance].append("line")
-            .attr('class', 'expected-line-distance')
+            .attr('class', graphColors.expectedTimeDistanceLine)
             .attr('x1', xScale(currentChartPosition))
             .attr('y1', yScale(currentActivityObjectiveDistanceValue))
             .attr('x2', xScale(currentActivityMaxTime + currentChartPosition))
@@ -609,7 +626,7 @@ function drawObjectives(svgArray, svgInstance, currentActivityObjective, xScale,
             .attr("y", yScale(currentActivityObjectiveDistanceValue) - rangeDistance / 2)
             .attr("width", rangeTime)
             .attr("height", rangeDistance)
-            .style("fill", "#0065C588")
+            .style("fill", graphColors.expectedRangeDistanceTime)
             .attr("opacity", 0.7);
 
         svgArray[svgInstance].append("line")
@@ -618,7 +635,7 @@ function drawObjectives(svgArray, svgInstance, currentActivityObjective, xScale,
             .attr('y1', yScale(0))
             .attr('x2', xScale(currentActivityObjectiveTimeValue + currentChartPosition))
             .attr('y2', yScale(currentActivityObjectiveDistanceValue))
-            .style("stroke", "0049FF")
+            .style("stroke", graphColors.expectedTimeDistanceLine)
             .style("stroke-width", '2px')
             .style("stroke-linecap", "round");
 
@@ -628,7 +645,7 @@ function drawObjectives(svgArray, svgInstance, currentActivityObjective, xScale,
             .attr('y1', yScale(currentActivityObjectiveDistanceValue))
             .attr('x2', xScale(currentActivityObjectiveTimeValue + currentChartPosition))
             .attr('y2', yScale(currentActivityObjectiveDistanceValue))
-            .style("stroke", "0049FF")
+            .style("stroke", graphColors.expectedTimeDistanceLine)
             .style("stroke-width", '2px')
             .style("stroke-linecap", "round");
     }
@@ -731,6 +748,8 @@ function drawResultPoint(currentActivityObjective, svgArray, svgInstance, graphI
             .attr("cx", xScale(currentActivityMaxTime + currentChartPosition))
             .attr("cy", yScale(currentActivityMaxYValue))
             .attr("r", 6)
+            .attr("stroke", "black")
+            .attr("stroke-width", 1)
             .attr("fill", getResultPointColor(currentActivityObjective, currentActivityMaxTime, currentActivityObjectiveTimeValue, currentActivityMaxYValue, currentActivityObjectiveDistanceValue));
     } else {
         svgArray[svgInstance].append("circle")
@@ -739,6 +758,8 @@ function drawResultPoint(currentActivityObjective, svgArray, svgInstance, graphI
             .attr("cx", xScale(currentActivityMaxTime + currentChartPosition))
             .attr("cy", yScale(currentActivityMaxYValue))
             .attr("r", 1)
+            .attr("stroke", "black")
+            .attr("stroke-width", 1)
             .style("visibility", "hidden");
     }
 }
@@ -766,7 +787,7 @@ function drawLabels(svgArray, svgInstance, idString, graphIndex, xScale, yScale,
         .attr('original-y', yScale(currentActivityMaxYValue)-ySpaceLabels)
         .attr('original-x', xPosition)
         .attr('dy', '8px')
-        .style('fill', '#0062cc')
+        .style('fill', graphColors.labelValue)
         .style('font-size', '14px')
         .style('font-weight', '600')
         .style('text-anchor', 'end')
@@ -781,7 +802,7 @@ function drawLabels(svgArray, svgInstance, idString, graphIndex, xScale, yScale,
             .attr('original-y', yScale(currentActivityMinYValue)-ySpaceLabels)
             .attr('original-x', xPosition)
             .attr('dy', '8px')
-            .style('fill', '#0062cc')
+            .style('fill', graphColors.labelValue)
             .style('font-size', '14px')
             .style('font-weight', '600')
             .style('text-anchor', 'end')
@@ -796,7 +817,7 @@ function drawLabels(svgArray, svgInstance, idString, graphIndex, xScale, yScale,
         .attr('original-y', yScaleLabel(overallMinYValue) + 10)
         .attr('original-x', xScale(currentActivityMaxTime + currentChartPosition))
         .attr('dy', '8px')
-        .style('fill', '#0062cc')
+        .style('fill', graphColors.labelValue)
         .style('font-size', '14px')
         .style('font-weight', '600')
         .style('text-anchor', 'end')
@@ -811,7 +832,7 @@ function drawMouseObjects(mouseLine, mouseCircle, mouseLabels, svgArray, svgInst
         .attr("x2", 0)
         .attr("y1", 0)
         .attr("y2", svgContainerHeight)
-        .style("stroke", "#ffe724")
+        .style("stroke", graphColors.mouseLine)
         .style("stroke-width", '2px')
         .style("stroke-linecap", "round")
         .attr("opacity", 0)
@@ -825,7 +846,7 @@ function drawMouseObjects(mouseLine, mouseCircle, mouseLabels, svgArray, svgInst
         .attr("r", 6)
         .attr('stroke', 'black')
         .attr('stroke-width', 1)
-        .attr("fill", "#ffe724")
+        .attr("fill", graphColors.mouseCircle)
         .attr("opacity", 0)
     );
 
@@ -837,7 +858,7 @@ function drawMouseObjects(mouseLine, mouseCircle, mouseLabels, svgArray, svgInst
         .attr("y", 0)
         .attr("width", 1)
         .attr("height", 1)
-        .style("fill", "#ffffff")
+        .style("fill", graphColors.mouseTextBackground)
         .attr("opacity", 0);
 
     svgArray[svgInstance].append("rect")
@@ -847,7 +868,7 @@ function drawMouseObjects(mouseLine, mouseCircle, mouseLabels, svgArray, svgInst
         .attr("y", 0)
         .attr("width", 1)
         .attr("height", 1)
-        .style("fill", "#ffffff")
+        .style("fill", graphColors.mouseTextBackground)
         .attr("opacity", 0);
 
     //Testo
@@ -855,7 +876,7 @@ function drawMouseObjects(mouseLine, mouseCircle, mouseLabels, svgArray, svgInst
         svgArray[svgInstance].append('text')
             .attr('id', 'mouse-label-y' + svgInstance)
             .attr('dy', '8px')
-            .style('fill', 'black')
+            .style('fill', graphColors.mouseTextColor)
             .style('font-size', '14px')
             .style('font-weight', '600')
             .style('text-anchor', 'end')
@@ -863,7 +884,7 @@ function drawMouseObjects(mouseLine, mouseCircle, mouseLabels, svgArray, svgInst
         svgArray[svgInstance].append('text')
             .attr('id', 'mouse-label-x' + svgInstance)
             .attr('dy', '8px')
-            .style('fill', 'black')
+            .style('fill', graphColors.mouseTextColor)
             .style('font-size', '14px')
             .style('font-weight', '600')
             .style('text-anchor', 'end')
@@ -1244,18 +1265,18 @@ function getResultPointColor(currentActivityObjective, currentActivityMaxTime, c
         objectiveTime = parseInt(currentActivityObjectiveTimeValue);
         deltaTime = currentActivityObjectiveTimeValue * 0.05;
         if ((valueTime < (objectiveTime + deltaTime)) && (valueTime > (objectiveTime - deltaTime))) {
-            color = "green";
+            color = graphColors.rightObjectiveCircle;
         } else {
-            color = "#ff0000";
+            color = graphColors.wrongObjectiveCircle;
         }
     } else if (currentActivityObjective == "DISTANCE") {
         valueDistance = currentActivityMaxXValue;
         objectiveDistance = parseInt(currentActivityObjectiveDistanceValue);
         deltaDistance = currentActivityObjectiveDistanceValue * 0.05;
         if ((valueDistance < (objectiveDistance + deltaDistance)) && (valueDistance > (objectiveDistance - deltaDistance))) {
-            color = "green";
+            color = graphColors.rightObjectiveCircle;
         } else {
-            color = "#ff4141";
+            color = graphColors.wrongObjectiveCircle;
         }
     } else {
         valueDistance = currentActivityMaxXValue;
@@ -1266,12 +1287,12 @@ function getResultPointColor(currentActivityObjective, currentActivityMaxTime, c
         deltaTime = currentActivityObjectiveTimeValue * 0.05;
         if ((valueDistance < (objectiveDistance + deltaDistance)) && (valueDistance > (objectiveDistance - deltaDistance))) {
             if ((valueTime < (objectiveTime + deltaTime)) && (valueTime > (objectiveTime - deltaTime))) {
-                color = "green";
+                color = graphColors.rightObjectiveCircle;
             } else {
-                color = "#ff4141";
+                color = graphColors.wrongObjectiveCircle;
             }
         } else {
-            color = "#ff4141";
+            color = graphColors.wrongObjectiveCircle;
         }
     }
     return color;
