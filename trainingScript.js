@@ -74,7 +74,10 @@ var svgViewports = [];
 var svgArray = [];
 
 var xScale, xScaleOriginal, yScale, xAxis, yAxis;
+var currentZoom = 1;
 var svgMarginXRight = 10;
+
+var yScaleChecked = false;
 
 var position = '';
 
@@ -193,17 +196,6 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                 xAxis = d3.axisBottom(xScale)
                     .ticks(0);
 
-                /*var keyTime;
-
-                $(document).on('keydown', function(e){
-                    if (e.ctrlKey) {
-                        //console.log(e.timeStamp);
-                        keyTime = e.timeStamp;
-                        console.log('key ' + keyTime);
-                    }
-                });*/
-
-
                 zoom = d3.zoom()
                     .scaleExtent([1, 20])
                     .translateExtent([[0, 0], [svgContainerWidth, svgContainerHeight]])
@@ -230,16 +222,30 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                                     el.selectAll("*").remove();
                                 });
 
-                                drawSVG(totalGraphs, maxObjectiveDistance, maxDistance, minPace, maxPace, minHbr, maxHbr, minAltitude, maxAltitude, xScale, yScale, xAxis, yAxis, currentChartPosition / e.k, spaceBetweenGraphs / e.k);
+                                currentZoom = e.k;
+
+                                drawSVG(totalGraphs, maxObjectiveDistance, maxDistance, minPace, maxPace, minHbr, maxHbr, minAltitude, maxAltitude, xScale, yScale, xAxis, yAxis, currentChartPosition / currentZoom, spaceBetweenGraphs / currentZoom, yScaleChecked);
                            // }
                         }
-                        //console.log('zoom:' + ev.sourceEvent.timeStamp);
                     });
 
                 //Disegno gli SVG
-                drawSVG(totalGraphs, maxObjectiveDistance, maxDistance, minPace, maxPace, minHbr, maxHbr, minAltitude, maxAltitude, xScale, yScale, xAxis, yAxis, currentChartPosition, spaceBetweenGraphs);
+                drawSVG(totalGraphs, maxObjectiveDistance, maxDistance, minPace, maxPace, minHbr, maxHbr, minAltitude, maxAltitude, xScale, yScale, xAxis, yAxis, currentChartPosition, spaceBetweenGraphs, yScaleChecked);
 
                 changeSliderLabelsColor(training.mark);
+
+                d3.select("#checkbox").on("change", function () {
+                    svgArray.forEach(function (el) {
+                        el.selectAll("*").remove();
+                    });
+                    console.log(d3.select("#checkbox").property("checked"));
+                    if(d3.select("#checkbox").property("checked")){
+                        yScaleChecked = true;
+                    }else{
+                        yScaleChecked = false;
+                    }
+                    drawSVG(totalGraphs, maxObjectiveDistance, maxDistance, minPace, maxPace, minHbr, maxHbr, minAltitude, maxAltitude, xScale, yScale, xAxis, yAxis, currentChartPosition / currentZoom, spaceBetweenGraphs / currentZoom, yScaleChecked);
+                });
             }
             /**Fine dell'if nella complete di papaparse**/
         }

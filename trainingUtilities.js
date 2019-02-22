@@ -20,7 +20,7 @@ var graphColors = {
     wrongObjectiveCircle : '#d10000'
 };
 
-function drawSVG(totalGraphs, maxObjectiveDistance, maxDistance, minPace, maxPace, minHbr, maxHbr, minAltitude, maxAltitude, xScale, yScale, xAxis, yAxis, currentChartPosition, spaceBetweenGraphs) {
+function drawSVG(totalGraphs, maxObjectiveDistance, maxDistance, minPace, maxPace, minHbr, maxHbr, minAltitude, maxAltitude, xScale, yScale, xAxis, yAxis, currentChartPosition, spaceBetweenGraphs, yScaleChecked) {
     paths=[];
 
     for (var svgInstance = 0; svgInstance < totalGraphs; svgInstance++) {
@@ -92,6 +92,15 @@ function drawSVG(totalGraphs, maxObjectiveDistance, maxDistance, minPace, maxPac
                 idString = "altitude";
             }
 
+            if((svgInstance==0)&&yScaleChecked){
+                yScale = d3.scaleLinear()
+                    .domain([0, currentActivityMaxYValue])
+                    .range([svgContainerHeight-svgMarginYBottom, svgMarginYTop]);
+
+                yAxis = d3.axisLeft(yScale)
+                    .ticks(0)
+                    .tickSize(0);
+            }
 
             if (currentActivityObjectiveTimeValue > currentActivityMaxTime) {
                 overallMaxTimeValue = currentActivityObjectiveTimeValue;
@@ -149,7 +158,7 @@ function drawSVG(totalGraphs, maxObjectiveDistance, maxDistance, minPace, maxPac
                 drawResultLines(svgArray, svgInstance, xScale, yScale, currentChartPosition, currentActivityMaxYValue, currentActivityMaxTime);
 
                 //Immagini degli obiettivi
-                drawObjectiveImages(currentActivityObjective, svgArray, svgInstance, graphIndex, xScale, yScale, currentChartPosition, overallMaxYValue, svgContainerWidth, currentActivityMaxTime);
+                drawObjectiveImages(currentActivityObjective, svgArray, svgInstance, graphIndex, xScale, yScale, currentChartPosition, overallMaxYValue, svgContainerWidth, currentActivityMaxTime, currentActivityMaxYValue, yScaleChecked);
 
                 //Punto del risultato dell'utente
                 drawResultPoint(currentActivityObjective, svgArray, svgInstance, graphIndex, xScale, yScale, currentChartPosition, currentActivityMaxTime,
@@ -686,8 +695,15 @@ function computeImagePosition(xScale, currentChartPosition, svgContainerWidth, c
     return xPosition;
 }
 
-function drawObjectiveImages(currentActivityObjective, svgArray, svgInstance, graphIndex, xScale, yScale, currentChartPosition, overallMaxYValue, svgContainerWidth, currentActivityMaxTime) {
-    var xPosition = computeImagePosition(xScale, currentChartPosition, svgContainerWidth, currentActivityMaxTime);
+function drawObjectiveImages(currentActivityObjective, svgArray, svgInstance, graphIndex, xScale, yScale, currentChartPosition, overallMaxYValue, svgContainerWidth, currentActivityMaxTime, currentActivityMaxYValue, yScaleChecked) {
+    var xPosition = computeImagePosition(xScale, currentChartPosition, svgContainerWidth, currentActivityMaxTime, currentActivityMaxYValue, yScaleChecked);
+    var yPosition;
+
+    if(yScaleChecked){
+        yPosition = yScale(currentActivityMaxYValue);
+    }else{
+        yPosition = yScale(overallMaxYValue);
+    }
 
     if (currentActivityObjective == "TIME") {
         svgArray[svgInstance].append("svg:image")
@@ -695,11 +711,9 @@ function drawObjectiveImages(currentActivityObjective, svgArray, svgInstance, gr
             .attr('id', 'activity-type-img' + graphIndex)
             .attr('xlink:href', 'img/time.png')
             .attr('x', xPosition-3)
-            .attr('y', yScale(overallMaxYValue))
+            .attr('y', yPosition)
             .attr('width', 30)
-            .attr('height', 30)
-            .attr('original-x', xScale(currentChartPosition))
-            .attr('original-y', yScale(overallMaxYValue));
+            .attr('height', 30);
 
     } else if (currentActivityObjective == "DISTANCE") {
         svgArray[svgInstance].append("svg:image")
@@ -707,11 +721,9 @@ function drawObjectiveImages(currentActivityObjective, svgArray, svgInstance, gr
             .attr('id', 'activity-type-img' + graphIndex)
             .attr('xlink:href', 'img/distance.png')
             .attr('x', xPosition)
-            .attr('y', yScale(overallMaxYValue))
+            .attr('y', yPosition)
             .attr('width', 30)
-            .attr('height', 30)
-            .attr('original-x', xScale(currentChartPosition))
-            .attr('original-y', yScale(overallMaxYValue));
+            .attr('height', 30);
 
     } else if (currentActivityObjective == "DISTANCE_TIME") {
         svgArray[svgInstance].append("svg:image")
@@ -719,11 +731,9 @@ function drawObjectiveImages(currentActivityObjective, svgArray, svgInstance, gr
             .attr('id', 'activity-type-img' + graphIndex)
             .attr('xlink:href', 'img/distancetime.png')
             .attr('x', xPosition)
-            .attr('y', yScale(overallMaxYValue))
+            .attr('y', yPosition)
             .attr('width', 70)
-            .attr('height', 30)
-            .attr('original-x', xScale(currentChartPosition))
-            .attr('original-y', yScale(overallMaxYValue));
+            .attr('height', 30);
 
     } else if (currentActivityObjective == "PACE") {
         svgArray[svgInstance].append("svg:image")
