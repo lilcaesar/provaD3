@@ -1152,7 +1152,7 @@ function createGraphTitle(index) {
 
     // 2a colonna
     var col_div2 = document.createElement("div");
-    col_div2.className = "col-md-2";
+    col_div2.className = "col-md-auto";
     // div contenente la classe del titolo
     var graph_name_class = document.createElement("div");
     graph_name_class.className = "graph-name";
@@ -1160,11 +1160,35 @@ function createGraphTitle(index) {
     var graph_name_text = document.createElement("h6");
     graph_name_text.innerHTML = getGraphName(index);
 
-
     // append degli elementi creati
     graph_name_class.append(graph_name_text);
     col_div2.append(graph_name_class);
     row_div.append(col_div2);
+
+    if(index == 0) {
+        // colonna checkbox
+        var col_div_check = document.createElement("div");
+        col_div_check.className = "col-md-0";
+        col_div_check.style.marginTop = '-2px';
+
+        var col_div_check_text = document.createElement("div");
+        col_div_check_text.className = "col-md-2 set-padding";
+
+        var checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.id = "checkbox";
+        //checkbox.className = "checkbox-position";
+
+        var checkbox_text = document.createElement("h6");
+        checkbox_text.for = "checkbox";
+        //checkbox_text.className = "form-check-input";
+        checkbox_text.innerHTML = "Adatta grafico";
+        col_div_check.append(checkbox);
+        col_div_check_text.append(checkbox_text);
+        row_div.append(col_div_check);
+        row_div.append(col_div_check_text);
+    }
+
 
     // 3a colonna
     var col_div3 = document.createElement("div");

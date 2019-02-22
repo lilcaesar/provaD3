@@ -193,30 +193,47 @@ for (var csvindex = 0; csvindex < files.length; csvindex++) {
                 xAxis = d3.axisBottom(xScale)
                     .ticks(0);
 
+                /*var keyTime;
+
+                $(document).on('keydown', function(e){
+                    if (e.ctrlKey) {
+                        //console.log(e.timeStamp);
+                        keyTime = e.timeStamp;
+                        console.log('key ' + keyTime);
+                    }
+                });*/
+
+
                 zoom = d3.zoom()
                     .scaleExtent([1, 20])
                     .translateExtent([[0, 0], [svgContainerWidth, svgContainerHeight]])
                     .extent([[0, 0], [svgContainerWidth, svgContainerHeight]])
                     .on("zoom", function () {
                         var ev = d3.event;
-                        console.log(ev);
-                        if((ev.sourceEvent.type=="wheel"&&ev.sourceEvent.ctrlKey)||ev.sourceEvent.type=="mousemove") {
-                            var e = ev.transform;
+                        //console.log(ev);
 
-                            var w = totalTime + ((spaceBetweenGraphs / e.k) * chartsNumber);
-                            xScaleOriginal = d3.scaleLinear()
-                                .domain([0, w])
-                                .range([0, svgContainerWidth-svgMarginXRight]);
+                        if((ev.sourceEvent.type=="wheel")||ev.sourceEvent.type=="mousemove") {
+                            //console.log(keyTime);
+                            //console.log(ev.sourceEvent.timeStamp);
+                            //if (ev.sourceEvent.timeStamp-keyTime < 0.4){
+                                var e = ev.transform;
 
-                            xScale.domain(e.rescaleX(xScaleOriginal).domain());
+                                var w = totalTime + ((spaceBetweenGraphs / e.k) * chartsNumber);
+                                xScaleOriginal = d3.scaleLinear()
+                                    .domain([0, w])
+                                    .range([0, svgContainerWidth - svgMarginXRight]);
 
-                            svgArray.forEach(function (el) {
-                                el.call(zoom.transform, e);
-                                el.selectAll("*").remove();
-                            });
+                                xScale.domain(e.rescaleX(xScaleOriginal).domain());
 
-                            drawSVG(totalGraphs, maxObjectiveDistance, maxDistance, minPace, maxPace, minHbr, maxHbr, minAltitude, maxAltitude, xScale, yScale, xAxis, yAxis, currentChartPosition / e.k, spaceBetweenGraphs / e.k);
+                                svgArray.forEach(function (el) {
+                                    el.call(zoom.transform, e);
+                                    el.selectAll("*").remove();
+                                });
+
+                                drawSVG(totalGraphs, maxObjectiveDistance, maxDistance, minPace, maxPace, minHbr, maxHbr, minAltitude, maxAltitude, xScale, yScale, xAxis, yAxis, currentChartPosition / e.k, spaceBetweenGraphs / e.k);
+                           // }
                         }
+                        //console.log('zoom:' + ev.sourceEvent.timeStamp);
                     });
 
                 //Disegno gli SVG
